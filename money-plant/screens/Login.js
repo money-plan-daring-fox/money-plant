@@ -38,17 +38,26 @@ const Login = props => {
     }
   }
   const signup = async (email, pass) => {
-    email = 'testucup@mail.com'
-    pass = 'fb12345'
-    try {
-      await firebase.auth()
-        .createUserWithEmailAndPassword(email, pass);
-      console.log("Account created");
-      // Navigate to the Home page, the user is auto logged in
+    const provider = new firebase.auth.GoogleAuthProvider()
+    firebase.auth()
+      .signInWithCredential(provider)
+      .then(result => {
+        console.log({ result })
+      })
+      .catch(err => {
+        console.log({ err })
+      })
+    // email = 'testucup@mail.com'
+    // pass = 'fb12345'
+    // try {
+    //   await firebase.auth()
+    //     .createUserWithEmailAndPassword(email, pass);
+    //   console.log("Account created");
+    //   // Navigate to the Home page, the user is auto logged in
 
-    } catch (error) {
-      console.log(error.toString())
-    }
+    // } catch (error) {
+    //   console.log(error.toString())
+    // }
   }
   const logout = async () => {
     try {
