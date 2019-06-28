@@ -12,6 +12,9 @@ import Plant from './screens/Plant'
 import NewPlant from './screens/NewPlant'
 import Profile from './screens/Profile'
 
+// Firebase
+import { AuthProvider } from './components/AuthContext'
+
 const drawerStyle = {
   contentComponent: props => {
     return (
@@ -76,4 +79,11 @@ const appNavigator = createSwitchNavigator({
   
 })
 
-export default createAppContainer(appNavigator)
+export default function App() {
+  const Route = createAppContainer(appNavigator)
+  return (
+    <AuthProvider>
+      <Route />
+    </AuthProvider>
+  )
+}
