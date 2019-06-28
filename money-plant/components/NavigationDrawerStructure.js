@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Image, TouchableOpacity, View, StyleSheet } from 'react-native'
+import { Feather } from '@expo/vector-icons'
 
 export default class NavigationDrawerStructure extends Component {
   toggleDrawer = () => {
@@ -10,10 +11,7 @@ export default class NavigationDrawerStructure extends Component {
     return (
       <View style={{ flexDirection: 'row' }}>
         <TouchableOpacity onPress={this.toggleDrawer.bind(this)}>
-          <Image
-            source={{ uri: 'https://cdn4.iconfinder.com/data/icons/wirecons-free-vector-icons/32/menu-alt-512.png' }}
-            style={{ width: 25, height: 25, marginLeft: 5 }}
-          />
+          <Feather name="list" size={25} color="white" />
         </TouchableOpacity>
       </View>
     );
