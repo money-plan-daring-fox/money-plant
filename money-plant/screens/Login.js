@@ -7,12 +7,16 @@ import {
   TouchableOpacity,
   Text,
   ImageBackground,
-  Dimensions
+  Dimensions,
+  Button
 } from "react-native";
 import { Font } from "expo";
+import firebase from 'firebase'
 
 const Login = props => {
   const [fontLoad, setFontLoad] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   useEffect(() => {
     Font.loadAsync({
@@ -21,6 +25,44 @@ const Login = props => {
       setFontLoad(true);
     });
   }, []);
+  // console.log(process.env.REACT_APP_FIREBASE_KEY)
+  const signin = async (email, pass) => {
+    try {
+      await firebase.auth()
+        .signInWithEmailAndPassword(email, pass);
+      console.log("Logged In!");
+      // Navigate to the Home page
+      props.navigation.navigate("Home")
+    } catch (error) {
+      console.log(error.toString())
+    }
+  }
+  const signup = async (email, pass) => {
+    email = 'testucup@mail.com'
+    pass = 'fb12345'
+    try {
+      await firebase.auth()
+        .createUserWithEmailAndPassword(email, pass);
+      console.log("Account created");
+      // Navigate to the Home page, the user is auto logged in
+
+    } catch (error) {
+      console.log(error.toString())
+    }
+  }
+  const logout = async () => {
+    try {
+      await firebase.auth().signOut();
+      // Navigate to login view
+      props.navigation.navigate('Login')
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleChange = input => {
+    console.log({input})
+  }
 
   return fontLoad ? (
     <View style={styles.container}>
@@ -79,27 +121,36 @@ const Login = props => {
             placeholderTextColor="rgba(255,255,255,0.7)"
             id="email"
             style={styles.input}
+            onChangeText={text => setEmail(text)}
           />
           <TextInput
             placeholder="password"
             placeholderTextColor="rgba(255,255,255,0.7)"
             id="password"
             style={styles.input}
+            onChangeText={text => setPassword(text)}
           />
           <View style={{ alignItems: "center" }}>
             <TouchableOpacity
-              onPress={() => props.navigation.navigate("Home")}
+              onPress={() => signin(email, password)}
               style={styles.button}
             >
               <Text style={styles.text}>Sign In</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => signup('email', 'password')}
+              style={styles.button2}
+            >
+              <Text style={styles.text}>Login with Google</Text>
+            </TouchableOpacity>
+            {/* <Button title="Tes Google" onPress={() => signup('email','password')} /> */}
           </View>
         </View>
       </KeyboardAvoidingView>
     </View>
   ) : (
-    <Text> Loading Font ... </Text>
-  );
+      <Text> Loading Font ... </Text>
+    );
 };
 
 const styles = StyleSheet.create({
@@ -127,7 +178,7 @@ const styles = StyleSheet.create({
     color: "#587e5b"
   },
   text: {
-    fontFamily: "PingFangHK-Light",
+    fontFamily: "MachineGunk",
     textAlign: "center",
     color: "#fff"
   },
@@ -135,7 +186,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#b9523e",
     paddingVertical: 15,
     borderRadius: 30,
-    width: 200
+    width: 200,
+    margin: 5,
+  },
+  button2: {
+    backgroundColor: "#039be5",
+    paddingVertical: 15,
+    borderRadius: 30,
+    width: 200,
+    margin: 5,
   }
 });
 
