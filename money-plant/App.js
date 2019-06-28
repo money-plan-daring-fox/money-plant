@@ -52,9 +52,6 @@ const drawerStyle = {
 }
 
 const appNavigator = createSwitchNavigator({
-  Login: {
-    screen: Login
-  },
   Home: {
     screen: createDrawerNavigator({
       Garden: {
@@ -70,8 +67,11 @@ const appNavigator = createSwitchNavigator({
         })
       }
     },
-      drawerStyle
+    drawerStyle
     )
+  },
+  Login: {
+    screen: Login
   },
   
 })
