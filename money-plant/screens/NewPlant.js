@@ -1,39 +1,169 @@
 import React, { useState } from 'react'
 import { View, Text, TouchableHighlight, TextInput, Picker, StyleSheetr } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import db from '../api/firebase'
 
 const NewPlant = props => {
-    const [plan, setPlan] = useState("default")
+  const [name, setName] = useState("")
+  const [price, setPrice] = useState(0)
+  const [plan, setPlan] = useState("default")
+  const [investing, setInvesting] = useState(0)
+  const [deadline, setDeadline] = useState(0)
 
-    return (
-        <View style={styles.container}>
-            <TextInput style={styles.input} placeholder="Plant/Product Name" placeholderTextColor="#f6f4f2" />
-            <TextInput style={styles.input} placeholder="Price" placeholderTextColor="#f6f4f2"/>
-            <Text style={{...styles.text, paddingTop : 15, paddingBottom : 6}}> How would you like to Save? </Text>
-            <Picker
-                selectedValue={plan}
-                onValueChange={(itemValue, itemIndex) => setPlan(itemValue)}
-                itemStyle={styles.picker}
-                >
-                <Picker.Item label="Default" value="default" />
-                <Picker.Item label="Month" value="month" />
-                <Picker.Item label="$ / month" value="money" />
-            </Picker>
+  // VALIDASI PLAN B DAN C HARUS MEMUNGKINKAN DENGAN INCOME USER
+  // VALIDASI PLAN B DAN C HARUS MEMUNGKINKAN DENGAN INCOME USER
+  // VALIDASI PLAN B DAN C HARUS MEMUNGKINKAN DENGAN INCOME USER
 
-            <TouchableOpacity style={styles.button}
-            onPress={() => props.navigation.navigate("Garden")}>
-                <Text style={styles.text}>Create plant</Text>
-            </TouchableOpacity>
+  const createPlant = (nameInput, priceInput, planInput, investingInput, deadlineInput) => {
+    console.log(nameInput);
+    console.log(priceInput);
+    console.log(planInput);
+    console.log(investingInput)
+    console.log(deadlineInput);
+
+    if (planInput === "default") {
+      db.firestore()
+        .collection("plants")
+        .doc()
+        .set({
+          name: nameInput,
+          price: Number(priceInput),
+          plan: planInput,
+          invested: 0,
+          investing: (10000000 * 0.2),
+          deadline: Math.ceil(priceInput / (10000000 * 0.2)),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          stage: Math.ceil((0 / priceInput) * 5),
+          uid: "jangan lupa uid"
+        })
+        .then(() => {
+          console.log(planInput, 'berhasil uy');
+        })
+        .catch(err => {
+          console.log('fail uy');
+        })
+    } else if (planInput === "money") {
+      db.firestore()
+        .collection("plants")
+        .doc()
+        .set({
+          name: nameInput,
+          price: Number(priceInput),
+          plan: planInput,
+          invested: 0,
+          investing: investingInput,
+          deadline: price / investingInput,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          stage: Math.ceil((0 / priceInput) * 5),
+          uid: "jangan lupa uid",
+        })
+        .then(() => {
+          console.log(planInput, 'berhasil')
+        })
+        .catch(err => {
+          console.log(planInput, "error boz")
+        })
+    } else if (planInput === "month") {
+      db.firestore()
+        .collection("plants")
+        .doc()
+        .set({
+          name: nameInput,
+          price: Number(priceInput),
+          plan: planInput,
+          invested: 0,
+          investing: priceInput / deadlineInput,
+          deadline: Number(deadlineInput),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          stage: Math.ceil((0 / priceInput) * 5),
+          uid: "jangan lupa uid"
+        })
+        .then(() => {
+          console.log(planInput, "berhasil hore testemistimos")
+        })
+        .catch(err => {
+          console.log(planInput, "Yeay error anjing")
+        })
+    }
+  }
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Plant/Product Name"
+        placeholderTextColor="white"
+        onChangeText={name => setName(name)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Price"
+        placeholderTextColor="white"
+        onChangeText={price => setPrice(price)}
+        keyboardType="numeric"
+      />
+      <Text style={{ ...styles.text, paddingTop: 15, paddingBottom: 6 }}> How would you like to Save? </Text>
+
+      <Picker
+        selectedValue={plan}
+        style={{ height: 50, width: 250 }}
+        onValueChange={(itemValue, itemIndex) => {
+          setPlan(itemValue)
+        }}
+        itemStyle={styles.picker}
+      >
+        <Picker.Item label="Default" value="default" />
+        <Picker.Item label="$ / month" value="money" />
+        <Picker.Item label="Month" value="month" />
+      </Picker>
+
+      {
+        plan === "default" &&
+        <Text style={{color: "white"}}>(20% x income) / month</Text>
+      }
+
+      {
+        plan === "month" &&
+        <View>
+          <Text style={{color: "white"}}>(Price / number of months) / month</Text>
+          <TextInput
+            placeholder="Number of months"
+            placeholderTextColor="rgba(255,255,255,0.7)"
+            keyboardType="numeric"
+            onChangeText={num => setDeadline(num)} />
         </View>
-    )
+      }
+
+      {
+        plan === "money" &&
+        <View>
+          <Text style={{color: "white"}}>(Selected investment) / month</Text>
+          <TextInput
+            placeholder="Investments per month"
+            placeholderTextColor="rgba(255,255,255,0.7)"
+            keyboardType="numeric"
+            onChangeText={num => setInvesting(num)} />
+        </View>
+      }
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => createPlant(name, price, plan, investing, deadline)}>
+        <Text style={styles.text}>Create plant</Text>
+      </TouchableOpacity>
+    </View>
+  )
 }
 
 NewPlant.navigationOptions = props => ({
-    title: "New Plant",
-    headerTintColor: "#f6f4f2",
-    headerStyle: {
-        backgroundColor: "#31422e",
-    },
+  title: "New Plant",
+  headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: "#31422e",
+  },
 })
 
 const styles = {
