@@ -10,14 +10,16 @@ import {
   Dimensions,
   Button
 } from "react-native";
-import { Font } from "expo";
 import firebase from 'firebase'
+import db from '../api/firebase'
+import * as Font from 'expo-font'
+import * as GoogleSignIn from 'expo-google-sign-in'
+import * as Expo from 'expo'
 
 const Login = props => {
   const [fontLoad, setFontLoad] = useState(false);
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
   useEffect(() => {
     Font.loadAsync({
       MachineGunk: require("../assets/fonts/MachineGunk.otf")
@@ -25,52 +27,68 @@ const Login = props => {
       setFontLoad(true);
     });
   }, []);
-  // console.log(process.env.REACT_APP_FIREBASE_KEY)
   const signin = async (email, pass) => {
+    console.log({email, pass})
     try {
-      await firebase.auth()
-        .signInWithEmailAndPassword(email, pass);
-      console.log("Logged In!");
-      // Navigate to the Home page
-      props.navigation.navigate("Home")
-    } catch (error) {
-      console.log(error.toString())
+      const user = await firebase.auth().signInWithEmailAndPassword(email, pass)
+      alert('Logged In!')
+      setEmail('')
+      setPassword('')
+      props.navigation.navigate('Home')
+    } catch (err) {
+      console.log({ err })
+      alert(err.toString())
     }
   }
   const signup = async (email, pass) => {
-    const provider = new firebase.auth.GoogleAuthProvider()
-    firebase.auth()
-      .signInWithCredential(provider)
-      .then(result => {
-        console.log({ result })
-      })
-      .catch(err => {
-        console.log({ err })
-      })
-    // email = 'testucup@mail.com'
-    // pass = 'fb12345'
     // try {
-    //   await firebase.auth()
-    //     .createUserWithEmailAndPassword(email, pass);
-    //   console.log("Account created");
-    //   // Navigate to the Home page, the user is auto logged in
-
-    // } catch (error) {
-    //   console.log(error.toString())
+    //   const result = await Expo.Google.logInAsync({
+    //     androidClientId: '861867384752-8h28g1bm9i2aniltjo1i5qlkhmgqpc3l.apps.googleusercontent.com',
+    //     scopes: ['email'],
+    //   })
+    //   console.log('masuk')
+    //   if (result.type === 'success') {
+    //     console.log('result', result)
+    //   } else {
+    //     console.log('error')
+    //   }
+    // } catch ({ message }) {
+    //   alert('GoogleSignIn.initAsync(): ' + message);
     // }
+    try {
+      const user = await firebase.auth().createUserWithEmailAndPassword(email, pass)
+      console.log({ user })
+      let newUser = {
+        email: user.user.email,
+        balance: 0,
+        plants: [],
+        income: 0
+      }
+      db.firestore()
+        .collection('users')
+        .add(newUser)
+        .then(ref => {
+          alert('Account registered!')
+          setEmail('')
+          setPassword('')
+        })
+      // Navigate to the Home page, the user is auto logged in
+    } catch (error) {
+      alert(error.toString())
+    }
   }
   const logout = async () => {
     try {
       await firebase.auth().signOut();
       // Navigate to login view
-      props.navigation.navigate('Login')
+      props.navigation.navigate('Home')
     } catch (error) {
       console.log(error);
     }
   }
 
   const handleChange = input => {
-    console.log({input})
+    console.log({ input })
   }
 
   return fontLoad ? (
@@ -136,6 +154,7 @@ const Login = props => {
             placeholder="password"
             placeholderTextColor="rgba(255,255,255,0.7)"
             id="password"
+            secureTextEntry={true}
             style={styles.input}
             onChangeText={text => setPassword(text)}
           />
@@ -147,12 +166,17 @@ const Login = props => {
               <Text style={styles.text}>Sign In</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => signup('email', 'password')}
+              onPress={() => signup(email, password)}
               style={styles.button2}
             >
-              <Text style={styles.text}>Login with Google</Text>
+              <Text style={styles.text}>Register</Text>
             </TouchableOpacity>
-            {/* <Button title="Tes Google" onPress={() => signup('email','password')} /> */}
+            {/* <GoogleSigninButton
+              style={{ width: 192, height: 48 }}
+              size={GoogleSigninButton.Size.Wide}
+              color={GoogleSigninButton.Color.Dark}
+              onPress={this._signIn}
+              disabled={this.state.isSigninInProgress} /> */}
           </View>
         </View>
       </KeyboardAvoidingView>
