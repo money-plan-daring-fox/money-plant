@@ -139,6 +139,34 @@ const drawerStyle = {
           >
             <Text style={styles.text}>See Garden</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#587e5b",
+              borderWidth: 1,
+              borderColor: "black",
+              width: "100%",
+              height: 50,
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            onPress={e => props.navigation.navigate("History")}
+          >
+            <Text style={styles.text}>History</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#587e5b",
+              borderWidth: 1,
+              borderColor: "black",
+              width: "100%",
+              height: 50,
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            onPress={e => props.navigation.navigate("Notification")}
+          >
+            <Text style={styles.text}>Notification</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );

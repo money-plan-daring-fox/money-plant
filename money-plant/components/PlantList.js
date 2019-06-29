@@ -11,6 +11,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 // import NumberFormat from 'react-number-format'
 const PlantList = ({ props, item }) => {
+
+  console.log(item)
+
   const [loading, setLoading] = useState(true);
   return (
     <View style={{ flex: 1, alignItems: "center", padding: 5 }}>
@@ -74,7 +77,7 @@ const PlantList = ({ props, item }) => {
             alignItems: "center",
             padding: 15
           }}
-          onPress={() => props.navigation.navigate("Plant")}
+          onPress={() => props.navigation.navigate("Plant", {item})}
         >
           <Text
             style={{
@@ -84,6 +87,15 @@ const PlantList = ({ props, item }) => {
             }}
           >
             {item.name}
+          </Text>
+          <Text
+            style={{
+              textTransform: "uppercase",
+              fontFamily: "MachineGunk",
+              flex: 1
+            }}
+          >
+            Rp. {item.price}
           </Text>
           <Image
             style={{ height: "100%", width: "100%", flex: 3 }}
@@ -129,7 +141,7 @@ const PlantList = ({ props, item }) => {
               flex: 1
             }}
           >
-            Rp. {(item.price - item.invest).toLocaleString()}
+            {item.deadline} months
           </Text>
         </TouchableOpacity>
       )}

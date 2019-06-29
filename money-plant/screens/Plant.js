@@ -15,11 +15,18 @@ import { Entypo, EvilIcons, Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
 
-const Plant = props => {
+const Plant = (props) => {
   const [touched, setTouched] = useState([]);
   const [progress, setProgress] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
 
+console.log('saya item uy');
+ let {name, price, deadline, invested, investing, plan} = props.navigation.getParam("item")
+console.log('saya item uy');
+
+invested = 3
+
+    
   return (
     <>
       <View style={styles.container}>
@@ -33,7 +40,7 @@ const Plant = props => {
             fontSize: 40
           }}
         >
-          IPhone X
+          {name}
         </Text>
         <Text
           style={{
@@ -43,7 +50,22 @@ const Plant = props => {
             paddingVertical: 10
           }}
         >
-          4 months remaining
+          harga barang Rp. {price}
+          sisa pembayaran Rp. {price - invested}
+          sudah invest berapa Rp. {invested}
+          per bulannya brp Rp. {investing}
+          plannya apa {plan}
+          progress {invested/price}
+        </Text>
+        <Text
+          style={{
+            fontFamily: "MachineGunk",
+            color: "white",
+            fontSize: 14,
+            paddingVertical: 10
+          }}
+        >
+          {deadline} months remaining
         </Text>
         <View
           style={{

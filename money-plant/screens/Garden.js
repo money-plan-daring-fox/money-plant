@@ -21,6 +21,7 @@ const Garden = props => {
     async function getUid() {
         try {
             const uidKu = await AsyncStorage.getItem("uid")
+            console.log(uidKu)
             setUid(uidKu)
             db.firestore()
                 .collection('plants')

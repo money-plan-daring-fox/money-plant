@@ -46,11 +46,17 @@ const Login = props => {
             console.log(item.data());
             
             console.log('aku login, ini uid', uid);
+            console.log('aku login, ini balance', balance);
+            console.log('aku login, ini email', email);
+            console.log('aku login, ini income', income);
+            console.log('aku login, ini id', item.id);
+            let newUid = uid == null ? "" : uid
+
             AsyncStorage.setItem('id', item.id)
             AsyncStorage.setItem('balance', balance)
             AsyncStorage.setItem('email', email)
             AsyncStorage.setItem('income', income)
-            AsyncStorage.setItem('uid', uid)
+            AsyncStorage.setItem('uid', newUid)
           })
           alert('Logged In!')
           setEmail('')
@@ -73,7 +79,9 @@ const Login = props => {
         email,
         balance: 0,
         plants: [],
-        income
+        income,
+        uid: user.user.uid,
+        notifications: [],
       }
       db.firestore()
         .collection('users')

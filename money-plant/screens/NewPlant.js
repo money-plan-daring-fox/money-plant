@@ -65,7 +65,8 @@ const NewPlant = props => {
           createdAt: new Date(),
           updatedAt: new Date(),
           stage: Math.ceil((0 / priceInput) * 5),
-          uid: uid
+          uid: uid,
+          history: [],
         })
         .then(() => {
           console.log(planInput, 'berhasil uy');
@@ -88,6 +89,7 @@ const NewPlant = props => {
           updatedAt: new Date(),
           stage: Math.ceil((0 / priceInput) * 5),
           uid: uid,
+          history: [],
         })
         .then(() => {
           console.log(planInput, 'berhasil')
@@ -109,7 +111,8 @@ const NewPlant = props => {
           createdAt: new Date(),
           updatedAt: new Date(),
           stage: Math.ceil((0 / priceInput) * 5),
-          uid: uid
+          uid: uid,
+          history: [],
         })
         .then(() => {
           console.log(planInput, 'berhasil')
