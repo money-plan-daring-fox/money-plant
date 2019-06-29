@@ -43,7 +43,7 @@ const Garden = props => {
             {
                 !loading &&
                 <FlatList
-                    style={{ padding: 12.5, backgroundColor: "#587E5B" }}
+                    style={{ padding: 12.5, backgroundColor: "#31422e" }}
                     data={plants}
                     horizontal={false}
                     numColumns={2}
@@ -60,7 +60,7 @@ const Garden = props => {
 }
 
 Garden.navigationOptions = props => ({
-    title: "Rp 10.000.000",
+    title: "My Garden",
     headerTintColor: "white",
     headerStyle: {
         backgroundColor: "#587E5B"

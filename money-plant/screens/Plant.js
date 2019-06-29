@@ -7,10 +7,11 @@ import {
   Image,
   Dimensions,
   Modal,
-  TextInput
+  TextInput,
+  SafeAreaView
 } from "react-native";
 import { Tooltip, Text as ToolText } from "react-native-elements";
-import { Entypo, EvilIcons } from "@expo/vector-icons";
+import { Entypo, EvilIcons, Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
 
@@ -115,12 +116,6 @@ const Plant = props => {
             />
           </View>
         </TouchableOpacity>
-        {/* 
-        <TouchableHighlight onPress={() => setTouched([...touched, "ah lagi"])}>
-          <Text>delete me mas</Text>
-        </TouchableHighlight> */}
-
-        <Text>{JSON.stringify(touched)}</Text>
       </View>
       <Modal
         animationType="fade"
@@ -138,39 +133,75 @@ const Plant = props => {
             backgroundColor: "#587e5b"
           }}
         >
-          <Text
-            style={{
-              fontFamily: "PingFangHK-Light",
-              textAlign: "center",
-              color: "#fff",
-              paddingVertical: 10
-            }}
-          >
-            Input Amount :
-          </Text>
-          <TextInput
-            textAlign={"center"}
-            placeholderTextColor="rgba(255,255,255,0.7)"
-            id="password"
-            style={styles.input}
-          />
-          <Text style={styles.text}> or </Text>
-          <View style={{ flexDirection: "row", alignItems : "baseline", justifyContent: "space-around" }}>
-            <Text style={styles.text}> Use Recommendation Settings </Text>
-            <Tooltip
-              popover={
-                <ToolText>
-                  Use recommended settings to allow the system calculate 10% of
-                  your salary as your savings value
-                </ToolText>
-              }
-              height={100}
-              width={300}
-              backgroundColor="#ffd02c"
+          <SafeAreaView style={{ flex: 1, alignSelf: "flex-end" }}>
+            <TouchableOpacity
+              style={{ paddingHorizontal: 25 }}
+              onPress={() => setModalVisible(false)}
             >
-              <EvilIcons name="question" size={20} style={{color : "white" }} />
-            </Tooltip>
+              <Ionicons
+                name="ios-close-circle-outline"
+                color="#ffd02c"
+                size={25}
+              />
+            </TouchableOpacity>
+          </SafeAreaView>
+          <View
+            style={{ flex: 5, justifyContent: "center", alignItems: "center" }}
+          >
+            <Text
+              style={{
+                fontFamily: "PingFangHK-Light",
+                textAlign: "center",
+                color: "#fff",
+                paddingVertical: 10
+              }}
+            >
+              Input Amount :
+            </Text>
+            <TextInput
+              textAlign={"center"}
+              placeholderTextColor="rgba(255,255,255,0.7)"
+              id="password"
+              style={styles.input}
+            />
+            <Text style={styles.text}> or </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "baseline",
+                justifyContent: "space-around",
+                paddingBottom: 20
+              }}
+            >
+              <Text style={styles.text}> Use Recommendation Settings </Text>
+              <TouchableOpacity>
+                <Tooltip
+                  popover={
+                    <ToolText>
+                      Use recommended settings to allow the system calculate 10%
+                      of your salary as your savings value
+                    </ToolText>
+                  }
+                  height={100}
+                  width={300}
+                  backgroundColor="#ffd02c"
+                >
+                  <EvilIcons
+                    name="question"
+                    size={20}
+                    style={{ color: "white" }}
+                  />
+                </Tooltip>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.text}>Submit</Text>
+            </TouchableOpacity>
           </View>
+          <View style={{ flex: 1 }} />
         </View>
       </Modal>
     </>
