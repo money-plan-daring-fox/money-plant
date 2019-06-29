@@ -70,7 +70,7 @@ const styles = {
       color: "#587e5b"
     },
     text: {
-      fontFamily: "PingFangHK-Light",
+      fontFamily: "MachineGunk",
       textAlign: "center",
       color: "#fff"
     },

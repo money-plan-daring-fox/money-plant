@@ -46,7 +46,7 @@ const PlantList = ({ props, item }) => {
           </View>
           <Text
             style={{
-              fontFamily: "PingFangHK-Light",
+              fontFamily: "MachineGunk",
               textAlign: "center",
               color: "#fff",
               paddingTop: 10
@@ -78,7 +78,7 @@ const PlantList = ({ props, item }) => {
           <Text
             style={{
               textTransform: "uppercase",
-              fontFamily: "PingFangHK-Light",
+              fontFamily: "MachineGunk",
               flex: 1
             }}
           >
@@ -92,14 +92,14 @@ const PlantList = ({ props, item }) => {
           <Text
             style={{
               textTransform: "uppercase",
-              fontFamily: "PingFangHK-Light"
+              fontFamily: "MachineGunk"
             }}
           >
             Remaining
           </Text>
           <Text
             style={{
-              fontFamily: "PingFangHK-Medium",
+              fontFamily: "MachineGunk",
               flex: 1
             }}
           >

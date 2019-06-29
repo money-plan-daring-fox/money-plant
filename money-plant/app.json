@@ -24,7 +24,17 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.daringfox.moneyplant",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.861867384752-ic0fdupchj6r0ornpvqbfl940rgq6fbe"
+        }
+      }
+    },
+    "android": {
+      "package": "com.daringfox.moneyplant",
+      "googleServicesFile": "./api/google-services.json"
     }
   }
 }
