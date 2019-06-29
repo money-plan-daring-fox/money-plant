@@ -20,6 +20,9 @@ const Login = props => {
   const [fontLoad, setFontLoad] = useState(false);
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [income, setIncome] = useState('')
+  const [registerPage, setRegisterPage] = useState(false)
+
   useEffect(() => {
     Font.loadAsync({
       MachineGunk: require("../assets/fonts/MachineGunk.otf")
@@ -31,16 +34,26 @@ const Login = props => {
     console.log({email, pass})
     try {
       const user = await firebase.auth().signInWithEmailAndPassword(email, pass)
-      alert('Logged In!')
-      setEmail('')
-      setPassword('')
+      console.log('')
+      db.firestore()
+        .collection('users')
+        .where('email', '==', email)
+        .then(onSnapshot => {
+          console.log({ onSnapshot })
+          alert('Logged In!')
+          setEmail('')
+          setPassword('')
+        })
+        .catch(err => {
+
+        })
       props.navigation.navigate('Home')
     } catch (err) {
       console.log({ err })
       alert(err.toString())
     }
   }
-  const signup = async (email, pass) => {
+  const signup = async (email, pass, income) => {
     // try {
     //   const result = await Expo.Google.logInAsync({
     //     androidClientId: '861867384752-8h28g1bm9i2aniltjo1i5qlkhmgqpc3l.apps.googleusercontent.com',
@@ -59,10 +72,10 @@ const Login = props => {
       const user = await firebase.auth().createUserWithEmailAndPassword(email, pass)
       console.log({ user })
       let newUser = {
-        email: user.user.email,
+        email,
         balance: 0,
         plants: [],
-        income: 0
+        income
       }
       db.firestore()
         .collection('users')
@@ -71,6 +84,9 @@ const Login = props => {
           alert('Account registered!')
           setEmail('')
           setPassword('')
+        })
+        .catch(err => {
+          console.log({ err })
         })
       // Navigate to the Home page, the user is auto logged in
     } catch (error) {
@@ -136,49 +152,107 @@ const Login = props => {
         </Text>
       </View>
       <KeyboardAvoidingView behavior="padding">
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            paddingTop: 70
-          }}
-        >
-          <TextInput
-            placeholder="username or email"
-            placeholderTextColor="rgba(255,255,255,0.7)"
-            id="email"
-            style={styles.input}
-            onChangeText={text => setEmail(text)}
-          />
-          <TextInput
-            placeholder="password"
-            placeholderTextColor="rgba(255,255,255,0.7)"
-            id="password"
-            secureTextEntry={true}
-            style={styles.input}
-            onChangeText={text => setPassword(text)}
-          />
-          <View style={{ alignItems: "center" }}>
-            <TouchableOpacity
-              onPress={() => signin(email, password)}
-              style={styles.button}
+        {
+          registerPage
+          ? (
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                paddingTop: 70
+              }}
             >
-              <Text style={styles.text}>Sign In</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => signup(email, password)}
-              style={styles.button2}
+              <TextInput
+                placeholder="username or email"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                id="email"
+                style={styles.input}
+                autoFocus = {true}
+                onSubmitEditing={() => this.password.focus()}
+                returnKeyType = {"next"}
+                blurOnSubmit={false}
+                onChangeText={text => setEmail(text)}
+              />
+              <TextInput
+                placeholder="password"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                id="password"
+                secureTextEntry={true}
+                style={styles.input}
+                blurOnSubmit={false}
+                ref={(input) => { this.password = input; }}
+                returnKeyType = {"next"}
+                onChangeText={text => setPassword(text)}
+                onSubmitEditing={() => this.income.focus()}
+              />
+              <TextInput
+                placeholder="income (rp/month)"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                id="income"
+                style={styles.input}
+                ref={(input) => { this.income = input }}
+                onChangeText={text => setIncome(text)}
+              />
+              <View style={{ alignItems: "center" }}>
+                <TouchableOpacity
+                  onPress={() => setRegisterPage(false)}
+                  style={styles.button}
+                >
+                  <Text style={styles.text}>Sign In</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => signup(email, password, income) }
+                  style={styles.button2}
+                >
+                  <Text style={styles.text}>Register</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )
+          : (
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                paddingTop: 70
+              }}
             >
-              <Text style={styles.text}>Register</Text>
-            </TouchableOpacity>
-            {/* <GoogleSigninButton
-              style={{ width: 192, height: 48 }}
-              size={GoogleSigninButton.Size.Wide}
-              color={GoogleSigninButton.Color.Dark}
-              onPress={this._signIn}
-              disabled={this.state.isSigninInProgress} /> */}
-          </View>
-        </View>
+              <TextInput
+                placeholder="username or email"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                id="email"
+                style={styles.input}
+                returnKeyType = {"next"}
+                onSubmitEditing={() => this.secondTextInput.focus()}
+                blurOnSubmit={false}
+                onChangeText={text => setEmail(text)}
+              />
+              <TextInput
+                placeholder="password"
+                placeholderTextColor="rgba(255,255,255,0.7)"
+                id="password"
+                secureTextEntry={true}
+                style={styles.input}
+                ref={(input) => { this.secondTextInput = input }}
+                onChangeText={text => setPassword(text)}
+              />
+              <View style={{ alignItems: "center" }}>
+                <TouchableOpacity
+                  onPress={() => signin(email, password)}
+                  style={styles.button}
+                >
+                  <Text style={styles.text}>Sign In</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setRegisterPage(true)}
+                  style={styles.button2}
+                >
+                  <Text style={styles.text}>Register</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )
+        }
       </KeyboardAvoidingView>
     </View>
   ) : (

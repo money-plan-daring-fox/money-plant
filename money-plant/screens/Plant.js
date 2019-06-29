@@ -23,12 +23,12 @@ const Plant = props => {
   return (
     <>
       <View style={styles.container}>
-        <Text style={{ fontFamily: "PingFangHK-Thin", color: "white" }}>
+        <Text style={{ fontFamily: "MachineGunk", color: "white" }}>
           saving for :
         </Text>
         <Text
           style={{
-            fontFamily: "PingFangHK-Thin",
+            fontFamily: "MachineGunk",
             color: "white",
             fontSize: 40
           }}
@@ -37,7 +37,7 @@ const Plant = props => {
         </Text>
         <Text
           style={{
-            fontFamily: "PingFangHK-Thin",
+            fontFamily: "MachineGunk",
             color: "white",
             fontSize: 14,
             paddingVertical: 10
@@ -150,7 +150,7 @@ const Plant = props => {
           >
             <Text
               style={{
-                fontFamily: "PingFangHK-Light",
+                fontFamily: "MachineGunk",
                 textAlign: "center",
                 color: "#fff",
                 paddingVertical: 10
@@ -230,7 +230,7 @@ const styles = {
     width: 200
   },
   text: {
-    fontFamily: "PingFangHK-Medium",
+    fontFamily: "MachineGunk",
     textAlign: "center",
     color: "#fff"
   },
