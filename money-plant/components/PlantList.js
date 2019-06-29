@@ -87,7 +87,7 @@ const PlantList = ({ props, item }) => {
           <Image
             style={{ height: "100%", width: "100%", flex: 3 }}
             resizeMode="contain"
-            source={require(`../assets/plants/plants-vector-free-icon-set-29.png`)}
+            source={{uri : 'https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-21.png?alt=media&token=ee490201-09a9-4c6f-ae12-d252ed6b2c02'}}
           />
           <Text
             style={{
