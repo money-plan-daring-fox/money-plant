@@ -131,7 +131,7 @@ const Login = props => {
             color: "#587e5b"
           }}
         >
-          MONEY
+          SAVING
         </Text>
         <Text
           style={{

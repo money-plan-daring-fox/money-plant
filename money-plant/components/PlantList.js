@@ -5,12 +5,13 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  Dimensions
+  Dimensions,
+  ActivityIndicator
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 // import NumberFormat from 'react-number-format'
 const PlantList = ({ props, item }) => {
-    
+  const [loading, setLoading] = useState(true);
   return (
     <View style={{ flex: 1, alignItems: "center", padding: 5 }}>
       {item === "add" && (
@@ -87,8 +88,33 @@ const PlantList = ({ props, item }) => {
           <Image
             style={{ height: "100%", width: "100%", flex: 3 }}
             resizeMode="contain"
-            source={{uri : 'https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-21.png?alt=media&token=ee490201-09a9-4c6f-ae12-d252ed6b2c02'}}
+            source={{
+              uri:
+                "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-21.png?alt=media&token=ee490201-09a9-4c6f-ae12-d252ed6b2c02"
+            }}
+            onLoadEnd={() => setLoading(false)}
           />
+          {loading && (
+            <View
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                opacity: 0.7,
+                backgroundColor: "#31422e",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <ActivityIndicator
+                size="small"
+                color="#ffd02c"
+                animating={loading}
+              />
+            </View>
+          )}
           <Text
             style={{
               textTransform: "uppercase",
