@@ -54,7 +54,10 @@ const Plant = props => {
 
     //JALANIN PROSES PERHITUNGAN DISINI
   };
-  invested = 3;
+  invested = 20;
+  console.log(invested / price);
+  console.log(invested);
+  console.log(price);
 
   return (
     <>
@@ -98,14 +101,65 @@ const Plant = props => {
             alignItems: "center"
           }}
         >
-          <Image
-            source={require("../assets/plantgrow.gif")}
-            style={{
-              width: "90%",
-              height: "90%",
-              borderRadius: (Dimensions.get("window").width * 0.9) / 2
-            }}
-          />
+          {invested / price <= 0.2 ? (
+            <Image
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage1.gif?alt=media&token=f30bb91d-e0eb-43cd-b5d2-cfdab554fbca"
+              }}
+              style={{
+                width: "90%",
+                height: "90%",
+                borderRadius: (Dimensions.get("window").width * 0.9) / 2
+              }}
+            />
+          ) : invested / price <= 0.4 ? (
+            <Image
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage2.gif?alt=media&token=dd650c8d-5c88-448d-9972-5dba4a98b839"
+              }}
+              style={{
+                width: "90%",
+                height: "90%",
+                borderRadius: (Dimensions.get("window").width * 0.9) / 2
+              }}
+            />
+          ) : invested / price <= 0.6 ? (
+            <Image
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage3.gif?alt=media&token=f303186f-126b-4ed6-959c-36ba81bcb30e"
+              }}
+              style={{
+                width: "90%",
+                height: "90%",
+                borderRadius: (Dimensions.get("window").width * 0.9) / 2
+              }}
+            />
+          ) : invested / price <= 0.8 ? (
+            <Image
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage4.gif?alt=media&token=69e4989a-7c83-4321-9c7c-b7ebe4bdb0df"
+              }}
+              style={{
+                width: "90%",
+                height: "90%",
+                borderRadius: (Dimensions.get("window").width * 0.9) / 2
+              }}
+            />
+          ) : invested / price <= 1 ? (
+            <Image
+              source={{uri : "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage5.gif?alt=media&token=8779d4c7-3c3d-4ab1-b52f-c67e413806b2"}}
+              style={{
+                width: "90%",
+                height: "90%",
+                borderRadius: (Dimensions.get("window").width * 0.9) / 2
+              }}
+            />
+          ) : null}
+
           <Progress.Bar
             progress={invested / price}
             width={200}
@@ -218,7 +272,7 @@ const Plant = props => {
             >
               <Text style={styles.text}>Submit</Text>
             </TouchableOpacity>
-            <Text style={{...styles.text, paddingTop : 20}}> or </Text>
+            <Text style={{ ...styles.text, paddingTop: 20 }}> or </Text>
             <View
               style={{
                 flexDirection: "row",
