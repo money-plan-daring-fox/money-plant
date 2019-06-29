@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,26 +10,65 @@ import {
   TextInput,
   SafeAreaView
 } from "react-native";
+import SelectInput from "react-native-select-input-ios";
 import { Tooltip, Text as ToolText } from "react-native-elements";
-import { Entypo, EvilIcons, Ionicons } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather, EvilIcons, Ionicons } from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
 
-const Plant = (props) => {
+const Plant = props => {
+  let {
+    name,
+    price,
+    deadline,
+    invested,
+    investing,
+    plan
+  } = props.navigation.getParam("item");
+
   const [touched, setTouched] = useState([]);
-  const [progress, setProgress] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [editplan, setPlan] = useState(plan);
+  const [options, setOptions] = useState([
+    { value: 0, label: `Edit Plan : ${editplan} (current) ` },
+    { value: 1, label: "Default" },
+    { value: 2, label: "Month" },
+    { value: 3, label: "Rp/month" }
+  ]);
 
-console.log('saya item uy');
- let {name, price, deadline, invested, investing, plan} = props.navigation.getParam("item")
-console.log('saya item uy');
+  const handleInputAmount = method => {
+    method === "recommended"
+      ? alert("proses perhitungan recommended dijalankan yaaa ")
+      : alert("proses perhitungan input manual dijalankan guyss");
+  };
 
-invested = 3
+  const handleSubmit = val => {
+    if (val !== 0) {
+      setPlan(options[val].label);
+      setOptions([
+        { value: 0, label: `Edit Plan : ${options[val].label} (current) ` },
+        { value: 1, label: "Default" },
+        { value: 2, label: "Month" },
+        { value: 3, label: "Rp/month" }
+      ]);
+    }
 
-    
+    //JALANIN PROSES PERHITUNGAN DISINI
+  };
+  invested = 3;
+
   return (
     <>
       <View style={styles.container}>
+        <View style={{ alignSelf: "flex-end", paddingRight: 10 }}>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => alert(`Are You Sure To Kill ${name}? 😭`)}
+          >
+            <Text style={styles.text}>
+              Delete <Feather name="x-circle" size={13} color="#fff" />
+            </Text>
+          </TouchableOpacity>
+        </View>
         <Text style={{ fontFamily: "MachineGunk", color: "white" }}>
           saving for :
         </Text>
@@ -50,22 +89,7 @@ invested = 3
             paddingVertical: 10
           }}
         >
-          harga barang Rp. {price}
-          sisa pembayaran Rp. {price - invested}
-          sudah invest berapa Rp. {invested}
-          per bulannya brp Rp. {investing}
-          plannya apa {plan}
-          progress {invested/price}
-        </Text>
-        <Text
-          style={{
-            fontFamily: "MachineGunk",
-            color: "white",
-            fontSize: 14,
-            paddingVertical: 10
-          }}
-        >
-          {deadline} months remaining
+          {deadline} months left
         </Text>
         <View
           style={{
@@ -83,7 +107,7 @@ invested = 3
             }}
           />
           <Progress.Bar
-            progress={progress}
+            progress={invested / price}
             width={200}
             style={{ marginTop: 10 }}
             borderColor="#fff"
@@ -91,8 +115,23 @@ invested = 3
             color="#9dddd9"
           />
         </View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "80%",
+            paddingVertical: 10
+          }}
+        >
+          <Text style={styles.textBar}>Rp. {invested.toLocaleString()}</Text>
+          <Text style={styles.textBar}> of </Text>
+          <Text style={styles.textBar}>Rp. {price.toLocaleString()}</Text>
+        </View>
+        <Text style={styles.sub}>
+          Rp. {(price - invested).toLocaleString()} more to get {name}
+        </Text>
         <TouchableOpacity
-          style={styles.button}
+          style={{ ...styles.editButton, marginVertical: 5 }}
           onPress={() => {
             setModalVisible(true);
           }}
@@ -105,22 +144,10 @@ invested = 3
             }}
           >
             <Text style={styles.text}>WATER ME</Text>
-            <Entypo
-              name="water"
-              size={15}
-              color="cyan"
-              style={{ paddingLeft: 15 }}
-            />
           </View>
         </TouchableOpacity>
-
         <TouchableOpacity
-          style={{
-            ...styles.button,
-            marginTop: 10,
-            backgroundColor: "#ffd02c"
-          }}
-          onPress={() => setTouched([...touched, "ah lagi"])}
+          style={{ ...styles.button, backgroundColor: "#ffd02c", marginTop: 5 }}
         >
           <View
             style={{
@@ -129,12 +156,11 @@ invested = 3
               flexDirection: "row"
             }}
           >
-            <Text style={{ ...styles.text, color: "black" }}>ABORT SAVING</Text>
-            <MaterialCommunityIcons
-              name="water-off"
-              size={20}
-              color="#b9523e"
-              style={{ paddingLeft: 15 }}
+            <SelectInput
+              value={options.value}
+              options={options}
+              labelStyle={{ ...styles.text, color: "black" }}
+              onSubmitEditing={val => handleSubmit(val)}
             />
           </View>
         </TouchableOpacity>
@@ -186,7 +212,13 @@ invested = 3
               id="password"
               style={styles.input}
             />
-            <Text style={styles.text}> or </Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => handleInputAmount("manual")}
+            >
+              <Text style={styles.text}>Submit</Text>
+            </TouchableOpacity>
+            <Text style={{...styles.text, paddingTop : 20}}> or </Text>
             <View
               style={{
                 flexDirection: "row",
@@ -195,12 +227,16 @@ invested = 3
                 paddingBottom: 20
               }}
             >
-              <Text style={styles.text}> Use Recommendation Settings </Text>
+              <TouchableOpacity
+                onPress={() => handleInputAmount("recommended")}
+              >
+                <Text style={styles.text}> Use Recommendation Settings </Text>
+              </TouchableOpacity>
               <TouchableOpacity>
                 <Tooltip
                   popover={
                     <ToolText>
-                      Use recommended settings to allow the system calculate 10%
+                      Use recommended settings to allow the system calculate 20%
                       of your salary as your savings value
                     </ToolText>
                   }
@@ -216,12 +252,6 @@ invested = 3
                 </Tooltip>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.text}>Submit</Text>
-            </TouchableOpacity>
           </View>
           <View style={{ flex: 1 }} />
         </View>
@@ -251,11 +281,28 @@ const styles = {
     borderRadius: 30,
     width: 200
   },
+  editButton: {
+    backgroundColor: "#65a1ad",
+    paddingVertical: 15,
+    borderRadius: 30,
+    width: 200
+  },
+  deleteButton: {
+    backgroundColor: "#b9523e",
+    paddingVertical: 10,
+    borderRadius: 30,
+    width: 75
+  },
+  textBar: {
+    fontFamily: "MachineGunk",
+    color: "#fff"
+  },
   text: {
     fontFamily: "MachineGunk",
     textAlign: "center",
     color: "#fff"
   },
+  sub: { fontFamily: "MachineGunk", fontSize: 20, color: "#f6f4f2" },
   input: {
     height: 40,
     width: 300,
