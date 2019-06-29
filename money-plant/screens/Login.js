@@ -41,11 +41,16 @@ const Login = props => {
         .get()
         .then(data => {
           data.forEach(item => {
-            const { balance, email, income } = item.data()
+            
+            const { balance, email, income, uid } = item.data()
+            console.log(item.data());
+            
+            console.log('aku login, ini uid', uid);
             AsyncStorage.setItem('id', item.id)
             AsyncStorage.setItem('balance', balance)
             AsyncStorage.setItem('email', email)
             AsyncStorage.setItem('income', income)
+            AsyncStorage.setItem('uid', uid)
           })
           alert('Logged In!')
           setEmail('')
@@ -160,12 +165,14 @@ const Login = props => {
                 onSubmitEditing={() => this.password.focus()}
                 returnKeyType = {"next"}
                 blurOnSubmit={false}
+                value={email}
                 onChangeText={text => setEmail(text)}
               />
               <TextInput
                 placeholder="password"
                 placeholderTextColor="rgba(255,255,255,0.7)"
                 id="password"
+                value={password}
                 secureTextEntry={true}
                 style={styles.input}
                 blurOnSubmit={false}
@@ -178,6 +185,7 @@ const Login = props => {
                 placeholder="income (rp/month)"
                 placeholderTextColor="rgba(255,255,255,0.7)"
                 id="income"
+                value={income}
                 style={styles.input}
                 ref={(input) => { this.income = input }}
                 onChangeText={text => setIncome(text)}
@@ -210,6 +218,7 @@ const Login = props => {
                 placeholder="username or email"
                 placeholderTextColor="rgba(255,255,255,0.7)"
                 id="email"
+                value={email}
                 style={styles.input}
                 returnKeyType = {"next"}
                 onSubmitEditing={() => this.secondTextInput.focus()}
@@ -217,6 +226,7 @@ const Login = props => {
                 onChangeText={text => setEmail(text)}
               />
               <TextInput
+                value={password}
                 placeholder="password"
                 placeholderTextColor="rgba(255,255,255,0.7)"
                 id="password"

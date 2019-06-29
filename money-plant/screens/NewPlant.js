@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { View, Text, TouchableHighlight, TextInput, Picker, StyleSheetr } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, TouchableHighlight, TextInput, Picker, StyleSheetr, AsyncStorage } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import db from '../api/firebase'
 
@@ -9,6 +9,30 @@ const NewPlant = props => {
   const [plan, setPlan] = useState("default")
   const [investing, setInvesting] = useState(0)
   const [deadline, setDeadline] = useState(0)
+  const [income, setIncome] = useState(0)
+  const [uid, setUid] = useState("")
+
+  useEffect(() => {
+    Promise
+      .all([AsyncStorage.getItem("income"), AsyncStorage.getItem("uid")])
+      .then(([incomeKu, uidKu]) => {
+        console.log(incomeKu);
+        console.log(uidKu);
+
+        setIncome(incomeKu)
+        setUid(uidKu)
+      })
+
+
+
+      // .then(data => {
+      //   setIncome(data)
+      // })
+
+      // .then(data => {
+      //   setUid(data)
+      // })
+  }, [])
 
   // VALIDASI PLAN B DAN C HARUS MEMUNGKINKAN DENGAN INCOME USER
   // VALIDASI PLAN B DAN C HARUS MEMUNGKINKAN DENGAN INCOME USER
@@ -20,6 +44,12 @@ const NewPlant = props => {
     console.log(planInput);
     console.log(investingInput)
     console.log(deadlineInput);
+    console.log(income);
+    console.log(uid);
+
+
+
+
 
     if (planInput === "default") {
       db.firestore()
@@ -30,18 +60,18 @@ const NewPlant = props => {
           price: Number(priceInput),
           plan: planInput,
           invested: 0,
-          investing: (10000000 * 0.2),
-          deadline: Math.ceil(priceInput / (10000000 * 0.2)),
+          investing: (income * 0.2),
+          deadline: Math.ceil(priceInput / (income * 0.2)),
           createdAt: new Date(),
           updatedAt: new Date(),
           stage: Math.ceil((0 / priceInput) * 5),
-          uid: "jangan lupa uid"
+          uid: uid
         })
         .then(() => {
           console.log(planInput, 'berhasil uy');
         })
         .catch(err => {
-          console.log('fail uy');
+          console.log(planInput, 'fail uy');
         })
     } else if (planInput === "money") {
       db.firestore()
@@ -57,7 +87,7 @@ const NewPlant = props => {
           createdAt: new Date(),
           updatedAt: new Date(),
           stage: Math.ceil((0 / priceInput) * 5),
-          uid: "jangan lupa uid",
+          uid: uid,
         })
         .then(() => {
           console.log(planInput, 'berhasil')
@@ -79,13 +109,13 @@ const NewPlant = props => {
           createdAt: new Date(),
           updatedAt: new Date(),
           stage: Math.ceil((0 / priceInput) * 5),
-          uid: "jangan lupa uid"
+          uid: uid
         })
         .then(() => {
-          console.log(planInput, "berhasil hore testemistimos")
+          console.log(planInput, 'berhasil')
         })
         .catch(err => {
-          console.log(planInput, "Yeay error anjing")
+          console.log(planInput, 'gagal')
         })
     }
   }
@@ -122,13 +152,13 @@ const NewPlant = props => {
 
       {
         plan === "default" &&
-        <Text style={{color: "white"}}>(20% x income) / month</Text>
+        <Text style={{ color: "white" }}>(20% x income) / month</Text>
       }
 
       {
         plan === "month" &&
         <View>
-          <Text style={{color: "white"}}>(Price / number of months) / month</Text>
+          <Text style={{ color: "white" }}>(Price / number of months) / month</Text>
           <TextInput
             placeholder="Number of months"
             placeholderTextColor="rgba(255,255,255,0.7)"
@@ -140,7 +170,7 @@ const NewPlant = props => {
       {
         plan === "money" &&
         <View>
-          <Text style={{color: "white"}}>(Selected investment) / month</Text>
+          <Text style={{ color: "white" }}>(Selected investment) / month</Text>
           <TextInput
             placeholder="Investments per month"
             placeholderTextColor="rgba(255,255,255,0.7)"
@@ -167,49 +197,49 @@ NewPlant.navigationOptions = props => ({
 })
 
 const styles = {
-    container: {
-      flex: 1,
-      backgroundColor: "#262525",
-      justifyContent: "center",
-      alignItems: "center"
-    },
-    input: {
-      height: 40,
-      width: 300,
-      marginBottom: 10,
-      paddingHorizontal: 10,
-      backgroundColor: "rgba(255,255,255,0.2)",
-      color: "#FFF",
-      borderRadius: 10
-    },
-    picker: {
-      height: 50,
-      width: 300,
-      marginBottom: 10,
-      paddingHorizontal: 10,
-      backgroundColor: "rgba(255,255,255,0.2)",
-      color: "#FFF",
-      borderRadius: 10
-    },
-    header: {
-      fontFamily: "MachineGunk",
-      textAlign: "center",
-      letterSpacing: 1,
-      fontSize: 50,
-      marginBottom: -35,
-      color: "#587e5b"
-    },
-    text: {
-      fontFamily: "MachineGunk",
-      textAlign: "center",
-      color: "#fff"
-    },
-    button: {
-      backgroundColor: "#b9523e",
-      paddingVertical: 15,
-      borderRadius: 30,
-      width: 200
-    }
-  };
+  container: {
+    flex: 1,
+    backgroundColor: "#262525",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  input: {
+    height: 40,
+    width: 300,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    color: "#FFF",
+    borderRadius: 10
+  },
+  picker: {
+    height: 50,
+    width: 300,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    color: "#FFF",
+    borderRadius: 10
+  },
+  header: {
+    fontFamily: "MachineGunk",
+    textAlign: "center",
+    letterSpacing: 1,
+    fontSize: 50,
+    marginBottom: -35,
+    color: "#587e5b"
+  },
+  text: {
+    fontFamily: "MachineGunk",
+    textAlign: "center",
+    color: "#fff"
+  },
+  button: {
+    backgroundColor: "#b9523e",
+    paddingVertical: 15,
+    borderRadius: 30,
+    width: 200
+  }
+};
 
 export default NewPlant
