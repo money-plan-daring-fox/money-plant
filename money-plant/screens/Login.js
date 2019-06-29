@@ -8,7 +8,8 @@ import {
   Text,
   ImageBackground,
   Dimensions,
-  Button
+  Button,
+  AsyncStorage,
 } from "react-native";
 import firebase from 'firebase'
 import db from '../api/firebase'
@@ -31,23 +32,40 @@ const Login = props => {
     });
   }, []);
   const signin = async (email, pass) => {
-    console.log({email, pass})
     try {
       const user = await firebase.auth().signInWithEmailAndPassword(email, pass)
-      console.log('')
+      // let loginUser = 
       db.firestore()
         .collection('users')
         .where('email', '==', email)
-        .then(onSnapshot => {
-          console.log({ onSnapshot })
-          alert('Logged In!')
-          setEmail('')
-          setPassword('')
+        .get()
+        .then(data => {
+          data.forEach(item => {
+            const { balance, email, income } = item.data()
+            AsyncStorage.setItem('id', item.id)
+            AsyncStorage.setItem('balance', balance)
+            AsyncStorage.setItem('email', email)
+            AsyncStorage.setItem('income', income)
+            alert('Logged In!')
+            setEmail('')
+            setPassword('')
+            props.navigation.navigate('Home')
+          })
         })
         .catch(err => {
-
+          console.log({err})
         })
-      props.navigation.navigate('Home')
+
+
+        // .get()
+        // .then(result => {
+        //   console.log({result, dari: 'signin'})
+        //   console.log('=====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================')
+        // })
+        // .catch(err => {
+        //   console.log({ err })
+        // })
+
     } catch (err) {
       console.log({ err })
       alert(err.toString())
