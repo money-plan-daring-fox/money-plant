@@ -1,6 +1,6 @@
 // React
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Dimensions } from 'react-native'
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, AsyncStorage } from 'react-native'
 
 // Children
 import PlantList from '../components/PlantList'
@@ -16,20 +16,30 @@ import db from '../api/firebase'
 const Garden = props => {
     const [plants, setPlants] = useState([])
     const [loading, setLoading] = useState(true)
+    const [uid, setUid] = useState({})
+
+    async function getUid() {
+        try {
+            const uidKu = await AsyncStorage.getItem("uid")
+            setUid(uidKu)
+            db.firestore()
+                .collection('plants')
+                .where('uid', '==', uidKu)
+                .onSnapshot(function (doc) {
+                    let data = []
+                    doc.forEach(el => {
+                        data.push({ ...el.data() })
+                    })
+                    setPlants(["add", ...data, "space"])
+                    setLoading(false)
+                })
+        } catch (err) {
+            console.log('error', err);
+        }
+    }
 
     useEffect(() => {
-        db.firestore()
-            .collection('plants')
-            // .get()
-            // .where('uid', '==', localStorage.uid)
-            .onSnapshot(function (doc) {
-                let data = []
-                doc.forEach(el => {
-                    data.push({ ...el.data() })
-                })
-                setPlants(["add", ...data, "space"])
-                setLoading(false)
-            })
+        getUid()
     }, [])
 
     return (
