@@ -10,12 +10,11 @@ import {
   Dimensions,
   Button,
   AsyncStorage,
+  ActivityIndicator,
 } from "react-native";
 import firebase from 'firebase'
 import db from '../api/firebase'
 import * as Font from 'expo-font'
-import * as GoogleSignIn from 'expo-google-sign-in'
-import * as Expo from 'expo'
 
 const Login = props => {
   const [fontLoad, setFontLoad] = useState(false);
@@ -23,18 +22,19 @@ const Login = props => {
   const [password, setPassword] = useState('')
   const [income, setIncome] = useState('')
   const [registerPage, setRegisterPage] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     Font.loadAsync({
       MachineGunk: require("../assets/fonts/MachineGunk.otf")
     }).then(() => {
-      setFontLoad(true);
+      setFontLoad(true)
     });
-  }, []);
+  }, [])
   const signin = async (email, pass) => {
+    setLoading(true)
     try {
       const user = await firebase.auth().signInWithEmailAndPassword(email, pass)
-      // let loginUser = 
       db.firestore()
         .collection('users')
         .where('email', '==', email)
@@ -46,49 +46,24 @@ const Login = props => {
             AsyncStorage.setItem('balance', balance)
             AsyncStorage.setItem('email', email)
             AsyncStorage.setItem('income', income)
-            alert('Logged In!')
-            setEmail('')
-            setPassword('')
-            props.navigation.navigate('Home')
           })
+          alert('Logged In!')
+          setEmail('')
+          setPassword('')
+          setLoading(false)
+          props.navigation.navigate('Home')
         })
         .catch(err => {
           console.log({err})
         })
-
-
-        // .get()
-        // .then(result => {
-        //   console.log({result, dari: 'signin'})
-        //   console.log('=====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================')
-        // })
-        // .catch(err => {
-        //   console.log({ err })
-        // })
-
     } catch (err) {
-      console.log({ err })
       alert(err.toString())
     }
   }
   const signup = async (email, pass, income) => {
-    // try {
-    //   const result = await Expo.Google.logInAsync({
-    //     androidClientId: '861867384752-8h28g1bm9i2aniltjo1i5qlkhmgqpc3l.apps.googleusercontent.com',
-    //     scopes: ['email'],
-    //   })
-    //   console.log('masuk')
-    //   if (result.type === 'success') {
-    //     console.log('result', result)
-    //   } else {
-    //     console.log('error')
-    //   }
-    // } catch ({ message }) {
-    //   alert('GoogleSignIn.initAsync(): ' + message);
-    // }
+    setLoading(true)
     try {
       const user = await firebase.auth().createUserWithEmailAndPassword(email, pass)
-      console.log({ user })
       let newUser = {
         email,
         balance: 0,
@@ -102,6 +77,7 @@ const Login = props => {
           alert('Account registered!')
           setEmail('')
           setPassword('')
+          setLoading(false)
         })
         .catch(err => {
           console.log({ err })
@@ -119,10 +95,6 @@ const Login = props => {
     } catch (error) {
       console.log(error);
     }
-  }
-
-  const handleChange = input => {
-    console.log({ input })
   }
 
   return fontLoad ? (
@@ -185,7 +157,6 @@ const Login = props => {
                 placeholderTextColor="rgba(255,255,255,0.7)"
                 id="email"
                 style={styles.input}
-                autoFocus = {true}
                 onSubmitEditing={() => this.password.focus()}
                 returnKeyType = {"next"}
                 blurOnSubmit={false}
@@ -259,7 +230,11 @@ const Login = props => {
                   onPress={() => signin(email, password)}
                   style={styles.button}
                 >
-                  <Text style={styles.text}>Sign In</Text>
+                  {
+                    loading
+                    ? <ActivityIndicator size="small" color="#fff" />
+                    : <Text style={styles.text}>Sign In</Text>
+                  }
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => setRegisterPage(true)}
