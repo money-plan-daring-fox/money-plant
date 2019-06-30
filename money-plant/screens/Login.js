@@ -212,29 +212,6 @@ const Login = props => {
               ref={input => {
                 this.password = input;
               }}
-            />
-            <TextInput
-              placeholder="username or email"
-              placeholderTextColor="rgba(255,255,255,0.7)"
-              id="email"
-              style={styles.input}
-              onSubmitEditing={() => this.password.focus()}
-              returnKeyType={"next"}
-              blurOnSubmit={false}
-              value={email}
-              onChangeText={text => setEmail(text)}
-            />
-            <TextInput
-              placeholder="password"
-              placeholderTextColor="rgba(255,255,255,0.7)"
-              id="password"
-              value={password}
-              secureTextEntry={true}
-              style={styles.input}
-              blurOnSubmit={false}
-              ref={input => {
-                this.password = input;
-              }}
               returnKeyType={"next"}
               onChangeText={text => setPassword(text)}
               onSubmitEditing={() => this.income.focus()}
@@ -252,12 +229,6 @@ const Login = props => {
             />
             <View style={{ alignItems: "center" }}>
               <TouchableOpacity
-                onPress={() => setRegisterPage(false)}
-                style={styles.button}
-              >
-                <Text style={styles.text}>Sign In</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
                 onPress={async () => {
                   await signup(email, password, income);
                   await signin(email, password);
@@ -265,6 +236,21 @@ const Login = props => {
                 style={styles.button2}
               >
                 <Text style={styles.text}>Register</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setRegisterPage(false)}
+                style={styles.button}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                >
+                  <Ionicons name="ios-arrow-back" size={15} color="#fff" style={{paddingRight : 5}} />
+                  <Text style={styles.text}>Sign In</Text>
+                </View>
               </TouchableOpacity>
             </View>
           </View>
