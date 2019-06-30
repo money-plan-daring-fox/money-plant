@@ -6,11 +6,25 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
+  AsyncStorage
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 // import NumberFormat from 'react-number-format'
 const PlantList = ({ props, item }) => {
+  const [income, setIncome] = useState(0)
+
+  useEffect(() => {
+    AsyncStorage
+      .getItem("income")
+      .then(incomeKu => {
+        console.log("income", incomeKu)
+        setIncome(incomeKu)
+      })
+  }, [])
+
+  // item.invested = 9100000
+
   const [loading, setLoading] = useState(true);
   return (
     <View style={{ flex: 1, alignItems: "center", padding: 5 }}>
@@ -74,7 +88,7 @@ const PlantList = ({ props, item }) => {
             alignItems: "center",
             padding: 15
           }}
-          onPress={() => props.navigation.navigate("Plant", {item})}
+          onPress={() => props.navigation.navigate("Plant", { item })}
         >
           <Text
             style={{
@@ -94,7 +108,7 @@ const PlantList = ({ props, item }) => {
           >
             Rp. {item.price}
           </Text>
-          <Image
+          {/* <Image
             style={{ height: "100%", width: "100%", flex: 3 }}
             resizeMode="contain"
             source={{
@@ -102,7 +116,55 @@ const PlantList = ({ props, item }) => {
                 "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-21.png?alt=media&token=ee490201-09a9-4c6f-ae12-d252ed6b2c02"
             }}
             onLoadEnd={() => setLoading(false)}
-          />
+          /> */}
+          {item.invested / item.price <= 0.2 ? (
+            <Image
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-32.png?alt=media&token=b72a980e-6307-4e51-bf7a-aaebcdd0a5c3"
+              }}
+              style={{ height: "100%", width: "100%", flex: 3 }}
+              resizeMode="contain"
+              onLoadEnd={() => setLoading(false)}
+            />
+          ) : item.invested / item.price <= 0.4 ? (
+            <Image
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-25.png?alt=media&token=655692b9-6b16-4b6a-b8e8-b8354404561d"
+              }}
+              style={{ height: "100%", width: "100%", flex: 3 }}
+              resizeMode="contain"
+              onLoadEnd={() => setLoading(false)}
+            />
+          ) : item.invested / item.price <= 0.6 ? (
+            <Image
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-21.png?alt=media&token=ee490201-09a9-4c6f-ae12-d252ed6b2c02"
+              }}
+              style={{ height: "100%", width: "100%", flex: 3 }}
+              resizeMode="contain"
+              onLoadEnd={() => setLoading(false)}
+            />
+          ) : item.invested / item.price <= 0.8 ? (
+            <Image
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-38.png?alt=media&token=8986e16c-7db5-4e37-adb0-9c580bc34bac"
+              }}
+              style={{ height: "100%", width: "100%", flex: 3 }}
+              resizeMode="contain"
+              onLoadEnd={() => setLoading(false)}
+            />
+          ) : item.invested ? (
+            <Image
+              source={{ uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-29.png?alt=media&token=c1ddcda5-0a98-4c5f-aa80-1d6cfdd47a65" }}
+              style={{ height: "100%", width: "100%", flex: 3 }}
+              resizeMode="contain"
+              onLoadEnd={() => setLoading(false)}
+            />
+          ) : null}
           {loading && (
             <View
               style={{
@@ -132,14 +194,44 @@ const PlantList = ({ props, item }) => {
           >
             Remaining
           </Text>
-          <Text
-            style={{
-              fontFamily: "MachineGunk",
-              flex: 1
-            }}
-          >
-            {item.deadline} months
-          </Text>
+          {
+            item.plan === "default" && (income * 0.2) <= (item.price - item.invested) &&
+            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
+              {Math.ceil((item.price - item.invested) / ((income * 0.2)))} months
+            </Text>
+          }
+          {
+            item.plan === 'default' && (income * 0.2) > (item.price - item.invested) &&
+            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
+              {Math.floor(((new Date() - item.createdAt.toDate()) / (1000 * 60 * 60 * 24)))} days
+            </Text>
+          }
+          {
+            item.plan === 'money' && item.investing <= (item.price - item.invested) &&
+            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
+              {Math.ceil((item.price - item.invested) / item.investing)} months
+            </Text>
+          }
+          {
+            item.plan === 'money' && item.investing > (item.price - item.invested) &&
+            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
+              {Math.floor(((new Date() - item.createdAt.toDate()) / (1000 * 60 * 60 * 24)))} days
+            </Text>
+          }
+          {
+            item.plan === 'month' && item.dueDate &&
+            (Math.floor(((item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))) >= 30 &&
+            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
+              {Math.floor((((item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24))) / 30)} months
+            </Text>
+          }
+          {
+            item.plan === 'month' && item.dueDate &&
+            (Math.floor(((item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))) < 30 &&
+            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
+              {Math.floor(((item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))} days
+            </Text>
+          }
         </TouchableOpacity>
       )}
     </View>

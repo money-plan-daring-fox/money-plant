@@ -54,7 +54,9 @@ const Plant = props => {
 
     //JALANIN PROSES PERHITUNGAN DISINI
   };
-  invested = 20;
+  console.log(invested / price);
+  console.log(invested);
+  console.log(price);
 
   return (
     <>

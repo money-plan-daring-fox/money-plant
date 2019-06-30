@@ -34,20 +34,9 @@ function getPriceRecommendation(name) {
     Promise
       .all([AsyncStorage.getItem("income"), AsyncStorage.getItem("uid")])
       .then(([incomeKu, uidKu]) => {
-
         setIncome(incomeKu)
         setUid(uidKu)
       })
-
-
-
-      // .then(data => {
-      //   setIncome(data)
-      // })
-
-      // .then(data => {
-      //   setUid(data)
-      // })
   }, [])
 
 
@@ -56,77 +45,47 @@ function getPriceRecommendation(name) {
   // VALIDASI PLAN B DAN C HARUS MEMUNGKINKAN DENGAN INCOME USER
 
   const createPlant = (nameInput, priceInput, planInput, investingInput, deadlineInput) => {
-
-
-
-
-
-    if (planInput === "default") {
-      db.firestore()
-        .collection("plants")
-        .doc()
-        .set({
-          name: nameInput,
-          price: Number(priceInput),
-          plan: planInput,
-          invested: 0,
-          investing: (income * 0.2),
-          deadline: Math.ceil(priceInput / (income * 0.2)),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          stage: Math.ceil((0 / priceInput) * 5),
-          uid: uid,
-          history: [],
-        })
-        .then(() => {
-        })
-        .catch(err => {
-        })
-    } else if (planInput === "money") {
-      db.firestore()
-        .collection("plants")
-        .doc()
-        .set({
-          name: nameInput,
-          price: Number(priceInput),
-          plan: planInput,
-          invested: 0,
-          investing: investingInput,
-          deadline: price / investingInput,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          stage: Math.ceil((0 / priceInput) * 5),
-          uid: uid,
-          history: [],
-        })
-        .then(() => {
-        })
-        .catch(err => {
-        })
-    } else if (planInput === "month") {
-      db.firestore()
-        .collection("plants")
-        .doc()
-        .set({
-          name: nameInput,
-          price: Number(priceInput),
-          plan: planInput,
-          invested: 0,
-          investing: priceInput / deadlineInput,
-          deadline: Number(deadlineInput),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          stage: Math.ceil((0 / priceInput) * 5),
-          uid: uid,
-          history: [],
-        })
-        .then(() => {
-        })
-        .catch(err => {
-        })
+    let input = {
+      name: nameInput,
+      price: Number(priceInput),
+      plan: planInput,
+      invested: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      stage: 1,
+      uid: uid,
+      history: [{ updatedAt: new Date(), invested: 0 }],
+      completed: false,
     }
-  }
+    
+    let dueDate = new Date()
+    if (planInput === "default") {
+      dueDate.setMonth(dueDate.getMonth() + Math.ceil(priceInput / (income * 0.2)))
+      input.investing = (income * 0.2)
+      input.deadline = (Math.ceil(priceInput / (income * 0.2))) * 30
+    } else if (planInput === "money") {
+      dueDate.setMonth(dueDate.getMonth() + (price / investingInput))
+      input.investing = investingInput
+      input.deadline = (price / investingInput) * 30
+    } else if (planInput === "month") {
+      dueDate.setMonth(dueDate.getMonth() + Number(deadlineInput))
+      input.investing = priceInput / deadlineInput
+      input.deadline = (Number(deadlineInput)) * 30
+    }
 
+    input.dueDate = dueDate
+
+    db.firestore()
+      .collection("plants")
+      .doc()
+      .set(input)
+      .then(() => {
+        console.log(planInput, 'berhasil uy');
+      })
+      .catch(err => {
+        console.log(planInput, 'fail uy');
+      })
+  }
   return (
     <View style={styles.container}>
       <TextInput
