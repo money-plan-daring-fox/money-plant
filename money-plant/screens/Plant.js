@@ -105,7 +105,7 @@ const Plant = props => {
             <Image
               source={{
                 uri:
-                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage1.gif?alt=media&token=f30bb91d-e0eb-43cd-b5d2-cfdab554fbca"
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage1speed.gif?alt=media&token=33b4c5e6-d0ec-4f50-887b-b6e0014a8ab0"
               }}
               style={{
                 width: "90%",
@@ -151,7 +151,7 @@ const Plant = props => {
             />
           ) : invested / price <= 1 ? (
             <Image
-              source={{uri : "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage5.gif?alt=media&token=8779d4c7-3c3d-4ab1-b52f-c67e413806b2"}}
+              source={{uri : "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage5speed.gif?alt=media&token=e8fa0eaa-12eb-47d8-897e-84487b6698ba"}}
               style={{
                 width: "90%",
                 height: "90%",
