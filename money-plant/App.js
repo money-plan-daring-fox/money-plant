@@ -15,7 +15,8 @@ import {
   createAppContainer,
   createSwitchNavigator,
   createDrawerNavigator,
-  createStackNavigator
+  createStackNavigator,
+  createBottomTabNavigator
 } from "react-navigation";
 
 // Screens
@@ -24,9 +25,18 @@ import Garden from "./screens/Garden";
 import Plant from "./screens/Plant";
 import NewPlant from "./screens/NewPlant";
 import Profile from "./screens/Profile";
+import HistoryCompleted from "./screens/HistoryCompleted";
+import HistoryDetails from "./screens/HistoryDetails";
+import HistoryOngoing from "./screens/HistoryOngoing";
 
 // Firebase
 import { AuthProvider } from './components/AuthContext'
+
+// Icons
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons'
+
+// Disable Yellow Warnings
+console.disableYellowBox = true
 
 const drawerStyle = {
   contentComponent: props => {
@@ -198,6 +208,44 @@ const appNavigator = createSwitchNavigator({
         Profile: {
           screen: createStackNavigator({
             Profile: { screen: Profile }
+          })
+        },
+        History: {
+          screen: createBottomTabNavigator({
+            Ongoing: {
+              screen: createStackNavigator({
+                HistoryOngoing: {
+                  screen: HistoryOngoing,
+                },
+                HistoryDetails: {
+                  screen: HistoryDetails
+                }
+              }),
+              navigationOptions: {
+                tabBarIcon: () => <FontAwesome name="leaf" color="white" size={20}/>,
+              },
+            },
+            Completed: {
+              screen: createStackNavigator({
+                HistoryCompleted: {
+                  screen: HistoryCompleted,
+                },
+                HistoryDetails: {
+                  screen: HistoryDetails
+                }
+              }),
+              navigationOptions: {
+                tabBarIcon: () => <MaterialIcons name="check-box" color="white" size={20}/>
+              },
+            },
+          }, {
+            tabBarOptions: {
+              style: {
+                backgroundColor: '#587E5B'
+              },
+              activeTintColor: "white",
+              activeTintColor: "black",
+            }
           })
         }
       },
