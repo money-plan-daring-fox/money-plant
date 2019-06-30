@@ -23,7 +23,6 @@ function getPriceRecommendation(name) {
   .then(({data}) => {
     // let priceRecommend = Number(data[0].price.match(/\d+/g).map(Number).join(''));
     let priceRecommend = data[0].price.split('').filter(el => el.match(/^[0-9]*$/)).join('')
-    console.log(priceRecommend, 'ooop')
     setPrice(priceRecommend.toLocaleString())
   })
   .finally(() => {
@@ -35,8 +34,6 @@ function getPriceRecommendation(name) {
     Promise
       .all([AsyncStorage.getItem("income"), AsyncStorage.getItem("uid")])
       .then(([incomeKu, uidKu]) => {
-        console.log(incomeKu);
-        console.log(uidKu);
 
         setIncome(incomeKu)
         setUid(uidKu)
@@ -59,13 +56,6 @@ function getPriceRecommendation(name) {
   // VALIDASI PLAN B DAN C HARUS MEMUNGKINKAN DENGAN INCOME USER
 
   const createPlant = (nameInput, priceInput, planInput, investingInput, deadlineInput) => {
-    console.log(nameInput);
-    console.log(priceInput);
-    console.log(planInput);
-    console.log(investingInput)
-    console.log(deadlineInput);
-    console.log(income);
-    console.log(uid);
 
 
 
@@ -89,10 +79,8 @@ function getPriceRecommendation(name) {
           history: [],
         })
         .then(() => {
-          console.log(planInput, 'berhasil uy');
         })
         .catch(err => {
-          console.log(planInput, 'fail uy');
         })
     } else if (planInput === "money") {
       db.firestore()
@@ -112,10 +100,8 @@ function getPriceRecommendation(name) {
           history: [],
         })
         .then(() => {
-          console.log(planInput, 'berhasil')
         })
         .catch(err => {
-          console.log(planInput, "error boz")
         })
     } else if (planInput === "month") {
       db.firestore()
@@ -135,10 +121,8 @@ function getPriceRecommendation(name) {
           history: [],
         })
         .then(() => {
-          console.log(planInput, 'berhasil')
         })
         .catch(err => {
-          console.log(planInput, 'gagal')
         })
     }
   }

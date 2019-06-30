@@ -21,7 +21,6 @@ const Garden = props => {
     async function getUid() {
         try {
             const uidKu = await AsyncStorage.getItem("uid")
-            console.log(uidKu)
             setUid(uidKu)
             db.firestore()
                 .collection('plants')
@@ -35,7 +34,6 @@ const Garden = props => {
                     setLoading(false)
                 })
         } catch (err) {
-            console.log('error', err);
         }
     }
 

@@ -39,17 +39,14 @@ const HistoryOngoing = (props) => {
           data.forEach(item => {
             let obj = item.data()
             obj.id = item.id
-            // console.log(obj)
             arr.push(obj)
             setLoading(false)
           })
           setPlants(arr)
         })
         .catch(err => {
-          // console.log({ err })
         })
     } catch (err) {
-      // console.log({ err })
       alert(err.toString())
     }
   }

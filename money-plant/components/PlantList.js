@@ -11,9 +11,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 // import NumberFormat from 'react-number-format'
 const PlantList = ({ props, item }) => {
-
-  console.log(item)
-
   const [loading, setLoading] = useState(true);
   return (
     <View style={{ flex: 1, alignItems: "center", padding: 5 }}>

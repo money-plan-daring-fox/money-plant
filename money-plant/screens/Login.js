@@ -47,13 +47,7 @@ const Login = props => {
           data.forEach(item => {
             
             const { balance, email, income, uid } = item.data()
-            // console.log(item.data());
             
-            // console.log('aku login, ini uid', uid);
-            // console.log('aku login, ini balance', balance);
-            // console.log('aku login, ini email', email);
-            // console.log('aku login, ini income', income);
-            // console.log('aku login, ini id', item.id);
             let newUid = uid == null ? "" : uid
 
             AsyncStorage.setItem('id', item.id)
@@ -69,7 +63,6 @@ const Login = props => {
           props.navigation.navigate('Home')
         })
         .catch(err => {
-          // console.log({err})
           alert(err.toString())
           setLoading(false)
         })
@@ -104,7 +97,6 @@ const Login = props => {
         .catch(err => {
           alert(error.toString())
           setLoading(false)
-          // console.log({ err })
         })
       // Navigate to the Home page, the user is auto logged in
     } catch (error) {
@@ -118,7 +110,6 @@ const Login = props => {
       // Navigate to login view
       props.navigation.navigate("Home");
     } catch (error) {
-      // console.log(error);
     }
   };
 
