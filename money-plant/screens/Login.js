@@ -45,33 +45,37 @@ const Login = props => {
         .get()
         .then(data => {
           data.forEach(item => {
-            const { balance, email, income, uid } = item.data();
-            console.log(item.data());
+            
+            const { balance, email, income, uid } = item.data()
+            // console.log(item.data());
+            
+            // console.log('aku login, ini uid', uid);
+            // console.log('aku login, ini balance', balance);
+            // console.log('aku login, ini email', email);
+            // console.log('aku login, ini income', income);
+            // console.log('aku login, ini id', item.id);
+            let newUid = uid == null ? "" : uid
 
-            console.log("aku login, ini uid", uid);
-            console.log("aku login, ini balance", balance);
-            console.log("aku login, ini email", email);
-            console.log("aku login, ini income", income);
-            console.log("aku login, ini id", item.id);
-            let newUid = uid == null ? "" : uid;
-
-            AsyncStorage.setItem("id", item.id);
-            AsyncStorage.setItem("balance", balance);
-            AsyncStorage.setItem("email", email);
-            AsyncStorage.setItem("income", income);
-            AsyncStorage.setItem("uid", newUid);
-          });
-          alert("Logged In!");
-          setEmail("");
-          setPassword("");
-          setLoading(false);
-          props.navigation.navigate("Home");
+            AsyncStorage.setItem('id', item.id)
+            AsyncStorage.setItem('balance', balance)
+            AsyncStorage.setItem('email', email)
+            AsyncStorage.setItem('income', income)
+            AsyncStorage.setItem('uid', newUid)
+          })
+          // alert('Logged In!')
+          setEmail('')
+          setPassword('')
+          setLoading(false)
+          props.navigation.navigate('Home')
         })
         .catch(err => {
-          console.log({ err });
-        });
+          // console.log({err})
+          alert(err.toString())
+          setLoading(false)
+        })
     } catch (err) {
-      alert(err.toString());
+      alert(err.toString())
+      setLoading(false)
     }
   };
   const signup = async (email, pass, income) => {
@@ -98,11 +102,14 @@ const Login = props => {
           setLoading(false);
         })
         .catch(err => {
-          console.log({ err });
-        });
+          alert(error.toString())
+          setLoading(false)
+          // console.log({ err })
+        })
       // Navigate to the Home page, the user is auto logged in
     } catch (error) {
-      alert(error.toString());
+      alert(error.toString())
+      setLoading(false)
     }
   };
   const logout = async () => {
@@ -111,7 +118,7 @@ const Login = props => {
       // Navigate to login view
       props.navigation.navigate("Home");
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
