@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableHighlight, TextInput, Picker, StyleSheetr, AsyncStorage } from 'react-native'
+import { View, Text, TouchableHighlight, TextInput, Picker, StyleSheetr, AsyncStorage, ActivityIndicator } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import db from '../api/firebase'
+import axios from 'axios'
+
+let server = 'http://367711fb.ngrok.io/'
 
 const NewPlant = props => {
   const [name, setName] = useState("")
@@ -11,6 +14,22 @@ const NewPlant = props => {
   const [deadline, setDeadline] = useState(0)
   const [income, setIncome] = useState(0)
   const [uid, setUid] = useState("")
+  const [loading, setLoading] = useState(false)
+
+function getPriceRecommendation(name) {
+  setLoading(true)
+  axios
+  .get(server+'getItemsPrice?key='+name)
+  .then(({data}) => {
+    // let priceRecommend = Number(data[0].price.match(/\d+/g).map(Number).join(''));
+    let priceRecommend = data[0].price.split('').filter(el => el.match(/^[0-9]*$/)).join('')
+    console.log(priceRecommend, 'ooop')
+    setPrice(priceRecommend.toLocaleString())
+  })
+  .finally(() => {
+    setLoading(false)
+  })
+}
 
   useEffect(() => {
     Promise
@@ -33,6 +52,7 @@ const NewPlant = props => {
       //   setUid(data)
       // })
   }, [])
+
 
   // VALIDASI PLAN B DAN C HARUS MEMUNGKINKAN DENGAN INCOME USER
   // VALIDASI PLAN B DAN C HARUS MEMUNGKINKAN DENGAN INCOME USER
@@ -130,14 +150,23 @@ const NewPlant = props => {
         placeholder="Plant/Product Name"
         placeholderTextColor="white"
         onChangeText={name => setName(name)}
+        onEndEditing={() => getPriceRecommendation(name)}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Price"
-        placeholderTextColor="white"
-        onChangeText={price => setPrice(price)}
-        keyboardType="numeric"
-      />
+      <View>
+        {
+          loading?
+          <ActivityIndicator size="small" color="#31422e" />
+          :
+          <TextInput
+            style={styles.input}
+            value={price}
+            placeholder="Price"
+            placeholderTextColor="white"
+            onChangeText={price => setPrice(price)}
+            keyboardType="numeric"
+          />
+        }
+      </View>
       <Text style={{ ...styles.text, paddingTop: 15, paddingBottom: 6 }}> How would you like to Save? </Text>
 
       <Picker
