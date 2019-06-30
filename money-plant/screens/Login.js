@@ -206,7 +206,10 @@ const Login = props => {
                   <Text style={styles.text}>Sign In</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => signup(email, password, income) }
+                  onPress={async() => {
+                    await signup(email, password, income)
+                    await signin(email, password)
+                  } }
                   style={styles.button2}
                 >
                   <Text style={styles.text}>Register</Text>
