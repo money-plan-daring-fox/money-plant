@@ -15,6 +15,7 @@ import {
 import firebase from 'firebase'
 import db from '../api/firebase'
 import * as Font from 'expo-font'
+import { red } from "ansi-colors";
 
 const Login = props => {
   const [fontLoad, setFontLoad] = useState(false);
@@ -112,10 +113,10 @@ const Login = props => {
 
   return fontLoad ? (
     <View style={styles.container}>
-      {/* <ImageBackground
+      <ImageBackground
         source={{
           uri:
-            "https://img.icons8.com/doodle/96/000000/gold-pot.png"
+            "https://png2.kisspng.com/sh/989ef1fe0bea347df5f50c701e5ec83e/L0KzQYi4UsEyN2U8e5GAYULoRYKChvM6Omg8TZC6MkS2Q4qBUcE2OWMAUKYEOUG7QoSCTwBvbz==/5a2e519fc92775.1243398115129849918239.png"
         }}
         style={{
           width: 100,
@@ -127,16 +128,16 @@ const Login = props => {
           style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}
         >
         </View>
-      </ImageBackground> */}
-      <View>
+      </ImageBackground>
+      <View style={{width : "100%", alignItems : "center", justifyContent : "center"}}>
         <Text
           style={{
             fontFamily: "MachineGunk",
             textAlign: "center",
             letterSpacing: 5,
-            fontSize: 80,
-            marginBottom: -35,
-            color: "#587e5b"
+            fontSize: 120,
+            color: "#587e5b",
+            position : 'absolute',
           }}
         >
           SAVING
@@ -146,9 +147,8 @@ const Login = props => {
             fontFamily: "MachineGunk",
             textAlign: "center",
             letterSpacing: 1,
-            fontSize: 50,
-            marginBottom: -30,
-            color: "#fff"
+            fontSize: 30,
+            color: "#fff",
           }}
         >
           PLANT
