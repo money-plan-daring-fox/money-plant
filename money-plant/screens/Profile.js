@@ -112,7 +112,7 @@ const Profile = props => {
             alignSelf: "flex-start"
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "baseline" }}>
+          <View style={{ flexDirection: "row", alignItems: "baseline"}}>
             <Text style={styles.text}>Settings</Text>
             <AntDesign
               style={{ paddingLeft: 5 }}
@@ -123,7 +123,7 @@ const Profile = props => {
             <Text style={styles.text}> : </Text>
           </View>
           <View style={{ paddingVertical: 10 }}>
-            <Text style={styles.sub}> Monthly Income </Text>
+            <Text style={{...styles.sub, paddingBottom : 5}}> Monthly Income </Text>
             <View
               style={{
                 flexDirection: "row",
@@ -160,12 +160,12 @@ const Profile = props => {
                   </View>
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity style={styles.editButton}>
+                <TouchableOpacity style={{...styles.editButton, marginLeft : 5}}>
                   <View
                     style={{
                       justifyContent: "center",
                       alignSelf: "center",
-                      flexDirection: "row"
+                      flexDirection: "row",
                     }}
                   >
                     <Text style={styles.text} onPress={() => setState("edit")}>

@@ -22,13 +22,9 @@ const PlantList = ({ props, item }) => {
       setIncome(incomeKu);
     });
 
-    item.invested / item.price <= 0.4
-      ? setProgressColorStyle("#ea4c89")
-      : item.invested / item.price <= 0.6
-      ? setProgressColorStyle("#ffd02c")
-      : item.invested / item.price <= 1
-      ? setProgressColorStyle("#9dddd9")
-      : null;
+    item.invested / item.price <= 0.4 ? setProgressColorStyle("#ea4c89")
+    : item.invested / item.price <= 0.6 ? setProgressColorStyle("#ffd02c") 
+    : item.invested / item.price <= 1 ? setProgressColorStyle("#9dddd9") : null
   }, []);
 
   // item.invested = 9100000
@@ -110,7 +106,7 @@ const PlantList = ({ props, item }) => {
           <Progress.Bar
             progress={item.invested / item.price}
             width={110}
-            style={{ marginBottom: 10 }}
+            style={{ marginBottom : 10}}
             borderColor="black"
             animated={true}
             color={progressColorStyle}
