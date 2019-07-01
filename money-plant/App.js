@@ -1,5 +1,5 @@
 // React
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Text,
@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   View,
   SafeAreaView,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 
 // Navigation
@@ -30,18 +31,30 @@ import HistoryDetails from "./screens/HistoryDetails";
 import HistoryOngoing from "./screens/HistoryOngoing";
 
 // Firebase
-import { AuthProvider } from './components/AuthContext'
+import { AuthProvider } from "./components/AuthContext";
 
 // Icons
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons'
+import {
+  MaterialIcons,
+  FontAwesome,
+  MaterialCommunityIcons
+} from "@expo/vector-icons";
 
 // Disable Yellow Warnings
-console.disableYellowBox = true
+console.disableYellowBox = true;
 
 const drawerStyle = {
   contentComponent: props => {
+    const [income, setIncome] = useState(0);
+
+    useEffect(async () => {
+      await AsyncStorage.getItem("income").then(incomeKu => {
+        setIncome(incomeKu);
+      });
+    }, []);
+
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: "#262525" }}>
         <View
           style={{
             flexDirection: "row",
@@ -121,6 +134,23 @@ const drawerStyle = {
           </View>
         </View>
         <View style={{ flex: 5 }}>
+          <View
+            style={{
+              width: "100%",
+              height: 50,
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row"
+            }}
+          >
+            <MaterialCommunityIcons name="coin" size={25} color="gold" />
+            <Text style={{ ...styles.text, color: "gold" }}>
+              {parseInt(income).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
+            </Text>
+          </View>
           <TouchableOpacity
             style={{
               backgroundColor: "#587e5b",
@@ -129,7 +159,23 @@ const drawerStyle = {
               width: "100%",
               height: 50,
               alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
+              borderRadius: 5
+            }}
+            onPress={e => props.navigation.navigate("Garden")}
+          >
+            <Text style={styles.text}>Zen Garden</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#587e5b",
+              borderWidth: 1,
+              borderColor: "black",
+              width: "100%",
+              height: 50,
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 5
             }}
             onPress={e => props.navigation.navigate("Profile")}
           >
@@ -143,21 +189,8 @@ const drawerStyle = {
               width: "100%",
               height: 50,
               alignItems: "center",
-              justifyContent: "center"
-            }}
-            onPress={e => props.navigation.navigate("Garden")}
-          >
-            <Text style={styles.text}>See Garden</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#587e5b",
-              borderWidth: 1,
-              borderColor: "black",
-              width: "100%",
-              height: 50,
-              alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
+              borderRadius: 5
             }}
             onPress={e => props.navigation.navigate("History")}
           >
@@ -171,7 +204,8 @@ const drawerStyle = {
               width: "100%",
               height: 50,
               alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
+              borderRadius: 5
             }}
             onPress={e => props.navigation.navigate("Notification")}
           >
@@ -211,42 +245,49 @@ const appNavigator = createSwitchNavigator({
           })
         },
         History: {
-          screen: createBottomTabNavigator({
-            Ongoing: {
-              screen: createStackNavigator({
-                HistoryOngoing: {
-                  screen: HistoryOngoing,
-                },
-                HistoryDetails: {
-                  screen: HistoryDetails
+          screen: createBottomTabNavigator(
+            {
+              Ongoing: {
+                screen: createStackNavigator({
+                  HistoryOngoing: {
+                    screen: HistoryOngoing
+                  },
+                  HistoryDetails: {
+                    screen: HistoryDetails
+                  }
+                }),
+                navigationOptions: {
+                  tabBarIcon: () => (
+                    <FontAwesome name="leaf" color="white" size={20} />
+                  )
                 }
-              }),
-              navigationOptions: {
-                tabBarIcon: () => <FontAwesome name="leaf" color="white" size={20}/>,
               },
-            },
-            Completed: {
-              screen: createStackNavigator({
-                HistoryCompleted: {
-                  screen: HistoryCompleted,
-                },
-                HistoryDetails: {
-                  screen: HistoryDetails
+              Completed: {
+                screen: createStackNavigator({
+                  HistoryCompleted: {
+                    screen: HistoryCompleted
+                  },
+                  HistoryDetails: {
+                    screen: HistoryDetails
+                  }
+                }),
+                navigationOptions: {
+                  tabBarIcon: () => (
+                    <MaterialIcons name="check-box" color="white" size={20} />
+                  )
                 }
-              }),
-              navigationOptions: {
-                tabBarIcon: () => <MaterialIcons name="check-box" color="white" size={20}/>
-              },
+              }
             },
-          }, {
-            tabBarOptions: {
-              style: {
-                backgroundColor: '#587E5B'
-              },
-              activeTintColor: "white",
-              activeTintColor: "black",
+            {
+              tabBarOptions: {
+                style: {
+                  backgroundColor: "#587E5B"
+                },
+                activeTintColor: "white",
+                activeTintColor: "black"
+              }
             }
-          })
+          )
         }
       },
       drawerStyle
@@ -255,10 +296,10 @@ const appNavigator = createSwitchNavigator({
 });
 
 export default function App() {
-  const Route = createAppContainer(appNavigator)
+  const Route = createAppContainer(appNavigator);
   return (
     <AuthProvider>
       <Route />
     </AuthProvider>
-  )
+  );
 }

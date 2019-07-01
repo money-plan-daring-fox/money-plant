@@ -1,5 +1,5 @@
 // React
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,8 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  SafeAreaView
+  SafeAreaView,
+  AsyncStorage
 } from "react-native";
 import RadioForm, {
   RadioButton,
@@ -22,14 +23,17 @@ import {
   FontAwesome,
   Foundation
 } from "@expo/vector-icons";
-
+import db from "../api/firebase";
 // Drawer
 import NavigationDrawerStructure from "../components/NavigationDrawerStructure";
 
 const Profile = props => {
   const [state, setState] = useState("view");
+  const [email, setEmail] = useState("");
   const [value, setValue] = useState(0);
-  const [income, setIncome] = useState("10.000.000");
+  const [income, setIncome] = useState(0);
+  const [balance, setBalance] = useState(0);
+  const [totalPlant, setTotalPlant] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const radio_props = [
     {
@@ -50,6 +54,25 @@ const Profile = props => {
   ];
 
   const onPress = data => setCards({ data });
+  useEffect(() => {
+    AsyncStorage.getItem("email").then(e => {
+      setEmail(e);
+    });
+  }, []);
+
+  db.firestore()
+    .collection("users")
+    .where("email", "==", email)
+    .get()
+    .then(data => {
+      data.forEach(async item => {
+        const { balance, email, income } = item.data();
+        setBalance(balance);
+        setEmail(email);
+        setIncome(income);
+        console.log(item.data(), "===========");
+      });
+    });
 
   return (
     <View style={styles.container}>
@@ -62,7 +85,7 @@ const Profile = props => {
         }}
       >
         <Text style={styles.text}>Hello,</Text>
-        <Text style={styles.header}>Mohammad Yusuf</Text>
+        <Text style={styles.header}>{email}</Text>
       </View>
       <View
         style={{
@@ -115,7 +138,12 @@ const Profile = props => {
                   placeholderTextColor="#f6f4f2"
                 />
               ) : (
-                <Text style={styles.value}> {income} </Text>
+                <Text style={styles.value}>
+                  {parseInt(income).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
+                </Text>
               )}
               {state === "edit" ? (
                 <TouchableOpacity style={styles.submitButton}>
@@ -161,7 +189,13 @@ const Profile = props => {
         </View>
         <View>
           <Text style={styles.sub}> Balance : </Text>
-          <Text style={styles.valueHeader}> Rp. 2.000.000,-</Text>
+          <Text style={{ ...styles.valueHeader, textAlign: "center" }}>
+            {" "}
+            {balance.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}
+          </Text>
           <TouchableOpacity
             style={styles.button}
             onPress={() => setModalVisible(true)}
@@ -227,8 +261,7 @@ const Profile = props => {
               >
                 <RadioForm
                   radio_props={radio_props}
-                  wrapStyle={{height : 100}}
-                
+                  wrapStyle={{ height: 100 }}
                   initial={0}
                   formHorizontal={false}
                   labelHorizontal={true}
@@ -244,15 +277,15 @@ const Profile = props => {
                 />
               </View>
               <TextInput
-                  style={styles.input}
-                  placeholder="Card Number"
-                  placeholderTextColor="#f6f4f2"
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="CVV"
-                  placeholderTextColor="#f6f4f2"
-                />
+                style={styles.input}
+                placeholder="Card Number"
+                placeholderTextColor="#f6f4f2"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="CVV"
+                placeholderTextColor="#f6f4f2"
+              />
             </View>
 
             <TouchableOpacity
@@ -323,7 +356,11 @@ Profile.navigationOptions = props => ({
   headerStyle: {
     backgroundColor: "#587e5b"
   },
-  headerLeft: <NavigationDrawerStructure navigationProps={props.navigation} />
+  headerLeft: (
+    <View style={{ marginLeft: 15 }}>
+      <NavigationDrawerStructure navigationProps={props.navigation} />
+    </View>
+  )
 });
 
 export default Profile;

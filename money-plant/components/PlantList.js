@@ -10,18 +10,26 @@ import {
   AsyncStorage
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as Progress from "react-native-progress";
 // import NumberFormat from 'react-number-format'
 const PlantList = ({ props, item }) => {
-  const [income, setIncome] = useState(0)
+  const [income, setIncome] = useState(0);
+  const [progressColorStyle, setProgressColorStyle] = useState("#9dddd9");
 
-  useEffect(() => {
-    AsyncStorage
-      .getItem("income")
-      .then(incomeKu => {
-        console.log("income", incomeKu)
-        setIncome(incomeKu)
-      })
-  }, [])
+  useEffect(async () => {
+    await AsyncStorage.getItem("income").then(incomeKu => {
+      console.log("income", incomeKu);
+      setIncome(incomeKu);
+    });
+
+    item.invested / item.price <= 0.4
+      ? setProgressColorStyle("#ea4c89")
+      : item.invested / item.price <= 0.6
+      ? setProgressColorStyle("#ffd02c")
+      : item.invested / item.price <= 1
+      ? setProgressColorStyle("#9dddd9")
+      : null;
+  }, []);
 
   // item.invested = 9100000
 
@@ -99,6 +107,14 @@ const PlantList = ({ props, item }) => {
           >
             {item.name}
           </Text>
+          <Progress.Bar
+            progress={item.invested / item.price}
+            width={110}
+            style={{ marginBottom: 10 }}
+            borderColor="black"
+            animated={true}
+            color={progressColorStyle}
+          />
           <Text
             style={{
               textTransform: "uppercase",
@@ -106,7 +122,11 @@ const PlantList = ({ props, item }) => {
               flex: 1
             }}
           >
-            Rp. {item.price}
+            Rp.
+            {parseInt(item.price).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}
           </Text>
           {/* <Image
             style={{ height: "100%", width: "100%", flex: 3 }}
@@ -159,7 +179,10 @@ const PlantList = ({ props, item }) => {
             />
           ) : item.invested ? (
             <Image
-              source={{ uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-29.png?alt=media&token=c1ddcda5-0a98-4c5f-aa80-1d6cfdd47a65" }}
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-29.png?alt=media&token=c1ddcda5-0a98-4c5f-aa80-1d6cfdd47a65"
+              }}
               style={{ height: "100%", width: "100%", flex: 3 }}
               resizeMode="contain"
               onLoadEnd={() => setLoading(false)}
@@ -194,44 +217,64 @@ const PlantList = ({ props, item }) => {
           >
             Remaining
           </Text>
-          {
-            item.plan === "default" && (income * 0.2) <= (item.price - item.invested) &&
-            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
-              {Math.ceil((item.price - item.invested) / ((income * 0.2)))} months
-            </Text>
-          }
-          {
-            item.plan === 'default' && (income * 0.2) > (item.price - item.invested) &&
-            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
-              {Math.floor(((new Date() - item.createdAt.toDate()) / (1000 * 60 * 60 * 24)))} days
-            </Text>
-          }
-          {
-            item.plan === 'money' && item.investing <= (item.price - item.invested) &&
-            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
-              {Math.ceil((item.price - item.invested) / item.investing)} months
-            </Text>
-          }
-          {
-            item.plan === 'money' && item.investing > (item.price - item.invested) &&
-            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
-              {Math.floor(((new Date() - item.createdAt.toDate()) / (1000 * 60 * 60 * 24)))} days
-            </Text>
-          }
-          {
-            item.plan === 'month' && item.dueDate &&
-            (Math.floor(((item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))) >= 30 &&
-            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
-              {Math.floor((((item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24))) / 30)} months
-            </Text>
-          }
-          {
-            item.plan === 'month' && item.dueDate &&
-            (Math.floor(((item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))) < 30 &&
-            <Text style={{ fontFamily: "MachineGunk", flex: 1 }} >
-              {Math.floor(((item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))} days
-            </Text>
-          }
+          {item.plan === "default" &&
+            income * 0.2 <= item.price - item.invested && (
+              <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
+                {Math.ceil((item.price - item.invested) / (income * 0.2))}{" "}
+                months
+              </Text>
+            )}
+          {item.plan === "default" &&
+            income * 0.2 > item.price - item.invested && (
+              <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
+                {Math.floor(
+                  (new Date() - item.createdAt.toDate()) / (1000 * 60 * 60 * 24)
+                )}{" "}
+                days
+              </Text>
+            )}
+          {item.plan === "money" &&
+            item.investing <= item.price - item.invested && (
+              <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
+                {Math.ceil((item.price - item.invested) / item.investing)}{" "}
+                months
+              </Text>
+            )}
+          {item.plan === "money" &&
+            item.investing > item.price - item.invested && (
+              <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
+                {Math.floor(
+                  (new Date() - item.createdAt.toDate()) / (1000 * 60 * 60 * 24)
+                )}{" "}
+                days
+              </Text>
+            )}
+          {item.plan === "month" &&
+            item.dueDate &&
+            Math.floor(
+              (item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)
+            ) >= 30 && (
+              <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
+                {Math.floor(
+                  (item.dueDate.toDate() - new Date()) /
+                    (1000 * 60 * 60 * 24) /
+                    30
+                )}{" "}
+                months
+              </Text>
+            )}
+          {item.plan === "month" &&
+            item.dueDate &&
+            Math.floor(
+              (item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)
+            ) < 30 && (
+              <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
+                {Math.floor(
+                  (item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)
+                )}{" "}
+                days
+              </Text>
+            )}
         </TouchableOpacity>
       )}
     </View>

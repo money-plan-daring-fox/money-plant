@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import db from '../api/firebase'
 import axios from 'axios'
 
-let server = 'http://367711fb.ngrok.io/'
+let server = 'http://localhost:3001/'
 
 const NewPlant = props => {
   const [name, setName] = useState("")
@@ -30,9 +30,9 @@ function getPriceRecommendation(name) {
   })
 }
 
-  useEffect(() => {
+  useEffect(async () => {
     Promise
-      .all([AsyncStorage.getItem("income"), AsyncStorage.getItem("uid")])
+      .all([await AsyncStorage.getItem("income"), await AsyncStorage.getItem("uid")])
       .then(([incomeKu, uidKu]) => {
         setIncome(incomeKu)
         setUid(uidKu)
@@ -102,10 +102,10 @@ function getPriceRecommendation(name) {
           :
           <TextInput
             style={styles.input}
-            value={price}
+            value={price.toLocaleString()}
             placeholder="Price"
             placeholderTextColor="white"
-            onChangeText={price => setPrice(price)}
+            onChangeText={price => setPrice(Number(price))}
             keyboardType="numeric"
           />
         }

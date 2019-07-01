@@ -10,7 +10,8 @@ import {
   Dimensions,
   Button,
   AsyncStorage,
-  ActivityIndicator
+  ActivityIndicator,
+  Image
 } from "react-native";
 import firebase from "firebase";
 import db from "../api/firebase";
@@ -44,31 +45,29 @@ const Login = props => {
         .where("email", "==", email)
         .get()
         .then(data => {
-          data.forEach(item => {
-            
-            const { balance, email, income, uid } = item.data()
-            
-            let newUid = uid == null ? "" : uid
+          data.forEach(async item => {
+            const { balance, email, income, uid } = item.data();
 
-            AsyncStorage.setItem('id', item.id)
-            AsyncStorage.setItem('balance', balance)
-            AsyncStorage.setItem('email', email)
-            AsyncStorage.setItem('income', income)
-            AsyncStorage.setItem('uid', newUid)
-          })
+            let newUid = uid == null ? "" : uid;
+            await AsyncStorage.setItem("id", item.id);
+            await AsyncStorage.setItem("balance", balance);
+            await AsyncStorage.setItem("email", email);
+            await AsyncStorage.setItem("income", income);
+            await AsyncStorage.setItem("uid", newUid);
+          });
           // alert('Logged In!')
-          setEmail('')
-          setPassword('')
-          setLoading(false)
-          props.navigation.navigate('Home')
+          setEmail("");
+          setPassword("");
+          setLoading(false);
+          props.navigation.navigate("Home");
         })
         .catch(err => {
-          alert(err.toString())
-          setLoading(false)
-        })
+          alert(err.toString());
+          setLoading(false);
+        });
     } catch (err) {
-      alert(err.toString())
-      setLoading(false)
+      alert(err.toString());
+      setLoading(false);
     }
   };
   const signup = async (email, pass, income) => {
@@ -95,13 +94,13 @@ const Login = props => {
           setLoading(false);
         })
         .catch(err => {
-          alert(error.toString())
-          setLoading(false)
-        })
+          alert(error.toString());
+          setLoading(false);
+        });
       // Navigate to the Home page, the user is auto logged in
     } catch (error) {
-      alert(error.toString())
-      setLoading(false)
+      alert(error.toString());
+      setLoading(false);
     }
   };
   const logout = async () => {
@@ -109,75 +108,28 @@ const Login = props => {
       await firebase.auth().signOut();
       // Navigate to login view
       props.navigation.navigate("Home");
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   return fontLoad ? (
     <View style={styles.container}>
-      <ImageBackground
+      <Image
         source={{
           uri:
-            "https://png2.kisspng.com/sh/989ef1fe0bea347df5f50c701e5ec83e/L0KzQYi4UsEyN2U8e5GAYULoRYKChvM6Omg8TZC6MkS2Q4qBUcE2OWMAUKYEOUG7QoSCTwBvbz==/5a2e519fc92775.1243398115129849918239.png"
+            "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/logo.png?alt=media&token=0f0ed0be-e04d-472a-9191-4ba172b7311c"
         }}
         style={{
-          width: 20,
-          height: 20,
-          marginBottom: 10,
-          marginLeft: 30
+          width: "100%",
+          height: Dimensions.get("window").width / 2
         }}
-        resizeMode="cover"
-      >
-        <View
-          style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}
-        />
-      </ImageBackground>
-      <View
-        style={{
-          width: "85%",
-          height: "10%",
-          alignItems: "center",
-          justifyContent: "center",
-          borderBottomColor: "#b9523e",
-          borderBottomWidth: 6,
-          borderBottomEndRadius: 15
-        }}
-      >
-        <Text
-          style={{
-            fontFamily: "MachineGunk",
-            textAlign: "center",
-            letterSpacing: 5,
-            fontSize: 120,
-            color: "#587e5b",
-            position: "absolute"
-          }}
-        >
-          SAVING
-        </Text>
-        <Text
-          style={{
-            fontFamily: "MachineGunk",
-            textAlign: "center",
-            letterSpacing: 1,
-            fontSize: 30,
-            color: "#fff"
-          }}
-        >
-          PLANT
-        </Text>
-      </View>
-      <View
-        style={{
-          width: "50%",
-          alignSelf: "center",
-          marginLeft: 80,
-          paddingTop: 20
-        }}
-      >
-        <Text style={{ ...styles.text, textAlign: "right" }}>
-          Get your exquisite gadget by devoted to a wonderful plant
-        </Text>
+        resizeMode="contain"
+      />
+      <View style={{ width: "100%", alignItems: "flex-end", marginRight: 100 }}>
+        <View style={{ width: "50%" }}>
+          <Text style={{ ...styles.text, textAlign: "right" }}>
+            Get your exquisite gadget by devoted to a wonderful plant...
+          </Text>
+        </View>
       </View>
       <KeyboardAvoidingView behavior="padding">
         {registerPage ? (
@@ -246,7 +198,12 @@ const Login = props => {
                     alignItems: "center"
                   }}
                 >
-                  <Ionicons name="ios-arrow-back" size={15} color="#fff" style={{paddingRight : 5}} />
+                  <Ionicons
+                    name="ios-arrow-back"
+                    size={15}
+                    color="#fff"
+                    style={{ paddingRight: 5 }}
+                  />
                   <Text style={styles.text}>Sign In</Text>
                 </View>
               </TouchableOpacity>
