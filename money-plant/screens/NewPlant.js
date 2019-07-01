@@ -45,10 +45,10 @@ const NewPlant = props => {
       });
   }
 
-  useEffect(async () => {
+  useEffect(() => {
     Promise.all([
-      await AsyncStorage.getItem("income"),
-      await AsyncStorage.getItem("uid")
+      AsyncStorage.getItem("income"),
+      AsyncStorage.getItem("uid")
     ]).then(([incomeKu, uidKu]) => {
       setIncome(incomeKu);
       setUid(uidKu);
@@ -139,7 +139,7 @@ const NewPlant = props => {
             value={price.toLocaleString()}
             placeholder="Price"
             placeholderTextColor="white"
-            onChangeText={price => setPrice(Number(price))}
+            onChangeText={price => setPrice(Number(price.split("").filter(el => el.match(/^[0-9]*$/)).join("")))}
             keyboardType="numeric"
           />
         )}

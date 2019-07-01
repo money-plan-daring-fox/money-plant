@@ -47,8 +47,8 @@ const drawerStyle = {
   contentComponent: props => {
     const [income, setIncome] = useState(0);
 
-    useEffect(async () => {
-      await AsyncStorage.getItem("income").then(incomeKu => {
+    useEffect( () => {
+      AsyncStorage.getItem("income").then(incomeKu => {
         setIncome(incomeKu);
       });
     }, []);

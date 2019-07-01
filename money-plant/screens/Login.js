@@ -46,15 +46,15 @@ const Login = props => {
         .where("email", "==", email)
         .get()
         .then(data => {
-          data.forEach(async item => {
+          data.forEach( item => {
             const { balance, email, income, uid } = item.data();
 
             let newUid = uid == null ? "" : uid;
-            await AsyncStorage.setItem("id", item.id);
-            await AsyncStorage.setItem("balance", balance);
-            await AsyncStorage.setItem("email", email);
-            await AsyncStorage.setItem("income", income);
-            await AsyncStorage.setItem("uid", newUid);
+            AsyncStorage.setItem("id", item.id);
+            AsyncStorage.setItem("balance", balance);
+            AsyncStorage.setItem("email", email);
+            AsyncStorage.setItem("income", income);
+            AsyncStorage.setItem("uid", newUid);
           });
           // alert('Logged In!')
           setEmail("");
