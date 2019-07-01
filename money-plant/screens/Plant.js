@@ -62,9 +62,19 @@ const Plant = props => {
 
   const [coba, setCoba] = useState("");
 
+  const [userId, setUserId] = useState('')
+
+  useEffect(() => {
+    AsyncStorage.getItem("id")
+    .then(idKu => {
+      setUserId(idKu)
+    })
+  })
+
   const handleApi = () => {
     axios
-      .get(`http://localhost:3001/users/getItemsPrice?key=${name}`)
+      // .get(`http://localhost:3001/users/getItemsPrice?key=${name}`)
+      .get(`http://localhost:3001/users/getItemsPrice?key=${name}&price=${price}`)
       .then(({ data }) => {
         console.log(data, "===== invoked");
         Linking.openURL(data[0].url);
@@ -160,20 +170,62 @@ const Plant = props => {
       .collection("plants")
       .doc(id)
       .onSnapshot(plant => {
-        setCoba({ ...plant.data(), id: plant.id });
-        setName(plant.data().name);
-        setPrice(plant.data().price);
-        setDeadline(plant.data().deadline);
-        setInvested(plant.data().invested);
-        setInvesting(plant.data().investing);
-        setCurrentPlan(plant.data().plan);
-        setDueDate(plant.data().dueDate);
-        setCreatedAt(plant.data().createdAt.toDate());
-        setId(plant.id);
-        setUid(plant.data().uid);
-        setHistory(plant.data().history);
+        if(plant.data()){
+          setCoba({ ...plant.data(), id: plant.id });
+          setName(plant.data().name);
+          setPrice(plant.data().price);
+          setDeadline(plant.data().deadline);
+          setInvested(plant.data().invested);
+          setInvesting(plant.data().investing);
+          setCurrentPlan(plant.data().plan);
+          setDueDate(plant.data().dueDate);
+          setCreatedAt(plant.data().createdAt.toDate());
+          setId(plant.id);
+          setUid(plant.data().uid);
+          setHistory(plant.data().history);
+        }
       });
   }, []);
+
+  const deletePlant = () => {
+    Alert.alert(
+      `Are You Sure To Kill ${name}? 😭`,
+      'really really sure?',
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { 
+          style: "OK",
+          text: "OK", 
+          onPress: () => {
+            db.firestore()
+              .collection('plants')
+              .doc(id)
+              .delete()
+              .then(() => {
+                db.firestore()
+                  .collection('users')
+                  .doc(userId)
+                  .update({
+                    totalInvestingPerMonth: firebase.firestore.FieldValue.increment-investing
+                  })
+                  .then(() => {
+                    alert(`Plant has successfully deleted`)
+                    props.navigation.navigate('Garden')
+                  })
+            })
+            .catch(err => {
+              console.log(err)
+            })
+          },
+       }
+      ],
+      { cancelable: false }
+    )
+  }
 
   return (
     <>
@@ -181,7 +233,7 @@ const Plant = props => {
         <View style={{ alignSelf: "flex-end", paddingRight: 10 }}>
           <TouchableOpacity
             style={styles.deleteButton}
-            onPress={() => alert(`Are You Sure To Kill ${name}? 😭`)}
+            onPress={() => deletePlant()}
           >
             <Text style={styles.text}>
               Delete <Feather name="x-circle" size={13} color="#fff" />
