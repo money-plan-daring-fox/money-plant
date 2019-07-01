@@ -27,10 +27,13 @@ const Garden = props => {
                 .where('uid', '==', uidKu)
                 .onSnapshot(function (doc) {
                     let data = []
+                    // let tetew = 0
                     doc.forEach(el => {
                         data.push({ ...el.data(), id: el.id })
+                        // tetew += el.data().investing 
                     })
                     setPlants(["add", ...data, "space"])
+                    // set tetew ke asyncstorage
                     setLoading(false)
                 })
         } catch (err) {

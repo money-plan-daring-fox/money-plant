@@ -33,8 +33,14 @@ const Profile = props => {
   const [value, setValue] = useState(0);
   const [income, setIncome] = useState(0);
   const [balance, setBalance] = useState(0);
+  const [balanceDatabase, setBalanceDatabase] = useState(0)
   const [totalPlant, setTotalPlant] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+const [uid, setUid] = useState("")
+const [concurrent, setConcurrent] = useState(0)
+const [id, setId] = useState("")
+const [user, setUser] = useState({})
+
   const radio_props = [
     {
       label: <FontAwesome name="cc-visa" key={1} size={30} color="#fff" />,
@@ -53,26 +59,115 @@ const Profile = props => {
     }
   ];
 
+  function handleTopup() {
+    setModalVisible(false)
+    // console.log("aku disini gengs")
+    // console.log({uid})
+    // console.log("aku disini gengs")
+
+    // console.log("AKU KUMPULAN KONSOL==========")
+    // console.log({id})
+    // console.log({balance});
+    // console.log({balanceDatabase});
+    // console.log("AKU KUMPULAN KONSOL==========")
+    
+    console.log("tetew")
+    console.log(balance)
+    console.log(balanceDatabase)
+
+    user.balance = Number(balance) + Number(balanceDatabase)
+
+    db.firestore()
+    .collection('users')
+    .doc(id)
+    .set(user)
+    .then(response => {
+      // console.log("handlletopup suskes uy")
+      // console.log(response)
+      alert("your balance has successfully been updated")
+    })
+    .catch(err => {
+      console.log("eh err mas ah enak")
+    })
+
+  }
+
   const onPress = data => setCards({ data });
+
   useEffect(() => {
-    AsyncStorage.getItem("email").then(e => {
-      setEmail(e);
-    });
+    Promise.all([AsyncStorage.getItem("email"), AsyncStorage.getItem("uid")])
+    .then(([email, uid]) => {
+      setEmail(email)
+      setUid(uid)
+      console.log("ini uid")
+      console.log(uid)
+      console.log("ini uid")
+
+      return uid
+    })
+    .then(uid => {
+      console.log('ini uid setelah then', uid)
+      db.firestore()
+      .collection("users")
+      .where('uid', '==', uid)
+      .onSnapshot(docs => {
+        console.log("udah masuk firestore nih hehe")
+        docs.forEach(el => {
+          setId(el.id)
+          setBalanceDatabase(el.data().balance)
+          setUser(el.data())
+          setEmail(el.data().email)
+          setIncome(el.data().income)
+        })
+      })
+    })
+    
+
+
+
+    // .then(e => {
+//       setEmail(e);
+//     });
+
+//         .then(e => {
+//           setUid(e)
+//           db.firestore()
+//           .collection("users")
+//           .where("uid", '==', uid)
+//           .onSnapshot(docs => {
+//             // console.log("aku si katanya balance")
+// // console.log(data.balance)
+//             // console.log("aku si katanya balance")
+//             // console.log('hai aku id');
+//             docs.forEach(el => {
+//               console.log("aku foreach")
+//               console.log(el.id)
+//               setId(el.id)
+//               console.log("aku foreach")
+//               setBalanceDatabase(el.data().balance)
+//             })
+//             // console.log(data.id)
+//             // setId(data.id)
+//             // setBalanceDatabase(data.balance)
+//         })
+
+//       })
   }, []);
 
-  db.firestore()
-    .collection("users")
-    .where("email", "==", email)
-    .get()
-    .then(data => {
-      data.forEach(async item => {
-        const { balance, email, income } = item.data();
-        setBalance(balance);
-        setEmail(email);
-        setIncome(income);
-        console.log(item.data(), "===========");
-      });
-    });
+  // db.firestore()
+  //   .collection("users")
+  //   .where("email", "==", email)
+  //   .get()
+  //   .then(data => {
+  //     data.forEach(async item => {
+  //       const { balance, email, income } = item.data();
+  //       setBalance(balance);
+  //       setEmail(email);
+  //       setIncome(income);
+  //       // setUser()
+  //       // console.log(item.data(), "===========");
+  //     });
+  //   });
 
   return (
     <View style={styles.container}>
@@ -191,7 +286,7 @@ const Profile = props => {
           <Text style={styles.sub}> Balance : </Text>
           <Text style={{ ...styles.valueHeader, textAlign: "center" }}>
             {" "}
-            {balance.toLocaleString(undefined, {
+            {balanceDatabase.toLocaleString(undefined, {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2
             })}
@@ -247,8 +342,9 @@ const Profile = props => {
             <TextInput
               textAlign={"center"}
               placeholderTextColor="rgba(255,255,255,0.7)"
-              id="password"
+              id="amount"
               style={styles.input}
+              onChangeText={(text) => setBalance(text)}
             />
             <View style={{ paddingVertical: 10, alignSelf: "center" }}>
               <Text style={{ ...styles.sub, textAlign: "center" }}>
@@ -290,7 +386,7 @@ const Profile = props => {
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => setModalVisible(false)}
+              onPress={() => handleTopup()}
             >
               <Text style={{ ...styles.text, textAlign: "center" }}>
                 Submit

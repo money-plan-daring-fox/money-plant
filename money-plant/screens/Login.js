@@ -47,11 +47,12 @@ const Login = props => {
         .get()
         .then(data => {
           data.forEach( item => {
-            const { balance, email, income, uid } = item.data();
+            const { balance, email, income, uid, concurrent } = item.data();
 
             let newUid = uid == null ? "" : uid;
             AsyncStorage.setItem("id", item.id);
             AsyncStorage.setItem("balance", balance);
+            AsyncStorage.setItem("concurrent", concurrent)
             AsyncStorage.setItem("email", email);
             AsyncStorage.setItem("income", income);
             AsyncStorage.setItem("uid", newUid);
@@ -80,6 +81,7 @@ const Login = props => {
       let newUser = {
         email,
         balance: 0,
+        concurrent: 0,
         plants: [],
         income,
         uid: user.user.uid,
