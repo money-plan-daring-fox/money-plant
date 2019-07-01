@@ -85,7 +85,8 @@ const Login = props => {
         plants: [],
         income,
         uid: user.user.uid,
-        notifications: []
+        notifications: [],
+        totalInvestingPerMonth: 0
       };
       db.firestore()
         .collection("users")

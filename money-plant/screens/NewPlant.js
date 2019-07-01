@@ -15,6 +15,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import db from "../api/firebase";
 import axios from "axios";
 import { Feather, EvilIcons, Ionicons } from "@expo/vector-icons";
+import firebase from 'firebase'
 
 let server = "http://localhost:3001/";
 
@@ -27,11 +28,12 @@ const NewPlant = props => {
   const [income, setIncome] = useState(0);
   const [uid, setUid] = useState("");
   const [loading, setLoading] = useState(false);
+  const [id, setId] = useState('');
 
   function getPriceRecommendation(name) {
     setLoading(true);
     axios
-      .get(server + "getItemsPrice?key=" + name)
+      .get(server + "users/getItemsPrice?key=" + name)
       .then(({ data }) => {
         // let priceRecommend = Number(data[0].price.match(/\d+/g).map(Number).join(''));
         let priceRecommend = data[0].price
@@ -48,10 +50,12 @@ const NewPlant = props => {
   useEffect(() => {
     Promise.all([
       AsyncStorage.getItem("income"),
-      AsyncStorage.getItem("uid")
-    ]).then(([incomeKu, uidKu]) => {
+      AsyncStorage.getItem("uid"),
+      AsyncStorage.getItem("id")
+    ]).then(([incomeKu, uidKu, idKu]) => {
       setIncome(incomeKu);
       setUid(uidKu);
+      setId(idKu)
     });
   }, []);
 
@@ -93,10 +97,9 @@ const NewPlant = props => {
       input.investing = investingInput;
       input.deadline = (price / investingInput) * 30;
       if((income) < investing){
-        alert(`Your current income (${income}) is less than the monthly payment ${investingInput}`)
-      }else {
+        return alert(`Your current income (${income}) is less than the monthly payment ${investingInput}`)
+      } else {
         console.log('tembak firestore cieeeee');
-        
       }
 
     } else if (planInput === "month") {
@@ -104,10 +107,9 @@ const NewPlant = props => {
       input.investing = priceInput / deadlineInput;
       input.deadline = Number(deadlineInput) * 30;
       if((income) < (priceInput / deadlineInput)){
-        alert(`Your current income (${income}) is less than the monthly payment (${priceInput / deadlineInput})`)
-      }else {
+        return alert(`Your current income (${income}) is less than the monthly payment (${priceInput / deadlineInput})`)
+      } else {
         console.log('tembak firestore cieeeee');
-
       }
 
     }
@@ -122,7 +124,16 @@ const NewPlant = props => {
       .doc()
       .set(input)
       .then(() => {
-        console.log(planInput, "berhasil uy");
+        return db.firestore()
+          .collection("users")
+          .doc(id)
+          .update({
+            totalInvestingPerMonth:firebase.firestore.FieldValue.increment(input.investing)
+          })
+          .then(() => {
+            console.log(planInput, "berhasil uy");
+            props.navigation.navigate('Garden')
+          })
       })
       .catch(err => {
         console.log(input)
