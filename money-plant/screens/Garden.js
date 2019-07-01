@@ -28,12 +28,13 @@ const Garden = props => {
                 .onSnapshot(function (doc) {
                     let data = []
                     doc.forEach(el => {
-                        data.push({ ...el.data() })
+                        data.push({ ...el.data(), id: el.id })
                     })
                     setPlants(["add", ...data, "space"])
                     setLoading(false)
                 })
         } catch (err) {
+            console.log(err)
         }
     }
 
