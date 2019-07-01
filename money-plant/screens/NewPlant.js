@@ -80,6 +80,8 @@ const NewPlant = props => {
     };
 
     let dueDate = new Date();
+    console.log("before")
+    console.log(dueDate)
     if (planInput === "default") {
       dueDate.setMonth(
         dueDate.getMonth() + Math.ceil(priceInput / (income * 0.2))
@@ -90,14 +92,31 @@ const NewPlant = props => {
       dueDate.setMonth(dueDate.getMonth() + price / investingInput);
       input.investing = investingInput;
       input.deadline = (price / investingInput) * 30;
+      if((income) < investing){
+        alert(`Your current income (${income}) is less than the monthly payment ${investingInput}`)
+      }else {
+        console.log('tembak firestore cieeeee');
+        
+      }
+
     } else if (planInput === "month") {
       dueDate.setMonth(dueDate.getMonth() + Number(deadlineInput));
       input.investing = priceInput / deadlineInput;
       input.deadline = Number(deadlineInput) * 30;
+      if((income) < (priceInput / deadlineInput)){
+        alert(`Your current income (${income}) is less than the monthly payment (${priceInput / deadlineInput})`)
+      }else {
+        console.log('tembak firestore cieeeee');
+
+      }
+
     }
+    console.log('after')
+    console.log(dueDate)
+    
+
 
     input.dueDate = dueDate;
-
     db.firestore()
       .collection("plants")
       .doc()
@@ -106,6 +125,7 @@ const NewPlant = props => {
         console.log(planInput, "berhasil uy");
       })
       .catch(err => {
+        console.log(input)
         console.log(planInput, "fail uy");
       });
   };

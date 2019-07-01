@@ -46,10 +46,14 @@ console.disableYellowBox = true;
 const drawerStyle = {
   contentComponent: props => {
     const [income, setIncome] = useState(0);
-
-    useEffect( () => {
+    const [balance, setBalance] = useState(0);
+    const [logoLoading, setLogoLoading] = useState(false);
+    useEffect(() => {
       AsyncStorage.getItem("income").then(incomeKu => {
         setIncome(incomeKu);
+      });
+      AsyncStorage.getItem("balance").then(balanceKu => {
+        setBalance(balance);
       });
     }, []);
 
@@ -107,30 +111,19 @@ const drawerStyle = {
               alignItems: "center"
             }}
           >
-            <Text
-              style={{
-                fontFamily: "MachineGunk",
-                textAlign: "center",
-                letterSpacing: 5,
-                fontSize: 40,
-                marginBottom: -15,
-                color: "#587e5b"
+            <Image
+              onLoadStart={() => setLogoLoading(true)}
+              onLoadEnd={() => setLogoLoading(false)}
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/logo.png?alt=media&token=0f0ed0be-e04d-472a-9191-4ba172b7311c"
               }}
-            >
-              Saving
-            </Text>
-            <Text
               style={{
-                fontFamily: "MachineGunk",
-                textAlign: "center",
-                letterSpacing: 1,
-                fontSize: 20,
-                marginBottom: -20,
-                color: "#fff"
+                width: "100%",
+                height: Dimensions.get("window").width / 2
               }}
-            >
-              Plant
-            </Text>
+              resizeMode="contain"
+            />
           </View>
         </View>
         <View style={{ flex: 5 }}>
@@ -145,7 +138,7 @@ const drawerStyle = {
           >
             <MaterialCommunityIcons name="coin" size={25} color="gold" />
             <Text style={{ ...styles.text, color: "gold" }}>
-              {parseInt(income).toLocaleString(undefined, {
+              {parseInt(balance).toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               })}
@@ -283,8 +276,8 @@ const appNavigator = createSwitchNavigator({
                 style: {
                   backgroundColor: "#587E5B"
                 },
-                activeTintColor: "white",
-                activeTintColor: "black"
+                inactiveTintColor: "#f6f4f2",
+                activeTintColor: "#ffd02c"
               }
             }
           )

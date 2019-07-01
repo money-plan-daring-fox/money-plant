@@ -40,7 +40,7 @@ const HistoryDetails = (props) => {
   }, [line])
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#31422e', padding: 10 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#31422e', padding: 10, alignItems : "center" }}>
       {
         loading
         ? <View style={{ height: Dimensions.get("window").width, justifyContent: "center" }}>
@@ -49,7 +49,7 @@ const HistoryDetails = (props) => {
         : <LineChart
             data={line}
             width={Dimensions.get('window').width - 20} // from react-native
-            height={220}
+            height={Dimensions.get('window').height }
             yAxisLabel={'Rp'}
             chartConfig={{
               backgroundColor: '#e26a00',
@@ -58,7 +58,7 @@ const HistoryDetails = (props) => {
               decimalPlaces: 2, // optional, defaults to 2dp
               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               style: {
-                borderRadius: 16
+                borderRadius: 16,
               }
             }}
             bezier

@@ -173,7 +173,7 @@ const PlantList = ({ props, item }) => {
               resizeMode="contain"
               onLoadEnd={() => setLoading(false)}
             />
-          ) : item.invested ? (
+          ) : item.invested / item.price < 1 ? (
             <Image
               source={{
                 uri:
@@ -183,7 +183,17 @@ const PlantList = ({ props, item }) => {
               resizeMode="contain"
               onLoadEnd={() => setLoading(false)}
             />
-          ) : null}
+          ) : item.invested / item.price >= 1 ? (
+            <Image
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-29.png?alt=media&token=c1ddcda5-0a98-4c5f-aa80-1d6cfdd47a65"
+              }}
+              style={{ height: "100%", width: "100%", flex: 3 }}
+              resizeMode="contain"
+              onLoadEnd={() => setLoading(false)}
+            />
+          ) : null }
           {loading && (
             <View
               style={{

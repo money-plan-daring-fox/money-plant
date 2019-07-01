@@ -9,13 +9,16 @@ import {
   Modal,
   TextInput,
   SafeAreaView,
-  AsyncStorage
+  AsyncStorage,
+  Linking,
+  Alert
 } from "react-native";
 import { Tooltip, Text as ToolText } from "react-native-elements";
 import { Feather, EvilIcons, Ionicons } from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
 import SelectInput from "react-native-select-input-ios";
-import db from '../api/firebase'
+import db from "../api/firebase";
+import axios from "axios";
 
 const Plant = props => {
   let {
@@ -27,23 +30,23 @@ const Plant = props => {
     // plan,
     // dueDate,
     // createdAt,
-    id,
+    id
     // uid,
     // history
   } = props.navigation.getParam("item");
+  console.log(id);
 
-  const [name, setName] = useState("")
-  const [price, setPrice] = useState(1)
-  const [deadline, setDeadline] = useState("")
-  const [invested, setInvested] = useState(0)
-  const [investing, setInvesting] = useState(0)
-  const [plan, setCurrentPlan] = useState("")
-  const [dueDate, setDueDate] = useState(undefined)
-  const [createdAt, setCreatedAt] = useState("")
-  const [stateid, setId] = useState("")
-  const [uid, setUid] = useState("")
-  const [history, setHistory] = useState("")
-
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState(1);
+  const [deadline, setDeadline] = useState("");
+  const [invested, setInvested] = useState(0);
+  const [investing, setInvesting] = useState(0);
+  const [plan, setCurrentPlan] = useState("");
+  const [dueDate, setDueDate] = useState(undefined);
+  const [createdAt, setCreatedAt] = useState(new Date());
+  const [stateid, setId] = useState("");
+  const [uid, setUid] = useState("");
+  const [history, setHistory] = useState("");
 
   const [touched, setTouched] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -54,10 +57,22 @@ const Plant = props => {
     { value: 2, label: "Month" },
     { value: 3, label: "Rp/month" }
   ]);
-  const [income, setIncome] = useState(0)
-  const [amount, setAmount] = useState(0)
+  const [income, setIncome] = useState(0);
+  const [amount, setAmount] = useState(0);
 
-  const [coba, setCoba] = useState("")
+  const [coba, setCoba] = useState("");
+
+  const handleApi = () => {
+    axios
+      .get(`http://localhost:3001/users/getItemsPrice?key=${name}`)
+      .then(({ data }) => {
+        console.log(data, "===== invoked");
+        Linking.openURL(data[0].url);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   const handleInputAmount = method => {
     // method === "recommended"
@@ -65,9 +80,7 @@ const Plant = props => {
     //   alert("proses perhitungan recommended dijalankan yaaa ")
     //   :
     if (method === "recommended") {
-
     } else if (method === "manual") {
-
       let input = {
         name,
         price,
@@ -77,26 +90,36 @@ const Plant = props => {
         updatedAt: new Date(),
         stage: ((invested + amount) / price) * 5,
         uid,
-        history: [...history, { updatedAt: new Date(), invested: invested + amount }],
-        completed: false,
-      }
+        history: [
+          ...history,
+          { updatedAt: new Date(), invested: invested + amount }
+        ],
+        completed: false
+      };
 
-      if ((invested + amount) == price) input.completed = true
+      if (invested + amount == price) input.completed = true;
 
-      let newDueDate = new Date()
+      let newDueDate = new Date();
       if (plan === "default") {
-        newDueDate.setMonth(newDueDate.getMonth() + Math.ceil((price - (invested + amount)) / (income * 0.2)))
-        input.investing = income * 0.2
-        input.deadline = (Math.ceil((price - (invested + amount)) / (income * 0.2))) * 30
-        input.dueDate = newDueDate
+        newDueDate.setMonth(
+          newDueDate.getMonth() +
+            Math.ceil((price - (invested + amount)) / (income * 0.2))
+        );
+        input.investing = income * 0.2;
+        input.deadline =
+          Math.ceil((price - (invested + amount)) / (income * 0.2)) * 30;
+        input.dueDate = newDueDate;
       } else if (plan === "money") {
-        newDueDate.setMonth(newDueDate.getMonth() + ((price - (invested + amount)) / investing))
-        input.investing = investing
-        input.deadline = ((price - (invested + amount)) / investing) * 30
-        input.dueDate = newDueDate
-      } else if (plan === 'month') {
-        input.investing = (price - (invested + amount)) / Math.round(deadline / 30)
-        input.dueDate = dueDate
+        newDueDate.setMonth(
+          newDueDate.getMonth() + (price - (invested + amount)) / investing
+        );
+        input.investing = investing;
+        input.deadline = ((price - (invested + amount)) / investing) * 30;
+        input.dueDate = newDueDate;
+      } else if (plan === "month") {
+        input.investing =
+          (price - (invested + amount)) / Math.round(deadline / 30);
+        input.dueDate = dueDate;
       }
 
       db.firestore()
@@ -104,12 +127,12 @@ const Plant = props => {
         .doc(id)
         .set(input)
         .then(() => {
-          console.log('update berhasil uy')
-          setModalVisible(false)
+          console.log("update berhasil uy");
+          setModalVisible(false);
         })
         .catch(err => {
-          console.log('update error uy', err)
-        })
+          console.log("update error uy", err);
+        });
     }
   };
 
@@ -128,31 +151,29 @@ const Plant = props => {
   };
 
   useEffect(() => {
-    AsyncStorage
-      .getItem("income")
-      .then(incomeKu => {
-        console.log("income", incomeKu)
-        setIncome(incomeKu)
-      })
+    AsyncStorage.getItem("income").then(incomeKu => {
+      console.log("income", incomeKu);
+      setIncome(incomeKu);
+    });
 
     db.firestore()
-      .collection('plants')
+      .collection("plants")
       .doc(id)
       .onSnapshot(plant => {
-        setCoba({ ...plant.data(), id: plant.id })
-        setName(plant.data().name)
-        setPrice(plant.data().price)
-        setDeadline(plant.data().deadline)
-        setInvested(plant.data().invested)
-        setInvesting(plant.data().investing)
-        setCurrentPlan(plant.data().plan)
-        setDueDate(plant.data().dueDate)
-        setCreatedAt(plant.data().createdAt)
-        setId(plant.id)
-        setUid(plant.data().uid)
-        setHistory(plant.data().history)
-      })
-  }, [])
+        setCoba({ ...plant.data(), id: plant.id });
+        setName(plant.data().name);
+        setPrice(plant.data().price);
+        setDeadline(plant.data().deadline);
+        setInvested(plant.data().invested);
+        setInvesting(plant.data().investing);
+        setCurrentPlan(plant.data().plan);
+        setDueDate(plant.data().dueDate);
+        setCreatedAt(plant.data().createdAt.toDate());
+        setId(plant.id);
+        setUid(plant.data().uid);
+        setHistory(plant.data().history);
+      });
+  }, []);
 
   return (
     <>
@@ -179,81 +200,107 @@ const Plant = props => {
         >
           {name}
         </Text>
-        {
-          plan === "default" && (income * 0.2) <= (price - invested) &&
-          <Text
-            style={{
-              fontFamily: "MachineGunk",
-              color: "white",
-              fontSize: 14,
-              paddingVertical: 10
-            }}>
-            {Math.ceil((price - invested) / ((income * 0.2)))} months
-          </Text>
-        }
-        {
-          plan === 'default' && (income * 0.2) > (price - invested) &&
-          <Text
-            style={{
-              fontFamily: "MachineGunk",
-              color: "white",
-              fontSize: 14,
-              paddingVertical: 10
-            }}>
-            {Math.floor(((new Date() - createdAt.toDate()) / (1000 * 60 * 60 * 24)))} days
-          </Text>
-        }
-        {
-          plan === 'money' && investing <= (price - invested) &&
-          <Text
-            style={{
-              fontFamily: "MachineGunk",
-              color: "white",
-              fontSize: 14,
-              paddingVertical: 10
-            }}>
-            {Math.ceil((price - invested) / investing)} months
-            
-          </Text>
-        }
-        {
-          plan === 'money' && investing > (price - invested) &&
-          <Text
-            style={{
-              fontFamily: "MachineGunk",
-              color: "white",
-              fontSize: 14,
-              paddingVertical: 10
-            }}>
-            {Math.floor(((new Date() - createdAt.toDate()) / (1000 * 60 * 60 * 24)))} days
-          </Text>
-        }
-        {
-          plan === 'month' && dueDate !== undefined &&
-          (Math.floor(((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))) >= 30 &&
-          <Text
-            style={{
-              fontFamily: "MachineGunk",
-              color: "white",
-              fontSize: 14,
-              paddingVertical: 10
-            }}>
-            {Math.floor((((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24))) / 30)} months
-          </Text>
-        }
-        {
-          plan === 'month' && dueDate !== undefined &&
-          (Math.floor(((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))) < 30 &&
-          <Text
-            style={{
-              fontFamily: "MachineGunk",
-              color: "white",
-              fontSize: 14,
-              paddingVertical: 10
-            }}>
-            {Math.floor(((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))} days
-          </Text>
-        }
+
+        {plan === "default" &&
+          income * 0.2 <= price - invested &&
+          invested / price < 1 && (
+            <Text
+              style={{
+                fontFamily: "MachineGunk",
+                color: "white",
+                fontSize: 14,
+                paddingVertical: 10
+              }}
+            >
+              {Math.ceil((price - invested) / (income * 0.2))} months
+            </Text>
+          )}
+        {plan === "default" &&
+          income * 0.2 > price - invested &&
+          invested / price < 1 && (
+            <Text
+              style={{
+                fontFamily: "MachineGunk",
+                color: "white",
+                fontSize: 14,
+                paddingVertical: 10
+              }}
+            >
+              {Math.floor((new Date() - createdAt) / (1000 * 60 * 60 * 24))}{" "}
+              days
+            </Text>
+          )}
+        {plan === "money" &&
+          investing <= price - invested &&
+          invested / price < 1 && (
+            <Text
+              style={{
+                fontFamily: "MachineGunk",
+                color: "white",
+                fontSize: 14,
+                paddingVertical: 10
+              }}
+            >
+              {Math.ceil((price - invested) / investing)} months
+            </Text>
+          )}
+        {plan === "money" &&
+          investing > price - invested &&
+          invested / price < 1 && (
+            <Text
+              style={{
+                fontFamily: "MachineGunk",
+                color: "white",
+                fontSize: 14,
+                paddingVertical: 10
+              }}
+            >
+              {Math.floor((new Date() - createdAt) / (1000 * 60 * 60 * 24))}{" "}
+              days
+              {/* anjing */}
+              {/* {JSON.stringify(new Date())} */}
+              {/* {JSON.stringify(createdAt.toDate())} */}
+              {/* {JSON.stringify(new Date)} */}
+            </Text>
+          )}
+        {plan === "month" &&
+          dueDate !== undefined &&
+          Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) >=
+            30 &&
+          invested / price < 1 && (
+            <Text
+              style={{
+                fontFamily: "MachineGunk",
+                color: "white",
+                fontSize: 14,
+                paddingVertical: 10
+              }}
+            >
+              {Math.floor(
+                (dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24) / 30
+              )}{" "}
+              months
+            </Text>
+          )}
+        {plan === "month" &&
+          dueDate !== undefined &&
+          Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) <
+            30 &&
+          invested / price < 1 && (
+            <Text
+              style={{
+                fontFamily: "MachineGunk",
+                color: "white",
+                fontSize: 14,
+                paddingVertical: 10
+              }}
+            >
+              {Math.floor(
+                (dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)
+              )}{" "}
+              days
+            </Text>
+          )}
         <View
           style={{
             width: Dimensions.get("window").width,
@@ -277,7 +324,7 @@ const Plant = props => {
             <Image
               source={{
                 uri:
-                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage2.gif?alt=media&token=dd650c8d-5c88-448d-9972-5dba4a98b839"
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage3speed.gif?alt=media&token=45f871b9-7944-4229-a04e-c22707fd551e"
               }}
               style={{
                 width: "90%",
@@ -289,7 +336,7 @@ const Plant = props => {
             <Image
               source={{
                 uri:
-                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage3.gif?alt=media&token=f303186f-126b-4ed6-959c-36ba81bcb30e"
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage3speed.gif?alt=media&token=45f871b9-7944-4229-a04e-c22707fd551e"
               }}
               style={{
                 width: "90%",
@@ -301,7 +348,7 @@ const Plant = props => {
             <Image
               source={{
                 uri:
-                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage4.gif?alt=media&token=69e4989a-7c83-4321-9c7c-b7ebe4bdb0df"
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage4speed.gif?alt=media&token=a774282f-df60-4097-95a0-3ea4e7caea4e"
               }}
               style={{
                 width: "90%",
@@ -309,9 +356,24 @@ const Plant = props => {
                 borderRadius: (Dimensions.get("window").width * 0.9) / 2
               }}
             />
-          ) : invested / price <= 1 ? (
+          ) : invested / price < 1 ? (
             <Image
-              source={{ uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage5speed.gif?alt=media&token=e8fa0eaa-12eb-47d8-897e-84487b6698ba" }}
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage5speed.gif?alt=media&token=e8fa0eaa-12eb-47d8-897e-84487b6698ba"
+              }}
+              style={{
+                width: "90%",
+                height: "90%",
+                borderRadius: (Dimensions.get("window").width * 0.9) / 2
+              }}
+            />
+          ) : invested / price >= 1 ? (
+            <Image
+              source={{
+                uri:
+                  "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/money-vector-free-icon-set-38.png?alt=media&token=4d78601a-4124-40e2-be63-3f6b3eb3a8fa"
+              }}
               style={{
                 width: "90%",
                 height: "90%",
@@ -342,84 +404,130 @@ const Plant = props => {
           <Text style={styles.textBar}>Rp. {price.toLocaleString()}</Text>
         </View>
 
-        {
-          plan === "default" && (income * 0.2) <= (price - invested) &&
+        {plan === "default" &&
+          income * 0.2 <= price - invested &&
+          invested / price < 1 && (
+            <Text style={styles.sub}>Rp. {income * 0.2} per month</Text>
+          )}
+        {plan === "default" &&
+          income * 0.2 > price - invested &&
+          invested / price < 1 && (
+            <Text style={styles.sub}>Last watering: Rp {price - invested}</Text>
+          )}
+        {plan === "money" &&
+          investing <= price - invested &&
+          invested / price < 1 && (
+            <Text style={styles.sub}>Rp. {investing} per month</Text>
+          )}
+        {plan === "money" &&
+          investing > price - invested &&
+          invested / price < 1 && (
+            <Text style={styles.sub}>Last watering: Rp {price - invested}</Text>
+          )}
+        {plan === "month" &&
+          dueDate !== undefined &&
+          Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) >=
+            30 &&
+          invested / price < 1 && (
+            <Text style={styles.sub}>
+              Rp.{" "}
+              {(price - invested) /
+                Math.floor(
+                  (dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24) / 30
+                )}{" "}
+              per month
+            </Text>
+          )}
+        {plan === "month" &&
+          dueDate !== undefined &&
+          Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) <
+            30 &&
+          invested / price < 1 && (
+            <Text style={styles.sub}>Last watering: Rp {price - invested}</Text>
+          )}
+        {invested / price < 1 ? (
           <Text style={styles.sub}>
-            Rp. {income * 0.2} per month
+            Rp. {(price - invested).toLocaleString()} more to get {name}
           </Text>
-        }
-        {
-          plan === 'default' && (income * 0.2) > (price - invested) &&
-          <Text style={styles.sub}>
-            Last watering: Rp {price - invested}
-          </Text>
-        }
-        {
-          plan === 'money' && investing <= (price - invested) &&
-          <Text style={styles.sub}>
-            Rp. {investing} per month
-          </Text>
-        }
-        {
-          plan === 'money' && investing > (price - invested) &&
-          <Text style={styles.sub}>
-            Last watering: Rp {price - invested}
-          </Text>
-        }
-        {
-          plan === 'month' && dueDate !== undefined &&
-          (Math.floor(((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))) >= 30 &&
-          <Text style={styles.sub}>
-            Rp. {(price - invested) / Math.floor((((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24))) / 30)} per month
-          </Text>
-        }
-        {
-          plan === 'month' && dueDate !== undefined &&
-          (Math.floor(((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)))) < 30 &&
-          <Text style={styles.sub}>
-            Last watering: Rp {price - invested}
-          </Text>
-        }
+        ) : null}
 
-
-
-        <Text style={styles.sub}>
-          Rp. {(price - invested).toLocaleString()} more to get {name}
-        </Text>
-        <TouchableOpacity
-          style={{ ...styles.editButton, marginVertical: 5 }}
-          onPress={() => {
-            setModalVisible(true);
-          }}
-        >
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row"
+        {invested / price < 1 ? (
+          <TouchableOpacity
+            style={{ ...styles.editButton, marginVertical: 5 }}
+            onPress={() => {
+              setModalVisible(true);
             }}
           >
-            <Text style={styles.text}>WATER ME</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{ ...styles.button, backgroundColor: "#ffd02c", marginTop: 5 }}
-        >
-          <View
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row"
+              }}
+            >
+              <Text style={styles.text}>WATER ME</Text>
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
             style={{
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row"
+              ...styles.editButton,
+              backgroundColor: "rgb(219,141,38)",
+              borderWidth : 2,
+              borderColor : "#ffd02c",
+              marginVertical: 5
+            }}
+            onPress={() =>
+              Alert.alert(
+                "Are you sure ?",
+                "You will leave this app",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => handleApi(), style: "OK" }
+                ],
+                { cancelable: false }
+              )
+            }
+          >
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row"
+              }}
+            >
+              <Text style={styles.text}>BUY {name} !!</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        {invested / price < 1 ? (
+          <TouchableOpacity
+            style={{
+              ...styles.button,
+              backgroundColor: "#ffd02c",
+              marginTop: 5
             }}
           >
-            <SelectInput
-              value={options.value}
-              options={options}
-              labelStyle={{ ...styles.text, color: "black" }}
-              onSubmitEditing={val => handleSubmit(val)}
-            />
-          </View>
-        </TouchableOpacity>
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row"
+              }}
+            >
+              <SelectInput
+                value={options.value}
+                options={options}
+                labelStyle={{ ...styles.text, color: "black" }}
+                onSubmitEditing={val => handleSubmit(val)}
+              />
+            </View>
+          </TouchableOpacity>
+        ) : null}
       </View>
       <Modal
         animationType="fade"
