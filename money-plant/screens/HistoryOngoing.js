@@ -17,7 +17,6 @@ import NavigationDrawerStructure from '../components/NavigationDrawerStructure'
 
 // Firebase
 import db from '../api/firebase'
-import firebase from 'firebase/app'
 
 const HistoryOngoing = (props) => {
   useEffect(() => {
@@ -33,6 +32,7 @@ const HistoryOngoing = (props) => {
       db.firestore()
         .collection('plants')
         .where('uid', '==', uid)
+        .where('completed', '==', false)
         .get()
         .then(data => {
           let arr = []
