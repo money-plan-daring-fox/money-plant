@@ -45,9 +45,9 @@ const Garden = props => {
         <SafeAreaView style={{ flex: 1, backgroundColor: "#587E5B" }}>
             {
                 loading &&
-                <View style={{ height: Dimensions.get("window").width, justifyContent: "center" }}>
+               ( <View style={{ height: Dimensions.get("window").width, justifyContent: "center" }}>
                     <ActivityIndicator size="large" color="white" />
-                </View>
+                </View>)
             }
             {
                 !loading &&
