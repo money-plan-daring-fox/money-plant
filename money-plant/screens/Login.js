@@ -26,6 +26,7 @@ const Login = props => {
   const [income, setIncome] = useState("");
   const [registerPage, setRegisterPage] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [logoLoading, setLogoLoading] = useState(false);
 
   useEffect(() => {
     Font.loadAsync({
@@ -114,6 +115,8 @@ const Login = props => {
   return fontLoad ? (
     <View style={styles.container}>
       <Image
+        onLoadStart={() => setLogoLoading(true)}
+        onLoadEnd={() => setLogoLoading(false)}
         source={{
           uri:
             "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/logo.png?alt=media&token=0f0ed0be-e04d-472a-9191-4ba172b7311c"
@@ -124,6 +127,23 @@ const Login = props => {
         }}
         resizeMode="contain"
       />
+      {logoLoading && (
+        <View
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            opacity: 0.7,
+            backgroundColor: "#31422e",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <ActivityIndicator size="small" color="#ffd02c" animating={logoLoading} />
+        </View>
+      )}
       <View style={{ width: "100%", alignItems: "flex-end", marginRight: 100 }}>
         <View style={{ width: "50%" }}>
           <Text style={{ ...styles.text, textAlign: "right" }}>

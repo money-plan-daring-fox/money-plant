@@ -10,10 +10,10 @@ import {
   TextInput,
   SafeAreaView
 } from "react-native";
-import SelectInput from "react-native-select-input-ios";
 import { Tooltip, Text as ToolText } from "react-native-elements";
 import { Feather, EvilIcons, Ionicons } from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
+import SelectInput from "react-native-select-input-ios";
 
 const Plant = props => {
   let {
