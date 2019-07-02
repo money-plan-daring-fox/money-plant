@@ -10,7 +10,8 @@ import {
   TouchableOpacity,
   TextInput,
   SafeAreaView,
-  AsyncStorage
+  AsyncStorage,
+  ActivityIndicator
 } from "react-native";
 import RadioForm, {
   RadioButton,
@@ -33,13 +34,14 @@ const Profile = props => {
   const [value, setValue] = useState(0);
   const [income, setIncome] = useState(0);
   const [balance, setBalance] = useState(0);
-  const [balanceDatabase, setBalanceDatabase] = useState(0)
+  const [balanceDatabase, setBalanceDatabase] = useState(0);
   const [totalPlant, setTotalPlant] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
-const [uid, setUid] = useState("")
-const [concurrent, setConcurrent] = useState(0)
-const [id, setId] = useState("")
-const [user, setUser] = useState({})
+  const [uid, setUid] = useState("");
+  const [concurrent, setConcurrent] = useState(0);
+  const [id, setId] = useState("");
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const radio_props = [
     {
@@ -60,123 +62,55 @@ const [user, setUser] = useState({})
   ];
 
   function handleTopup() {
-    setModalVisible(false)
-    // console.log("aku disini gengs")
-    // console.log({uid})
-    // console.log("aku disini gengs")
+    setModalVisible(false);
 
-    // console.log("AKU KUMPULAN KONSOL==========")
-    // console.log({id})
-    // console.log({balance});
-    // console.log({balanceDatabase});
-    // console.log("AKU KUMPULAN KONSOL==========")
-    
-    console.log("tetew")
-    console.log(balance)
-    console.log(balanceDatabase)
-
-    user.balance = Number(balance) + Number(balanceDatabase)
+    user.balance = Number(balance) + Number(balanceDatabase);
 
     db.firestore()
-    .collection('users')
-    .doc(id)
-    .set(user)
-    .then(response => {
-      // console.log("handlletopup suskes uy")
-      // console.log(response)
-      alert("your balance has successfully been updated")
-    })
-    .catch(err => {
-      console.log("eh err mas ah enak")
-    })
-
+      .collection("users")
+      .doc(id)
+      .set(user)
+      .then(response => {
+        alert("your balance has successfully been updated");
+      })
+      .catch(err => {
+        console.log("eh err mas ah enak");
+      });
   }
 
   const onPress = data => setCards({ data });
 
   useEffect(() => {
     Promise.all([AsyncStorage.getItem("email"), AsyncStorage.getItem("uid")])
-    .then(([email, uid]) => {
-      setEmail(email)
-      setUid(uid)
-      console.log("ini uid")
-      console.log(uid)
-      console.log("ini uid")
-
-      return uid
-    })
-    .then(uid => {
-      console.log('ini uid setelah then', uid)
-      db.firestore()
-      .collection("users")
-      .where('uid', '==', uid)
-      .onSnapshot(docs => {
-        console.log("udah masuk firestore nih hehe")
-        docs.forEach(el => {
-          setId(el.id)
-          setBalanceDatabase(el.data().balance)
-          setUser(el.data())
-          setEmail(el.data().email)
-          setIncome(el.data().income)
-        })
+      .then(([email, uid]) => {
+        setEmail(email);
+        return uid;
       })
-    })
-    
-
-
-
-    // .then(e => {
-//       setEmail(e);
-//     });
-
-//         .then(e => {
-//           setUid(e)
-//           db.firestore()
-//           .collection("users")
-//           .where("uid", '==', uid)
-//           .onSnapshot(docs => {
-//             // console.log("aku si katanya balance")
-// // console.log(data.balance)
-//             // console.log("aku si katanya balance")
-//             // console.log('hai aku id');
-//             docs.forEach(el => {
-//               console.log("aku foreach")
-//               console.log(el.id)
-//               setId(el.id)
-//               console.log("aku foreach")
-//               setBalanceDatabase(el.data().balance)
-//             })
-//             // console.log(data.id)
-//             // setId(data.id)
-//             // setBalanceDatabase(data.balance)
-//         })
-
-//       })
+      .then(uid => {
+        console.log("ini uid setelah then", uid);
+        db.firestore()
+          .collection("users")
+          .where("uid", "==", uid)
+          .onSnapshot(docs => {
+            console.log("udah masuk firestore nih hehe");
+            docs.forEach(el => {
+              setId(el.id);
+              setBalanceDatabase(el.data().balance);
+              setUser(el.data());
+              setEmail(el.data().email);
+              setIncome(el.data().income);
+            });
+          });
+      });
   }, []);
-
-  // db.firestore()
-  //   .collection("users")
-  //   .where("email", "==", email)
-  //   .get()
-  //   .then(data => {
-  //     data.forEach(async item => {
-  //       const { balance, email, income } = item.data();
-  //       setBalance(balance);
-  //       setEmail(email);
-  //       setIncome(income);
-  //       // setUser()
-  //       // console.log(item.data(), "===========");
-  //     });
-  //   });
 
   return (
     <View style={styles.container}>
       <View
         style={{
-          backgroundColor: "#587e5b",
+          backgroundColor: "#31422e",
           justifyContent: "center",
-          alignItems: "center",
-          paddingBottom: 10
+          alignItems: "center"
         }}
       >
         <Text style={styles.text}>Hello,</Text>
@@ -189,25 +123,52 @@ const [user, setUser] = useState({})
           alignItems: "center"
         }}
       >
-        <Image
-          source={{
-            uri: "https://avatars2.githubusercontent.com/u/46883609?s=460&v=4"
-          }}
-          style={{
-            width: "90%",
-            height: "90%",
-            borderRadius: (Dimensions.get("window").width * 0.9) / 2
-          }}
-        />
+        {loading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <View
+            style={{
+              width: Dimensions.get("window").width,
+              height: Dimensions.get("window").width,
+              alignItems: "center"
+            }}
+          >
+            <Image
+              source={{
+                uri:
+                  "https://cdn.dribbble.com/users/1252358/screenshots/2923669/one-man-punch.gif"
+              }}
+              style={{
+                width: "90%",
+                height: "90%",
+                opacity: 0.2,
+                borderRadius: (Dimensions.get("window").width * 0.9) / 2,
+                position: "absolute"
+              }}
+            />
+            <View style={{ justifyContent: "center" }}>
+              <Image
+                source={{
+                  uri: "https://img.icons8.com/ios/344/lock-filled.png"
+                }}
+                style={{
+                  width: 50,
+                  height: 50,
+                  position: "relative"
+                }}
+              />
+            </View>
+          </View>
+        )}
+
         <View
           style={{
-            backgroundColor: "#587e5b",
-            paddingVertical: 10,
+            backgroundColor: "#31422e",
             paddingHorizontal: 10,
             alignSelf: "flex-start"
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "baseline"}}>
+          <View style={{ flexDirection: "row", alignItems: "baseline" }}>
             <Text style={styles.text}>Settings</Text>
             <AntDesign
               style={{ paddingLeft: 5 }}
@@ -218,7 +179,10 @@ const [user, setUser] = useState({})
             <Text style={styles.text}> : </Text>
           </View>
           <View style={{ paddingVertical: 10 }}>
-            <Text style={{...styles.sub, paddingBottom : 5}}> Monthly Income </Text>
+            <Text style={{ ...styles.sub, paddingBottom: 5 }}>
+              {" "}
+              Monthly Income{" "}
+            </Text>
             <View
               style={{
                 flexDirection: "row",
@@ -255,12 +219,14 @@ const [user, setUser] = useState({})
                   </View>
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity style={{...styles.editButton, marginLeft : 5}}>
+                <TouchableOpacity
+                  style={{ ...styles.editButton, marginLeft: 5 }}
+                >
                   <View
                     style={{
                       justifyContent: "center",
                       alignSelf: "center",
-                      flexDirection: "row",
+                      flexDirection: "row"
                     }}
                   >
                     <Text style={styles.text} onPress={() => setState("edit")}>
@@ -344,7 +310,7 @@ const [user, setUser] = useState({})
               placeholderTextColor="rgba(255,255,255,0.7)"
               id="amount"
               style={styles.input}
-              onChangeText={(text) => setBalance(text)}
+              onChangeText={text => setBalance(text)}
             />
             <View style={{ paddingVertical: 10, alignSelf: "center" }}>
               <Text style={{ ...styles.sub, textAlign: "center" }}>
@@ -404,7 +370,7 @@ const styles = {
   container: {
     flex: 1,
     paddingVertical: 20,
-    backgroundColor: "#587e5b",
+    backgroundColor: "#31422e",
     alignItems: "center"
   },
   text: { fontFamily: "PingFangHK-Light", fontSize: 12, color: "#f6f4f2" },

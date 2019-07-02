@@ -68,7 +68,7 @@ const PlantList = ({ props, item }) => {
               fontFamily: "MachineGunk",
               textAlign: "center",
               color: "#fff",
-              paddingTop: 10
+              paddingTop: 20
             }}
           >
             Plant new seed!

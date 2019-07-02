@@ -53,7 +53,7 @@ const drawerStyle = {
         setIncome(incomeKu);
       });
       AsyncStorage.getItem("balance").then(balanceKu => {
-        setBalance(balance);
+        setBalance(balanceKu);
       });
     }, []);
 
