@@ -27,6 +27,7 @@ import {
 import db from "../api/firebase";
 // Drawer
 import NavigationDrawerStructure from "../components/NavigationDrawerStructure";
+import Carousel from "react-native-snap-carousel";
 
 const Profile = props => {
   const [state, setState] = useState("view");
@@ -43,6 +44,23 @@ const Profile = props => {
   const [id, setId] = useState("");
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
+  const [entries, setEntries] = useState([
+    {
+      url:
+        "https://cdn.dribbble.com/users/1632728/screenshots/4693038/profilepic_dribbble.gif",
+      opacity: 1
+    },
+    {
+      url:
+        "https://cdn.dribbble.com/users/2764754/screenshots/5507524/dribbblemichael2.gif",
+      locked: true
+    },
+    {
+      url:
+        "https://cdn.dribbble.com/users/1252358/screenshots/2923669/one-man-punch.gif",
+      locked: true
+    }
+  ]);
 
   const radio_props = [
     {
@@ -61,6 +79,44 @@ const Profile = props => {
       value: "paypal"
     }
   ];
+
+  const renderItem = ({ item, index }) => {
+    return (
+      <View
+        style={{
+          width: Dimensions.get("window").width,
+          height: Dimensions.get("window").width,
+          alignItems: "center"
+        }}
+      >
+        <Image
+          source={{ uri: item.url }}
+          style={{
+            width: "90%",
+            height: "90%",
+            opacity: item.opacity,
+            borderRadius: (Dimensions.get("window").width * 0.9) / 2,
+            position: "absolute"
+          }}
+        />
+        <View style={{ justifyContent: "center" }}>
+          {item.locked === true ? (
+            <Image
+              source={{
+                uri: "https://img.icons8.com/ios/344/lock-filled.png"
+              }}
+              style={{
+                marginTop : 50,
+                width: 50,
+                height: 50,
+                position: "relative"
+              }}
+            />
+          ) : null}
+        </View>
+      </View>
+    );
+  };
 
   function handleTopup() {
     setModalVisible(false);
@@ -147,7 +203,20 @@ const Profile = props => {
         {loading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <View
+          <View style={{ height: Dimensions.get("window").height / 2.3 }}>
+            <Carousel
+              ref={c => {
+                this._carousel = c;
+              }}
+              data={entries}
+              renderItem={renderItem}
+              sliderWidth={Dimensions.get("window").width}
+              itemWidth={Dimensions.get("window").width}
+              layout="stack"
+            />
+          </View>
+
+          /* <View
             style={{
               width: Dimensions.get("window").width,
               height: Dimensions.get("window").width,
@@ -179,7 +248,7 @@ const Profile = props => {
                 }}
               />
             </View>
-          </View>
+          </View> */
         )}
 
         <View
