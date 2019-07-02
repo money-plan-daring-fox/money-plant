@@ -31,6 +31,7 @@ import NavigationDrawerStructure from "../components/NavigationDrawerStructure";
 const Profile = props => {
   const [state, setState] = useState("view");
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [value, setValue] = useState(0);
   const [income, setIncome] = useState(0);
   const [balance, setBalance] = useState(0);
@@ -64,44 +65,64 @@ const Profile = props => {
   function handleTopup() {
     setModalVisible(false);
 
-    user.balance = Number(balance) + Number(balanceDatabase);
+    // console.log("AKU KUMPULAN KONSOL==========")
+    // console.log({id})
+    // console.log({balance});
+    // console.log({balanceDatabase});
+    // console.log("AKU KUMPULAN KONSOL==========")
+
+    console.log("tetew")
+    console.log(balance)
+    console.log(balanceDatabase)
+
+    user.balance = Number(balance) + Number(balanceDatabase)
 
     db.firestore()
-      .collection("users")
+      .collection('users')
       .doc(id)
       .set(user)
       .then(response => {
-        alert("your balance has successfully been updated");
+        // console.log("handlletopup suskes uy")
+        // console.log(response)
+        alert("your balance has successfully been updated")
       })
       .catch(err => {
-        console.log("eh err mas ah enak");
-      });
+        console.log("eh err mas ah enak")
+      })
+
   }
 
   const onPress = data => setCards({ data });
 
   useEffect(() => {
-    Promise.all([AsyncStorage.getItem("email"), AsyncStorage.getItem("uid")])
-      .then(([email, uid]) => {
-        setEmail(email);
-        return uid;
+    Promise.all([AsyncStorage.getItem("email"), AsyncStorage.getItem("uid"), AsyncStorage.getItem("name")])
+      .then(([email, uid, name]) => {
+        setEmail(email)
+        setUid(uid)
+        setName(name)
+        // console.log("ini uid")
+        // console.log(uid)
+        // console.log("ini uid")
+
+        return uid
       })
       .then(uid => {
-        console.log("ini uid setelah then", uid);
+        // console.log('ini uid setelah then', uid)
         db.firestore()
           .collection("users")
-          .where("uid", "==", uid)
+          .where('uid', '==', uid)
           .onSnapshot(docs => {
-            console.log("udah masuk firestore nih hehe");
+            // console.log("udah masuk firestore nih hehe")
             docs.forEach(el => {
-              setId(el.id);
-              setBalanceDatabase(el.data().balance);
-              setUser(el.data());
-              setEmail(el.data().email);
-              setIncome(el.data().income);
-            });
-          });
-      });
+              setId(el.id)
+              setName(el.data().name)
+              setBalanceDatabase(el.data().balance)
+              setUser(el.data())
+              setEmail(el.data().email)
+              setIncome(el.data().income)
+            })
+          })
+      })
   }, []);
 
   return (
@@ -114,7 +135,7 @@ const Profile = props => {
         }}
       >
         <Text style={styles.text}>Hello,</Text>
-        <Text style={styles.header}>{email}</Text>
+        <Text style={styles.header}>{name}</Text>
       </View>
       <View
         style={{
@@ -197,13 +218,13 @@ const Profile = props => {
                   placeholderTextColor="#f6f4f2"
                 />
               ) : (
-                <Text style={styles.value}>
-                  {parseInt(income).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })}
-                </Text>
-              )}
+                  <Text style={styles.value}>
+                    {parseInt(income).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
+                  </Text>
+                )}
               {state === "edit" ? (
                 <TouchableOpacity style={styles.submitButton}>
                   <View
@@ -219,22 +240,20 @@ const Profile = props => {
                   </View>
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity
-                  style={{ ...styles.editButton, marginLeft: 5 }}
-                >
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      alignSelf: "center",
-                      flexDirection: "row"
-                    }}
-                  >
-                    <Text style={styles.text} onPress={() => setState("edit")}>
-                      EDIT
+                  <TouchableOpacity style={{ ...styles.editButton, marginLeft: 5 }}>
+                    <View
+                      style={{
+                        justifyContent: "center",
+                        alignSelf: "center",
+                        flexDirection: "row",
+                      }}
+                    >
+                      <Text style={styles.text} onPress={() => setState("edit")}>
+                        EDIT
                     </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
+                    </View>
+                  </TouchableOpacity>
+                )}
             </View>
           </View>
           <View

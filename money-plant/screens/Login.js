@@ -24,6 +24,7 @@ const Login = props => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [income, setIncome] = useState("");
+  const [name, setName] = useState("")
   const [registerPage, setRegisterPage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [logoLoading, setLogoLoading] = useState(false);
@@ -47,12 +48,13 @@ const Login = props => {
         .get()
         .then(data => {
           data.forEach( item => {
-            const { balance, email, income, uid, concurrent } = item.data();
-
+            const { balance, email, income, uid, concurrent, name } = item.data();
+            console.log({ name })
             let newUid = uid == null ? "" : uid;
             AsyncStorage.setItem("id", item.id);
-            AsyncStorage.setItem("balance", balance.toString());
-            AsyncStorage.setItem("concurrent", concurrent.toString())
+            AsyncStorage.setItem("name", name);
+            AsyncStorage.setItem("balance", balance);
+            AsyncStorage.setItem("concurrent", concurrent)
             AsyncStorage.setItem("email", email);
             AsyncStorage.setItem("income", income);
             AsyncStorage.setItem("uid", newUid);
@@ -72,14 +74,15 @@ const Login = props => {
       setLoading(false);
     }
   };
-  const signup = async (email, pass, income) => {
+  const signup = async (email, pass, income, name) => {
     setLoading(true);
+    console.log({name})
     try {
       const user = await firebase
         .auth()
         .createUserWithEmailAndPassword(email, pass);
       let newUser = {
-        email,
+        email, name,
         balance: 0,
         concurrent: 0,
         plants: [],
@@ -164,15 +167,29 @@ const Login = props => {
             }}
           >
             <TextInput
-              placeholder="username or email"
+              placeholder="email"
               placeholderTextColor="rgba(255,255,255,0.7)"
               id="email"
               style={styles.input}
-              onSubmitEditing={() => this.password.focus()}
+              onSubmitEditing={() => this.name.focus()}
               returnKeyType={"next"}
               blurOnSubmit={false}
               value={email}
               onChangeText={text => setEmail(text)}
+            />
+            <TextInput
+              placeholder="name"
+              placeholderTextColor="rgba(255,255,255,0.7)"
+              id="name"
+              onChangeText={text => setName(text)}
+              onSubmitEditing={() => this.password.focus()}
+              returnKeyType={"next"}
+              blurOnSubmit={false}
+              style={styles.input}
+              value={name}
+              ref={input => {
+                this.name = input;
+              }}
             />
             <TextInput
               placeholder="password"
@@ -203,12 +220,16 @@ const Login = props => {
             <View style={{ alignItems: "center" }}>
               <TouchableOpacity
                 onPress={async () => {
-                  await signup(email, password, income);
+                  await signup(email, password, income, name);
                   await signin(email, password);
                 }}
                 style={styles.button2}
               >
-                <Text style={styles.text}>Register</Text>
+                {
+                  loading
+                  ? <ActivityIndicator size="small" color="#fff"/>
+                  : <Text style={styles.text}>Register</Text>
+                }
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setRegisterPage(false)}
@@ -241,7 +262,7 @@ const Login = props => {
             }}
           >
             <TextInput
-              placeholder="username or email"
+              placeholder="email"
               placeholderTextColor="rgba(255,255,255,0.7)"
               id="email"
               value={email}

@@ -162,7 +162,7 @@ const Plant = props => {
 
   useEffect(() => {
     AsyncStorage.getItem("income").then(incomeKu => {
-      console.log("income", incomeKu);
+      // console.log("income", incomeKu);
       setIncome(incomeKu);
     });
 
