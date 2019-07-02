@@ -156,7 +156,7 @@ const HistoryCompleted = (props) => {
                               flex: 1
                             }}
                           >
-                            createdAt: {JSON.stringify(Date(item.createdAt))}
+                            createdAt: {Date(item.createdAt)}
                           </Text>
                           <Text
                             style={{
@@ -165,7 +165,7 @@ const HistoryCompleted = (props) => {
                               flex: 1
                             }}
                           >
-                            updatedAt: {JSON.stringify(Date(item.updatedAt))}
+                            updatedAt: {Date(item.updatedAt)}
                           </Text>
                         </View>
                       </TouchableOpacity>
