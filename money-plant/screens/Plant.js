@@ -18,6 +18,7 @@ import { Feather, EvilIcons, Ionicons } from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
 import SelectInput from "react-native-select-input-ios";
 import db from "../api/firebase";
+import firebase from 'firebase'
 import axios from "axios";
 
 const Plant = props => {
@@ -34,7 +35,9 @@ const Plant = props => {
     // uid,
     // history
   } = props.navigation.getParam("item");
-  console.log(id);
+  // console.log(id);
+  const investingProps = props.navigation.getParam("item").investing
+
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState(1);
@@ -60,6 +63,7 @@ const Plant = props => {
   const [income, setIncome] = useState(0);
   const [amount, setAmount] = useState(0);
 
+  const [investingPerMonthDatabase, setInvestingPerMonth] = useState(0)
   const [coba, setCoba] = useState("");
 
   const [userId, setUserId] = useState('')
@@ -68,7 +72,14 @@ const Plant = props => {
     AsyncStorage.getItem("id")
     .then(idKu => {
       setUserId(idKu)
+      db.firestore()
+      .collection("users")
+      .doc(idKu)
+      .onSnapshot(doc => {
+        setInvestingPerMonth(doc.data().totalInvestingPerMonth)
+      })
     })
+
   })
 
   const handleApi = () => {
@@ -132,6 +143,12 @@ const Plant = props => {
         input.dueDate = dueDate;
       }
 
+      console.log("INFO UPDATE TOTALINEVSTINGPERMONTH")
+      console.log(investingPerMonthDatabase)
+      console.log(input.investing)
+      console.log(investingProps)
+      console.log("INFO UPDATE TOTALINEVSTINGPERMONTH")
+
       db.firestore()
         .collection("plants")
         .doc(id)
@@ -139,6 +156,12 @@ const Plant = props => {
         .then(() => {
           console.log("update berhasil uy");
           setModalVisible(false);
+          // db.firestore()
+          // .collection('users')
+          // .doc(userId)
+          // .update({
+          //   totalInvestingPerMonth: firebase.firestore.FieldValue.increment(investingPerMonthDatabase + (input.investing - investingProps))
+          // })
         })
         .catch(err => {
           console.log("update error uy", err);
@@ -188,6 +211,7 @@ const Plant = props => {
   }, []);
 
   const deletePlant = () => {
+    // console.log(userId)
     Alert.alert(
       `Are You Sure To Kill ${name}? 😭`,
       'really really sure?',
@@ -206,15 +230,19 @@ const Plant = props => {
               .doc(id)
               .delete()
               .then(() => {
+                console.log("masuk then")
+                console.log(userId)
                 db.firestore()
                   .collection('users')
                   .doc(userId)
                   .update({
-                    totalInvestingPerMonth: firebase.firestore.FieldValue.increment-investing
+                    totalInvestingPerMonth: firebase.firestore.FieldValue.increment(Number(investing) * -1)
                   })
                   .then(() => {
+                    console.log("ini thennya user")
+                    console.log(Number(investing) * -1)
                     alert(`Plant has successfully deleted`)
-                    props.navigation.navigate('Garden')
+                    props.navigation.navigate('Garden')(-Number(investing))
                   })
             })
             .catch(err => {

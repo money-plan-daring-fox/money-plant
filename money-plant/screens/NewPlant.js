@@ -29,6 +29,7 @@ const NewPlant = props => {
   const [uid, setUid] = useState("");
   const [loading, setLoading] = useState(false);
   const [id, setId] = useState('');
+  const [investingPerMonthDatabase, setInvestingPerMonthDatabase] = useState(0)
 
   function getPriceRecommendation(name) {
     setLoading(true);
@@ -56,7 +57,19 @@ const NewPlant = props => {
       setIncome(incomeKu);
       setUid(uidKu);
       setId(idKu)
-    });
+      return idKu
+    })
+    .then(id => {
+      console.log('aku use effect')
+      console.log(id)
+      db.firestore()
+      .collection("users")
+      .doc(id)
+      .onSnapshot(user => {
+        console.log(user.data())
+        setInvestingPerMonthDatabase(user.data().totalInvestingPerMonth)
+      })
+    })
   }, []);
 
   // VALIDASI PLAN B DAN C HARUS MEMUNGKINKAN DENGAN INCOME USER
@@ -84,8 +97,7 @@ const NewPlant = props => {
     };
 
     let dueDate = new Date();
-    console.log("before")
-    console.log(dueDate)
+    
     if (planInput === "default") {
       dueDate.setMonth(
         dueDate.getMonth() + Math.ceil(priceInput / (income * 0.2))
@@ -94,29 +106,40 @@ const NewPlant = props => {
       input.deadline = Math.ceil(priceInput / (income * 0.2)) * 30;
     } else if (planInput === "money") {
       dueDate.setMonth(dueDate.getMonth() + price / investingInput);
-      input.investing = investingInput;
+      input.investing = Number(investingInput);
       input.deadline = (price / investingInput) * 30;
-      if((income) < investing){
-        return alert(`Your current income (${income}) is less than the monthly payment ${investingInput}`)
+      if(Number(income) < Number(investingInput)){
+        return alert(`ini income ${income}, ini investing ${investing}, ini investingInput ${investingInput}`)
       } else {
         console.log('tembak firestore cieeeee');
       }
 
     } else if (planInput === "month") {
       dueDate.setMonth(dueDate.getMonth() + Number(deadlineInput));
-      input.investing = priceInput / deadlineInput;
+      input.investing = Number(priceInput / deadlineInput);
       input.deadline = Number(deadlineInput) * 30;
-      if((income) < (priceInput / deadlineInput)){
+      if(Number(income) < Number(priceInput / deadlineInput)){
         return alert(`Your current income (${income}) is less than the monthly payment (${priceInput / deadlineInput})`)
       } else {
         console.log('tembak firestore cieeeee');
       }
-
     }
-    console.log('after')
-    console.log(dueDate)
-    
 
+    // console.log("LIHAT AKU MAS")
+    // console.log(income)
+    // console.log(investingPerMonthDatabase)
+    // console.log(input.investing)
+    // console.log("LIHAT AKU MAS")
+
+    // console.log(income)
+    // console.log(investingPerMonthDatabase)
+    // console.log(input.investing)
+    if(Number(income) < Number(investingPerMonthDatabase) + Number(input.investing)) return alert("Your current income is insufficient")
+    // console.log("liat aku mas")
+    // console.log(input)
+    // console.log(input.investing)
+
+    console.log("liat aku mas")
 
     input.dueDate = dueDate;
     db.firestore()
@@ -137,7 +160,8 @@ const NewPlant = props => {
       })
       .catch(err => {
         console.log(input)
-        console.log(planInput, "fail uy");
+        console.log("fail firestore")
+        // console.log(planInput, "fail uy");
       });
   };
   return (
