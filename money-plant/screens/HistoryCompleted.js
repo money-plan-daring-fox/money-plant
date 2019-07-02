@@ -92,7 +92,7 @@ const HistoryCompleted = (props) => {
                         <View style={{ flex: 1.5, /* backgroundColor: 'cornflowerblue' */ }}>
                           <Image style={{ height: "100%", width: "100%", }}
                             resizeMode="contain"
-                            source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-21.png?alt=media&token=ee490201-09a9-4c6f-ae12-d252ed6b2c02' }} />
+                            source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-29.png?alt=media&token=c1ddcda5-0a98-4c5f-aa80-1d6cfdd47a65' }} />
                         </View>
                         <View style={{ flex: 3.5, padding: 15, /* backgroundColor: 'aquamarine' */ }}>
                           <Text
