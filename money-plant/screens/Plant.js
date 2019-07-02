@@ -50,6 +50,7 @@ const Plant = props => {
   const [stateid, setId] = useState("");
   const [uid, setUid] = useState("");
   const [history, setHistory] = useState("");
+  const [completed, setCompleted] = useState(false)
 
   const [touched, setTouched] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -70,15 +71,15 @@ const Plant = props => {
 
   useEffect(() => {
     AsyncStorage.getItem("id")
-    .then(idKu => {
-      setUserId(idKu)
-      db.firestore()
-      .collection("users")
-      .doc(idKu)
-      .onSnapshot(doc => {
-        setInvestingPerMonth(doc.data().totalInvestingPerMonth)
+      .then(idKu => {
+        setUserId(idKu)
+        db.firestore()
+          .collection("users")
+          .doc(idKu)
+          .onSnapshot(doc => {
+            setInvestingPerMonth(doc.data().totalInvestingPerMonth)
+          })
       })
-    })
 
   })
 
@@ -96,10 +97,6 @@ const Plant = props => {
   };
 
   const handleInputAmount = method => {
-    // method === "recommended"
-    //   ?
-    //   alert("proses perhitungan recommended dijalankan yaaa ")
-    //   :
     if (method === "recommended") {
     } else if (method === "manual") {
       let input = {
@@ -118,13 +115,13 @@ const Plant = props => {
         completed: false
       };
 
-      if (invested + amount == price) input.completed = true;
+      if (invested + amount >= price) input.completed = true;
 
       let newDueDate = new Date();
       if (plan === "default") {
         newDueDate.setMonth(
           newDueDate.getMonth() +
-            Math.ceil((price - (invested + amount)) / (income * 0.2))
+          Math.ceil((price - (invested + amount)) / (income * 0.2))
         );
         input.investing = income * 0.2;
         input.deadline =
@@ -141,31 +138,65 @@ const Plant = props => {
         input.investing =
           (price - (invested + amount)) / Math.round(deadline / 30);
         input.dueDate = dueDate;
+        input.deadline = deadline
       }
 
-      console.log("INFO UPDATE TOTALINEVSTINGPERMONTH")
-      console.log(investingPerMonthDatabase)
-      console.log(input.investing)
-      console.log(investingProps)
-      console.log("INFO UPDATE TOTALINEVSTINGPERMONTH")
+      if (input.completed === true && input.plan !== "month") {
+        db.firestore()
+          .collection("plants")
+          .doc(id)
+          .set(input)
+          .then(() => {
+            console.log("update berhasil uy");
+            setModalVisible(false);
+            db.firestore()
+              .collection('users')
+              .doc(userId)
+              .update({
+                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(investing * -1)
+              })
+          })
+          .catch(err => {
+            console.log("update error uy", err);
+          });
+      } else if (input.completed === false && input.plan !== "month") {
+        db.firestore()
+          .collection("plants")
+          .doc(id)
+          .set(input)
+          .then(() => {
+            console.log("update berhasil uy");
+            setModalVisible(false);
+          })
+          .catch(err => {
+            console.log("update error uy", err);
+          });
+      } else if (input.plan === "month") {
+        db.firestore()
+          .collection("plants")
+          .doc(id)
+          .set(input)
+          .then(() => {
+            console.log("update berhasil uy");
+            setModalVisible(false);
+            console.log("WOOOOOHOOOOOO")
+            console.log(price)
+            console.log(invested)
+            console.log(amount)
+            console.log(deadline)
+            console.log("WOOOOOHOOOOOO")
+            db.firestore()
+              .collection("users")
+              .doc(userId)
+              .update({
+                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(((price - (invested + amount)) / Math.round(deadline / 30)) - ((price - invested) / Math.round(deadline / 30)))
+              })
+          })
+          .catch(err => {
+            console.log("update error uy", err);
+          });
+      }
 
-      db.firestore()
-        .collection("plants")
-        .doc(id)
-        .set(input)
-        .then(() => {
-          console.log("update berhasil uy");
-          setModalVisible(false);
-          // db.firestore()
-          // .collection('users')
-          // .doc(userId)
-          // .update({
-          //   totalInvestingPerMonth: firebase.firestore.FieldValue.increment(investingPerMonthDatabase + (input.investing - investingProps))
-          // })
-        })
-        .catch(err => {
-          console.log("update error uy", err);
-        });
     }
   };
 
@@ -179,26 +210,23 @@ const Plant = props => {
         { value: 3, label: "Rp/month" }
       ]);
     }
-
-    //JALANIN PROSES PERHITUNGAN DISINI
   };
 
   useEffect(() => {
     AsyncStorage.getItem("income").then(incomeKu => {
-      // console.log("income", incomeKu);
-      setIncome(incomeKu);
+      setIncome(Number(incomeKu));
     });
 
     db.firestore()
       .collection("plants")
       .doc(id)
       .onSnapshot(plant => {
-        if(plant.data()){
+        if (plant.data()) {
           setCoba({ ...plant.data(), id: plant.id });
           setName(plant.data().name);
-          setPrice(plant.data().price);
+          setPrice(Number(plant.data().price));
           setDeadline(plant.data().deadline);
-          setInvested(plant.data().invested);
+          setInvested(Number(plant.data().invested));
           setInvesting(plant.data().investing);
           setCurrentPlan(plant.data().plan);
           setDueDate(plant.data().dueDate);
@@ -206,12 +234,12 @@ const Plant = props => {
           setId(plant.id);
           setUid(plant.data().uid);
           setHistory(plant.data().history);
+          setCompleted(plant.data().completed)
         }
       });
   }, []);
 
   const deletePlant = () => {
-    // console.log(userId)
     Alert.alert(
       `Are You Sure To Kill ${name}? 😭`,
       'really really sure?',
@@ -221,35 +249,64 @@ const Plant = props => {
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel"
         },
-        { 
+        {
           style: "OK",
-          text: "OK", 
+          text: "OK",
           onPress: () => {
-            db.firestore()
-              .collection('plants')
-              .doc(id)
-              .delete()
-              .then(() => {
-                console.log("masuk then")
-                console.log(userId)
-                db.firestore()
-                  .collection('users')
-                  .doc(userId)
-                  .update({
-                    totalInvestingPerMonth: firebase.firestore.FieldValue.increment(Number(investing) * -1)
-                  })
-                  .then(() => {
-                    console.log("ini thennya user")
-                    console.log(Number(investing) * -1)
-                    alert(`Plant has successfully deleted`)
-                    props.navigation.navigate('Garden')(-Number(investing))
-                  })
-            })
-            .catch(err => {
-              console.log(err)
-            })
+            if (completed === true) {
+              db.firestore()
+                .collection("plants")
+                .doc(id)
+                .delete()
+                .then(() => {
+                  props.navigation.navigate("Garden")
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+            } else if (completed === false && plan !== "month") {
+              db.firestore()
+                .collection('plants')
+                .doc(id)
+                .delete()
+                .then(() => {
+                  db.firestore()
+                    .collection('users')
+                    .doc(userId)
+                    .update({
+                      totalInvestingPerMonth: firebase.firestore.FieldValue.increment(Number(investing) * -1)
+                    })
+                    .then(() => {
+                      alert(`Plant has successfully deleted`)
+                      props.navigation.navigate('Garden')(-Number(investing))
+                    })
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+            } else if (completed === false && plan === "month") {
+              db.firestore()
+                .collection('plants')
+                .doc(id)
+                .delete()
+                .then(() => {
+                  db.firestore()
+                    .collection('users')
+                    .doc(userId)
+                    .update({
+                      totalInvestingPerMonth: firebase.firestore.FieldValue.increment(Number(investing) * -1)
+                    })
+                    .then(() => {
+                      alert(`Plant has successfully deleted`)
+                      props.navigation.navigate('Garden')(-Number(investing))
+                    })
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+            }
           },
-       }
+        }
       ],
       { cancelable: false }
     )
@@ -337,16 +394,12 @@ const Plant = props => {
             >
               {Math.floor((new Date() - createdAt) / (1000 * 60 * 60 * 24))}{" "}
               days
-              {/* anjing */}
-              {/* {JSON.stringify(new Date())} */}
-              {/* {JSON.stringify(createdAt.toDate())} */}
-              {/* {JSON.stringify(new Date)} */}
             </Text>
           )}
         {plan === "month" &&
           dueDate !== undefined &&
           Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) >=
-            30 &&
+          30 &&
           invested / price < 1 && (
             <Text
               style={{
@@ -365,7 +418,7 @@ const Plant = props => {
         {plan === "month" &&
           dueDate !== undefined &&
           Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) <
-            30 &&
+          30 &&
           invested / price < 1 && (
             <Text
               style={{
@@ -507,7 +560,7 @@ const Plant = props => {
         {plan === "month" &&
           dueDate !== undefined &&
           Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) >=
-            30 &&
+          30 &&
           invested / price < 1 && (
             <Text style={styles.sub}>
               Rp.{" "}
@@ -521,7 +574,7 @@ const Plant = props => {
         {plan === "month" &&
           dueDate !== undefined &&
           Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) <
-            30 &&
+          30 &&
           invested / price < 1 && (
             <Text style={styles.sub}>Last watering: Rp {price - invested}</Text>
           )}
@@ -549,41 +602,41 @@ const Plant = props => {
             </View>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            style={{
-              ...styles.editButton,
-              backgroundColor: "rgb(219,141,38)",
-              borderWidth : 2,
-              borderColor : "#ffd02c",
-              marginVertical: 5
-            }}
-            onPress={() =>
-              Alert.alert(
-                "Are you sure ?",
-                "You will leave this app",
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                  },
-                  { text: "OK", onPress: () => handleApi(), style: "OK" }
-                ],
-                { cancelable: false }
-              )
-            }
-          >
-            <View
+            <TouchableOpacity
               style={{
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "row"
+                ...styles.editButton,
+                backgroundColor: "rgb(219,141,38)",
+                borderWidth: 2,
+                borderColor: "#ffd02c",
+                marginVertical: 5
               }}
+              onPress={() =>
+                Alert.alert(
+                  "Are you sure ?",
+                  "You will leave this app",
+                  [
+                    {
+                      text: "Cancel",
+                      onPress: () => console.log("Cancel Pressed"),
+                      style: "cancel"
+                    },
+                    { text: "OK", onPress: () => handleApi(), style: "OK" }
+                  ],
+                  { cancelable: false }
+                )
+              }
             >
-              <Text style={styles.text}>BUY {name} !!</Text>
-            </View>
-          </TouchableOpacity>
-        )}
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "row"
+                }}
+              >
+                <Text style={styles.text}>BUY {name} !!</Text>
+              </View>
+            </TouchableOpacity>
+          )}
         {invested / price < 1 ? (
           <TouchableOpacity
             style={{

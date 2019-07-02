@@ -16,15 +16,15 @@ const PlantList = ({ props, item }) => {
   const [income, setIncome] = useState(0);
   const [progressColorStyle, setProgressColorStyle] = useState("#9dddd9");
 
-  useEffect( () => {
+  useEffect(() => {
     AsyncStorage.getItem("income").then(incomeKu => {
       console.log("income", incomeKu);
       setIncome(incomeKu);
     });
 
     item.invested / item.price <= 0.4 ? setProgressColorStyle("#ea4c89")
-    : item.invested / item.price <= 0.6 ? setProgressColorStyle("#ffd02c") 
-    : item.invested / item.price <= 1 ? setProgressColorStyle("#9dddd9") : null
+      : item.invested / item.price <= 0.6 ? setProgressColorStyle("#ffd02c")
+        : item.invested / item.price <= 1 ? setProgressColorStyle("#9dddd9") : null
   }, []);
 
   // item.invested = 9100000
@@ -106,7 +106,7 @@ const PlantList = ({ props, item }) => {
           <Progress.Bar
             progress={item.invested / item.price}
             width={110}
-            style={{ marginBottom : 10}}
+            style={{ marginBottom: 10 }}
             borderColor="black"
             animated={true}
             color={progressColorStyle}
@@ -193,7 +193,7 @@ const PlantList = ({ props, item }) => {
               resizeMode="contain"
               onLoadEnd={() => setLoading(false)}
             />
-          ) : null }
+          ) : null}
           {loading && (
             <View
               style={{
@@ -215,22 +215,25 @@ const PlantList = ({ props, item }) => {
               />
             </View>
           )}
-          <Text
-            style={{
-              textTransform: "uppercase",
-              fontFamily: "MachineGunk"
-            }}
-          >
-            Remaining
-          </Text>
-          {item.plan === "default" &&
+          {
+            !item.completed &&
+            <Text
+              style={{
+                textTransform: "uppercase",
+                fontFamily: "MachineGunk"
+              }}
+            >
+              Remaining
+            </Text>
+          }
+          {item.plan === "default" && item.completed === false &&
             income * 0.2 <= item.price - item.invested && (
               <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
                 {Math.ceil((item.price - item.invested) / (income * 0.2))}
                 {" "} months
               </Text>
             )}
-          {item.plan === "default" &&
+          {item.plan === "default" && item.completed === false &&
             income * 0.2 > item.price - item.invested && (
               <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
                 {Math.floor(
@@ -239,14 +242,14 @@ const PlantList = ({ props, item }) => {
                 days
               </Text>
             )}
-          {item.plan === "money" &&
+          {item.plan === "money" && item.completed === false &&
             item.investing <= item.price - item.invested && (
               <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
                 {Math.ceil((item.price - item.invested) / item.investing)}
                 {" "} months
               </Text>
             )}
-          {item.plan === "money" &&
+          {item.plan === "money" && item.completed === false &&
             item.investing > item.price - item.invested && (
               <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
                 {Math.floor(
@@ -255,7 +258,7 @@ const PlantList = ({ props, item }) => {
                 {" "} days
               </Text>
             )}
-          {item.plan === "month" &&
+          {item.plan === "month" && item.completed === false &&
             item.dueDate &&
             Math.floor(
               (item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)
@@ -263,13 +266,13 @@ const PlantList = ({ props, item }) => {
               <Text style={{ fontFamily: "MachineGunk", flex: 1 }}>
                 {Math.floor(
                   (item.dueDate.toDate() - new Date()) /
-                    (1000 * 60 * 60 * 24) /
-                    30
+                  (1000 * 60 * 60 * 24) /
+                  30
                 )}
                 {" "} months
               </Text>
             )}
-          {item.plan === "month" &&
+          {item.plan === "month" && item.completed === false &&
             item.dueDate &&
             Math.floor(
               (item.dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)
