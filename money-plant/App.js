@@ -29,6 +29,7 @@ import Profile from "./screens/Profile";
 import HistoryCompleted from "./screens/HistoryCompleted";
 import HistoryDetails from "./screens/HistoryDetails";
 import HistoryOngoing from "./screens/HistoryOngoing";
+import Leaderboard from "./screens/Leaderboard"
 
 // Firebase
 import { AuthProvider } from "./components/AuthContext";
@@ -204,6 +205,21 @@ const drawerStyle = {
           >
             <Text style={styles.text}>Notification</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#587e5b",
+              borderWidth: 1,
+              borderColor: "black",
+              width: "100%",
+              height: 50,
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 5
+            }}
+            onPress={e => props.navigation.navigate("Leaderboard")}
+          >
+            <Text style={styles.text}>Leaderboard</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -281,6 +297,13 @@ const appNavigator = createSwitchNavigator({
               }
             }
           )
+        },
+        Leaderboard: {
+          screen: createStackNavigator({
+            Leaderboard: {
+              screen: Leaderboard
+            }
+          })
         }
       },
       drawerStyle
