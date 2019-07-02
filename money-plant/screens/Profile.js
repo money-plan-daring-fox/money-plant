@@ -53,12 +53,14 @@ const Profile = props => {
     {
       url:
         "https://cdn.dribbble.com/users/2764754/screenshots/5507524/dribbblemichael2.gif",
-      locked: true
+      locked: true,
+      
     },
     {
       url:
         "https://cdn.dribbble.com/users/1252358/screenshots/2923669/one-man-punch.gif",
-      locked: true
+      locked: true,
+      
     }
   ]);
 
@@ -101,7 +103,8 @@ const Profile = props => {
                 height: "90%",
                 opacity: item.opacity,
                 borderRadius: (Dimensions.get("window").width * 0.9) / 2,
-                position: "absolute"
+                position: "absolute",
+                filter: "blur(4px)"
               }}
             />
             <View style={{ justifyContent: "center" }}>
@@ -112,8 +115,8 @@ const Profile = props => {
                   }}
                   style={{
                     marginTop: 50,
-                    width: 50,
-                    height: 50,
+                    width: 100,
+                    height: 100,
                     position: "relative"
                   }}
                 />
