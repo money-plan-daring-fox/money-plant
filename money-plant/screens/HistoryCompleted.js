@@ -120,24 +120,6 @@ const HistoryCompleted = (props) => {
                               flex: 1
                             }}
                           >
-                            Investing: Rp. {item.investing}
-                          </Text>
-                          <Text
-                            style={{
-                              textTransform: "uppercase",
-                              // fontFamily: "Trebuchet MS",
-                              flex: 1
-                            }}
-                          >
-                            invested: Rp. {item.invested}
-                          </Text>
-                          <Text
-                            style={{
-                              textTransform: "uppercase",
-                              // fontFamily: "Trebuchet MS",
-                              flex: 1
-                            }}
-                          >
                             plan: {item.plan}
                           </Text>
                           <Text
@@ -147,26 +129,17 @@ const HistoryCompleted = (props) => {
                               flex: 1
                             }}
                           >
-                            deadline: {item.deadline}
+                            created at: {Date(item.createdAt)}
                           </Text>
-                          <Text
+                          {/* <Text
                             style={{
                               textTransform: "uppercase",
                               // fontFamily: "Trebuchet MS",
                               flex: 1
                             }}
                           >
-                            createdAt: {JSON.stringify(Date(item.createdAt))}
-                          </Text>
-                          <Text
-                            style={{
-                              textTransform: "uppercase",
-                              // fontFamily: "Trebuchet MS",
-                              flex: 1
-                            }}
-                          >
-                            updatedAt: {JSON.stringify(Date(item.updatedAt))}
-                          </Text>
+                            Last watered: {Date(item.updatedAt)}
+                          </Text> */}
                         </View>
                       </TouchableOpacity>
                     </View>

@@ -172,7 +172,7 @@ const HistoryOngoing = (props) => {
                           >
                             createdAt: {Date(item.createdAt)}
                           </Text>
-                          <Text
+                          {/* <Text
                             style={{
                               textTransform: "uppercase",
                               // fontFamily: "Trebuchet MS",
@@ -180,7 +180,7 @@ const HistoryOngoing = (props) => {
                             }}
                           >
                             updatedAt: {Date(item.updatedAt)}
-                          </Text>
+                          </Text> */}
                         </View>
                       </TouchableOpacity>
                     </View>
