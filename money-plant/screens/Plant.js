@@ -51,6 +51,7 @@ const Plant = props => {
   const [uid, setUid] = useState("");
   const [history, setHistory] = useState("");
   const [completed, setCompleted] = useState(false)
+  const [progressColorStyle, setProgressColorStyle] = useState("");
 
   const [touched, setTouched] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -237,7 +238,11 @@ const Plant = props => {
           setCompleted(plant.data().completed)
         }
       });
-  }, []);
+
+      invested / price <= 0.4 ? setProgressColorStyle("#ea4c89")
+      : invested / price <= 0.6 ? setProgressColorStyle("#ffd02c")
+        : invested / price <= 1 ? setProgressColorStyle("#9dddd9") : null
+  }, [invested]);
 
   const deletePlant = () => {
     Alert.alert(
@@ -517,11 +522,11 @@ const Plant = props => {
 
           <Progress.Bar
             progress={invested / price}
-            width={200}
+            width={300}
+            height={10}
             style={{ marginTop: 10 }}
-            borderColor="#fff"
             animated={true}
-            color="#9dddd9"
+            color={progressColorStyle}
           />
         </View>
         <View
@@ -540,7 +545,7 @@ const Plant = props => {
         {plan === "default" &&
           income * 0.2 <= price - invested &&
           invested / price < 1 && (
-            <Text style={styles.sub}>Rp. {income * 0.2} per month</Text>
+            <Text style={styles.sub}>Rp. {Math.round(income * 0.2).toLocaleString()} per month</Text>
           )}
         {plan === "default" &&
           income * 0.2 > price - invested &&
@@ -550,7 +555,7 @@ const Plant = props => {
         {plan === "money" &&
           investing <= price - invested &&
           invested / price < 1 && (
-            <Text style={styles.sub}>Rp. {investing} per month</Text>
+            <Text style={styles.sub}>Rp. {investing.toLocaleString()} per month</Text>
           )}
         {plan === "money" &&
           investing > price - invested &&
@@ -564,10 +569,10 @@ const Plant = props => {
           invested / price < 1 && (
             <Text style={styles.sub}>
               Rp.{" "}
-              {(price - invested) /
+              {Math.round((price - invested) /
                 Math.floor(
                   (dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24) / 30
-                )}{" "}
+                )).toLocaleString()}{" "}
               per month
             </Text>
           )}

@@ -14,18 +14,19 @@ import * as Progress from "react-native-progress";
 // import NumberFormat from 'react-number-format'
 const PlantList = ({ props, item }) => {
   const [income, setIncome] = useState(0);
-  const [progressColorStyle, setProgressColorStyle] = useState("#9dddd9");
+  const [progressColorStyle, setProgressColorStyle] = useState("");
 
   useEffect(() => {
     AsyncStorage.getItem("income").then(incomeKu => {
       console.log("income", incomeKu);
       setIncome(incomeKu);
     });
-
-    item.invested / item.price <= 0.4 ? setProgressColorStyle("#ea4c89")
-      : item.invested / item.price <= 0.6 ? setProgressColorStyle("#ffd02c")
-        : item.invested / item.price <= 1 ? setProgressColorStyle("#9dddd9") : null
-  }, []);
+    console.log(item.invested / item.price,'=====');
+    
+    +item.invested / +item.price <= 0.4 ? setProgressColorStyle("#ea4c89")
+      : +item.invested / +item.price <= 0.6 ? setProgressColorStyle("#ffd02c")
+        : +item.invested / +item.price <= 1 ? setProgressColorStyle("#9dddd9") : null
+  }, [item]);
 
   // item.invested = 9100000
 
