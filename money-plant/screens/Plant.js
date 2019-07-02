@@ -154,7 +154,8 @@ const Plant = props => {
               .collection('users')
               .doc(userId)
               .update({
-                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(investing * -1)
+                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(investing * -1),
+                completed: true
               })
           })
           .catch(err => {
@@ -190,7 +191,8 @@ const Plant = props => {
               .collection("users")
               .doc(userId)
               .update({
-                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(((price - (invested + amount)) / Math.round(deadline / 30)) - ((price - invested) / Math.round(deadline / 30)))
+                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(((price - (invested + amount)) / Math.round(deadline / 30)) - ((price - invested) / Math.round(deadline / 30))),
+                // completed: true
               })
           })
           .catch(err => {
