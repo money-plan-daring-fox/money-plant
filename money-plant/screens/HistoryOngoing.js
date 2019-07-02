@@ -198,7 +198,7 @@ const HistoryOngoing = (props) => {
 }
 
 HistoryOngoing.navigationOptions = props => ({
-  title: "Ongoing s",
+  title: "Ongoing",
   headerTintColor: "white",
   headerStyle: {
     backgroundColor: "#587E5B",

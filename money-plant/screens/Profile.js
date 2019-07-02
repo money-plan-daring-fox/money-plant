@@ -86,34 +86,41 @@ const Profile = props => {
         style={{
           width: Dimensions.get("window").width,
           height: Dimensions.get("window").width,
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
-        <Image
-          source={{ uri: item.url }}
-          style={{
-            width: "90%",
-            height: "90%",
-            opacity: item.opacity,
-            borderRadius: (Dimensions.get("window").width * 0.9) / 2,
-            position: "absolute"
-          }}
-        />
-        <View style={{ justifyContent: "center" }}>
-          {item.locked === true ? (
+        {loading ? (
+          <ActivityIndicator size={large} color="#fff" animating={loading} />
+        ) : (
+          <>
             <Image
-              source={{
-                uri: "https://img.icons8.com/ios/344/lock-filled.png"
-              }}
+              onLoadEnd={() => setLoading(false)}
+              source={{ uri: item.url }}
               style={{
-                marginTop : 50,
-                width: 50,
-                height: 50,
-                position: "relative"
+                width: "90%",
+                height: "90%",
+                opacity: item.opacity,
+                borderRadius: (Dimensions.get("window").width * 0.9) / 2,
+                position: "absolute"
               }}
             />
-          ) : null}
-        </View>
+            <View style={{ justifyContent: "center" }}>
+              {item.locked === true ? (
+                <Image
+                  source={{
+                    uri: "https://img.icons8.com/ios/344/lock-filled.png"
+                  }}
+                  style={{
+                    marginTop: 50,
+                    width: 50,
+                    height: 50,
+                    position: "relative"
+                  }}
+                />
+              ) : null}
+            </View>
+          </>
+        )}
       </View>
     );
   };
@@ -127,58 +134,61 @@ const Profile = props => {
     // console.log({balanceDatabase});
     // console.log("AKU KUMPULAN KONSOL==========")
 
-    console.log("tetew")
-    console.log(balance)
-    console.log(balanceDatabase)
+    console.log("tetew");
+    console.log(balance);
+    console.log(balanceDatabase);
 
-    user.balance = Number(balance) + Number(balanceDatabase)
+    user.balance = Number(balance) + Number(balanceDatabase);
 
     db.firestore()
-      .collection('users')
+      .collection("users")
       .doc(id)
       .set(user)
       .then(response => {
         // console.log("handlletopup suskes uy")
         // console.log(response)
-        alert("your balance has successfully been updated")
+        alert("your balance has successfully been updated");
       })
       .catch(err => {
-        console.log("eh err mas ah enak")
-      })
-
+        console.log("eh err mas ah enak");
+      });
   }
 
   const onPress = data => setCards({ data });
 
   useEffect(() => {
-    Promise.all([AsyncStorage.getItem("email"), AsyncStorage.getItem("uid"), AsyncStorage.getItem("name")])
+    Promise.all([
+      AsyncStorage.getItem("email"),
+      AsyncStorage.getItem("uid"),
+      AsyncStorage.getItem("name")
+    ])
       .then(([email, uid, name]) => {
-        setEmail(email)
-        setUid(uid)
-        setName(name)
+        setEmail(email);
+        setUid(uid);
+        setName(name);
         // console.log("ini uid")
         // console.log(uid)
         // console.log("ini uid")
 
-        return uid
+        return uid;
       })
       .then(uid => {
         // console.log('ini uid setelah then', uid)
         db.firestore()
           .collection("users")
-          .where('uid', '==', uid)
+          .where("uid", "==", uid)
           .onSnapshot(docs => {
             // console.log("udah masuk firestore nih hehe")
             docs.forEach(el => {
-              setId(el.id)
-              setName(el.data().name)
-              setBalanceDatabase(el.data().balance)
-              setUser(el.data())
-              setEmail(el.data().email)
-              setIncome(el.data().income)
-            })
-          })
-      })
+              setId(el.id);
+              setName(el.data().name);
+              setBalanceDatabase(el.data().balance);
+              setUser(el.data());
+              setEmail(el.data().email);
+              setIncome(el.data().income);
+            });
+          });
+      });
   }, []);
 
   return (
@@ -200,56 +210,18 @@ const Profile = props => {
           alignItems: "center"
         }}
       >
-        {loading ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <View style={{ height: Dimensions.get("window").height / 2.3 }}>
-            <Carousel
-              ref={c => {
-                this._carousel = c;
-              }}
-              data={entries}
-              renderItem={renderItem}
-              sliderWidth={Dimensions.get("window").width}
-              itemWidth={Dimensions.get("window").width}
-              layout="stack"
-            />
-          </View>
-
-          /* <View
-            style={{
-              width: Dimensions.get("window").width,
-              height: Dimensions.get("window").width,
-              alignItems: "center"
+        <View style={{ marginVertical : 15, height: Dimensions.get("window").height / 2.3 }}>
+          <Carousel
+            ref={c => {
+              this._carousel = c;
             }}
-          >
-            <Image
-              source={{
-                uri:
-                  "https://cdn.dribbble.com/users/1252358/screenshots/2923669/one-man-punch.gif"
-              }}
-              style={{
-                width: "90%",
-                height: "90%",
-                opacity: 0.2,
-                borderRadius: (Dimensions.get("window").width * 0.9) / 2,
-                position: "absolute"
-              }}
-            />
-            <View style={{ justifyContent: "center" }}>
-              <Image
-                source={{
-                  uri: "https://img.icons8.com/ios/344/lock-filled.png"
-                }}
-                style={{
-                  width: 50,
-                  height: 50,
-                  position: "relative"
-                }}
-              />
-            </View>
-          </View> */
-        )}
+            data={entries}
+            renderItem={renderItem}
+            sliderWidth={Dimensions.get("window").width}
+            itemWidth={Dimensions.get("window").width}
+            layout="stack"
+          />
+        </View>
 
         <View
           style={{
@@ -287,13 +259,13 @@ const Profile = props => {
                   placeholderTextColor="#f6f4f2"
                 />
               ) : (
-                  <Text style={styles.value}>
-                    {parseInt(income).toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
-                    })}
-                  </Text>
-                )}
+                <Text style={styles.value}>
+                  {parseInt(income).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
+                </Text>
+              )}
               {state === "edit" ? (
                 <TouchableOpacity style={styles.submitButton}>
                   <View
@@ -309,20 +281,22 @@ const Profile = props => {
                   </View>
                 </TouchableOpacity>
               ) : (
-                  <TouchableOpacity style={{ ...styles.editButton, marginLeft: 5 }}>
-                    <View
-                      style={{
-                        justifyContent: "center",
-                        alignSelf: "center",
-                        flexDirection: "row",
-                      }}
-                    >
-                      <Text style={styles.text} onPress={() => setState("edit")}>
-                        EDIT
+                <TouchableOpacity
+                  style={{ ...styles.editButton, marginLeft: 5 }}
+                >
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignSelf: "center",
+                      flexDirection: "row"
+                    }}
+                  >
+                    <Text style={styles.text} onPress={() => setState("edit")}>
+                      EDIT
                     </Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
+                  </View>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
           <View

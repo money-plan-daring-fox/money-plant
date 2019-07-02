@@ -250,8 +250,8 @@ const appNavigator = createSwitchNavigator({
                   }
                 }),
                 navigationOptions: {
-                  tabBarIcon: () => (
-                    <FontAwesome name="leaf" color="white" size={20} />
+                  tabBarIcon: ({tintColor}) => (
+                    <FontAwesome name="leaf" color={tintColor} size={20} />
                   )
                 }
               },
@@ -265,8 +265,8 @@ const appNavigator = createSwitchNavigator({
                   }
                 }),
                 navigationOptions: {
-                  tabBarIcon: () => (
-                    <MaterialIcons name="check-box" color="white" size={20} />
+                  tabBarIcon: ({tintColor}) => (
+                    <MaterialIcons name="check-box" color={tintColor} size={20} />
                   )
                 }
               }

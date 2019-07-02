@@ -53,8 +53,8 @@ const Login = props => {
             let newUid = uid == null ? "" : uid;
             AsyncStorage.setItem("id", item.id);
             AsyncStorage.setItem("name", name);
-            AsyncStorage.setItem("balance", balance);
-            AsyncStorage.setItem("concurrent", concurrent)
+            AsyncStorage.setItem("balance", balance.toString());
+            AsyncStorage.setItem("concurrent", concurrent.toString())
             AsyncStorage.setItem("email", email);
             AsyncStorage.setItem("income", income);
             AsyncStorage.setItem("uid", newUid);
