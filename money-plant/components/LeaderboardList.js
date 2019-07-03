@@ -44,13 +44,13 @@ const LeaderboardList = (props) => {
                             style={{height:20, width:20}}
                             resizeMode='cover'
                         />
-                        <Text style={{marginRight:10}}>{el.plants.length}</Text>
+                        <Text style={{marginRight:10}}>{el.ongoingPlants}</Text>
                         <Image 
                             source={{uri: 'https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-29.png?alt=media&token=c1ddcda5-0a98-4c5f-aa80-1d6cfdd47a65'}} 
                             style={{height:25, width:25}}
                             resizeMode='cover'
                         />
-                        <Text>{el.plants.length}</Text>
+                        <Text>{el.completedPlants}</Text>
                     </View>
                 </View>
             </View>

@@ -341,6 +341,8 @@ const appNavigator = createSwitchNavigator({
     .doc(notification.data.id)
     .update({
       notifications: firebase.firestore.FieldValue.arrayUnion(notification.data)
+    }).then(() => {
+      console.log('berhasil masuk firestore')
     })
   };
   Notifications.addListener(_handleNotification);

@@ -13,6 +13,8 @@ const Leaderboard = (props) => {
         setLoading(true)
         db.firestore()
             .collection("users")
+            .orderBy("completedPlants", "desc")
+            .limit(10)
             .onSnapshot((querySnapshot) => {
                 let usersFromDb = []
                 querySnapshot.forEach((doc) => {
