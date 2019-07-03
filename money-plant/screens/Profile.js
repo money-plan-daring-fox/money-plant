@@ -41,6 +41,7 @@ const Profile = props => {
   const [modalVisible, setModalVisible] = useState(false);
   const [uid, setUid] = useState("");
   const [concurrent, setConcurrent] = useState(0);
+  const [changeIncome, setChangeIncome] = useState(income)
   const [id, setId] = useState("");
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
@@ -54,13 +55,13 @@ const Profile = props => {
       url:
         "https://cdn.dribbble.com/users/2764754/screenshots/5507524/dribbblemichael2.gif",
       locked: true,
-      
+
     },
     {
       url:
         "https://cdn.dribbble.com/users/1252358/screenshots/2923669/one-man-punch.gif",
       locked: true,
-      
+
     }
   ]);
 
@@ -94,53 +95,43 @@ const Profile = props => {
         {loading ? (
           <ActivityIndicator size={large} color="#fff" animating={loading} />
         ) : (
-          <>
-            <Image
-              onLoadEnd={() => setLoading(false)}
-              source={{ uri: item.url }}
-              style={{
-                width: "90%",
-                height: "90%",
-                opacity: item.opacity,
-                borderRadius: (Dimensions.get("window").width * 0.9) / 2,
-                position: "absolute",
-                filter: "blur(4px)"
-              }}
-            />
-            <View style={{ justifyContent: "center" }}>
-              {item.locked === true ? (
-                <Image
-                  source={{
-                    uri: "https://img.icons8.com/ios/344/lock-filled.png"
-                  }}
-                  style={{
-                    marginTop: 50,
-                    width: 100,
-                    height: 100,
-                    position: "relative"
-                  }}
-                />
-              ) : null}
-            </View>
-          </>
-        )}
+            <>
+              <Image
+                onLoadEnd={() => setLoading(false)}
+                source={{ uri: item.url }}
+                style={{
+                  width: "90%",
+                  height: "90%",
+                  opacity: item.opacity,
+                  borderRadius: (Dimensions.get("window").width * 0.9) / 2,
+                  position: "absolute",
+                  filter: "blur(4px)"
+                }}
+              />
+              <View style={{ justifyContent: "center" }}>
+                {item.locked === true ? (
+                  <Image
+                    source={{
+                      uri: "https://img.icons8.com/ios/344/lock-filled.png"
+                    }}
+                    style={{
+                      marginTop: 50,
+                      width: 100,
+                      height: 100,
+                      position: "relative"
+                    }}
+                  />
+                ) : null}
+              </View>
+            </>
+          )}
       </View>
     );
   };
 
   function handleTopup() {
     setModalVisible(false);
-
-    // console.log("AKU KUMPULAN KONSOL==========")
-    // console.log({id})
-    // console.log({balance});
-    // console.log({balanceDatabase});
-    // console.log("AKU KUMPULAN KONSOL==========")
-
-    console.log("tetew");
-    console.log(balance);
-    console.log(balanceDatabase);
-
+    
     user.balance = Number(balance) + Number(balanceDatabase);
 
     db.firestore()
@@ -148,13 +139,26 @@ const Profile = props => {
       .doc(id)
       .set(user)
       .then(response => {
-        // console.log("handlletopup suskes uy")
-        // console.log(response)
         alert("your balance has successfully been updated");
       })
       .catch(err => {
         console.log("eh err mas ah enak");
       });
+  }
+
+  function submitChangeIncome(){
+    db.firestore()
+    .collection('users')
+    .doc(id)
+    .update({
+      income: Number(changeIncome)
+    })
+    .then(() => {
+      setState("view")
+    })
+    .catch(err => {
+      console.log("error submit change income")
+    })
   }
 
   const onPress = data => setCards({ data });
@@ -169,19 +173,13 @@ const Profile = props => {
         setEmail(email);
         setUid(uid);
         setName(name);
-        // console.log("ini uid")
-        // console.log(uid)
-        // console.log("ini uid")
-
         return uid;
       })
       .then(uid => {
-        // console.log('ini uid setelah then', uid)
         db.firestore()
           .collection("users")
           .where("uid", "==", uid)
           .onSnapshot(docs => {
-            // console.log("udah masuk firestore nih hehe")
             docs.forEach(el => {
               setId(el.id);
               setName(el.data().name);
@@ -213,7 +211,7 @@ const Profile = props => {
           alignItems: "center"
         }}
       >
-        <View style={{ marginVertical : 15, height: Dimensions.get("window").height / 2.3 }}>
+        <View style={{ marginVertical: 15, height: Dimensions.get("window").height / 2.3 }}>
           <Carousel
             ref={c => {
               this._carousel = c;
@@ -259,33 +257,22 @@ const Profile = props => {
                 <TextInput
                   style={styles.input}
                   placeholder="Input Income"
+                  // value={income}
                   placeholderTextColor="#f6f4f2"
+                  keyboardType="numeric"
+                  onChangeText={text => setChangeIncome(text)}
                 />
               ) : (
-                <Text style={styles.value}>
-                  {parseInt(income).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })}
-                </Text>
-              )}
+                  <Text style={styles.value}>
+                    {parseInt(income).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
+                  </Text>
+                )}
               {state === "edit" ? (
-                <TouchableOpacity style={styles.submitButton}>
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      alignSelf: "center",
-                      flexDirection: "row"
-                    }}
-                  >
-                    <Text style={styles.text} onPress={() => setState("view")}>
-                      SUBMIT
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ) : (
                 <TouchableOpacity
-                  style={{ ...styles.editButton, marginLeft: 5 }}
+                  style={styles.submitButton}
                 >
                   <View
                     style={{
@@ -294,12 +281,31 @@ const Profile = props => {
                       flexDirection: "row"
                     }}
                   >
-                    <Text style={styles.text} onPress={() => setState("edit")}>
-                      EDIT
+                    <Text style={styles.text} onPress={() => {
+                      submitChangeIncome()
+                      console.log(changeIncome)
+                    }}>
+                      SUBMIT
                     </Text>
                   </View>
                 </TouchableOpacity>
-              )}
+              ) : (
+                  <TouchableOpacity
+                    style={{ ...styles.editButton, marginLeft: 5 }}
+                  >
+                    <View
+                      style={{
+                        justifyContent: "center",
+                        alignSelf: "center",
+                        flexDirection: "row"
+                      }}
+                    >
+                      <Text style={styles.text} onPress={() => setState("edit")}>
+                        EDIT
+                    </Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
             </View>
           </View>
           <View

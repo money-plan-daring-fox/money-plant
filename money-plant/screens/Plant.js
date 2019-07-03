@@ -64,6 +64,7 @@ const Plant = props => {
   ]);
   const [income, setIncome] = useState(0);
   const [amount, setAmount] = useState(0);
+  const [balance, setBalance] = useState(0);
 
   const [investingPerMonthDatabase, setInvestingPerMonth] = useState(0)
   const [coba, setCoba] = useState("");
@@ -78,6 +79,7 @@ const Plant = props => {
           .collection("users")
           .doc(idKu)
           .onSnapshot(doc => {
+            setBalance(doc.data().balance)
             setInvestingPerMonth(doc.data().totalInvestingPerMonth)
           })
       })
@@ -98,6 +100,7 @@ const Plant = props => {
   };
 
   const handleInputAmount = method => {
+    if (amount > balance) return alert(`Amount (Rp ${amount}) entered is larger than your current balance (Rp ${balance})`)
     if (method === "recommended") {
     } else if (method === "manual") {
       let input = {
@@ -116,7 +119,8 @@ const Plant = props => {
         completed: false
       };
 
-      if (invested + amount >= price) input.completed = true;
+      if((invested + amount) > price) return alert(`Your water amount (Rp ${invested + amount}) exceeds the total price (Rp ${price})`)
+      if ((invested + amount) == price) input.completed = true;
 
       let newDueDate = new Date();
       if (plan === "default") {
@@ -155,7 +159,7 @@ const Plant = props => {
               .doc(userId)
               .update({
                 totalInvestingPerMonth: firebase.firestore.FieldValue.increment(investing * -1),
-                completed: true
+                balance: firebase.firestore.FieldValue.increment(amount * -1),
               })
           })
           .catch(err => {
@@ -169,6 +173,12 @@ const Plant = props => {
           .then(() => {
             console.log("update berhasil uy");
             setModalVisible(false);
+            db.firestore()
+              .collection("users")
+              .doc(userId)
+              .update({
+                balance: firebase.firestore.FieldValue.increment(amount * -1),
+              })
           })
           .catch(err => {
             console.log("update error uy", err);
@@ -179,21 +189,17 @@ const Plant = props => {
           .doc(id)
           .set(input)
           .then(() => {
-            console.log("update berhasil uy");
-            setModalVisible(false);
-            console.log("WOOOOOHOOOOOO")
-            console.log(price)
-            console.log(invested)
-            console.log(amount)
-            console.log(deadline)
-            console.log("WOOOOOHOOOOOO")
-            db.firestore()
-              .collection("users")
-              .doc(userId)
-              .update({
-                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(((price - (invested + amount)) / Math.round(deadline / 30)) - ((price - invested) / Math.round(deadline / 30))),
-                // completed: true
-              })
+            // AsyncStorage.setItem("balance", (balance - amount))
+              // .then(() => {
+                setModalVisible(false);
+                db.firestore()
+                  .collection("users")
+                  .doc(userId)
+                  .update({
+                    totalInvestingPerMonth: firebase.firestore.FieldValue.increment(((price - (invested + amount)) / Math.round(deadline / 30)) - ((price - invested) / Math.round(deadline / 30))),
+                    balance: firebase.firestore.FieldValue.increment(amount * -1),
+                  })
+              // })
           })
           .catch(err => {
             console.log("update error uy", err);
@@ -241,7 +247,7 @@ const Plant = props => {
         }
       });
 
-      invested / price <= 0.4 ? setProgressColorStyle("#ea4c89")
+    invested / price <= 0.4 ? setProgressColorStyle("#ea4c89")
       : invested / price <= 0.6 ? setProgressColorStyle("#ffd02c")
         : invested / price <= 1 ? setProgressColorStyle("#9dddd9") : null
   }, [invested]);
