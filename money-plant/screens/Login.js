@@ -56,7 +56,7 @@ const Login = props => {
             AsyncStorage.setItem("balance", balance.toString());
             AsyncStorage.setItem("concurrent", concurrent.toString())
             AsyncStorage.setItem("email", email);
-            AsyncStorage.setItem("income", income);
+            AsyncStorage.setItem("income", income.toString());
             AsyncStorage.setItem("uid", newUid);
           });
           // alert('Logged In!')
