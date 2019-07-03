@@ -59,7 +59,8 @@ const Plant = props => {
           .collection("users")
           .doc(idKu)
           .onSnapshot(doc => {
-            setBalance(doc.data().balance)
+            setIncome(Number(doc.data().income))
+            setBalance(Number(doc.data().balance))
             setInvestingPerMonth(doc.data().totalInvestingPerMonth)
           })
       })
@@ -84,6 +85,7 @@ const Plant = props => {
   const handleInputAmount = method => {
     if (amount > balance) return alert(`Amount (Rp ${amount}) entered is larger than your current balance (Rp ${balance})`)
     if (method === "recommended") {
+      setAmount(income * 0.2);
     } else if (method === "manual") {
       let input = {
         name,
@@ -134,7 +136,6 @@ const Plant = props => {
           .doc(id)
           .set(input)
           .then(() => {
-            console.log("update berhasil uy");
             setModalVisible(false);
             db.firestore()
               .collection("users")
@@ -191,9 +192,9 @@ const Plant = props => {
   };
 
   useEffect(() => {
-    AsyncStorage.getItem("income").then(incomeKu => {
-      setIncome(Number(incomeKu));
-    });
+    // AsyncStorage.getItem("income").then(incomeKu => {
+    //   setIncome(Number(incomeKu));
+    // });
 
     db.firestore()
       .collection("plants")
@@ -749,12 +750,22 @@ const Plant = props => {
               Input Amount :
             </Text>
             <TextInput
+              value={amount.toLocaleString()}
               textAlign={"center"}
               placeholderTextColor="rgba(255,255,255,0.7)"
               id="password"
               keyboardType="numeric"
               style={styles.input}
-              onChangeText={amount => setAmount(Number(amount))}
+              onChangeText={amount =>
+                setAmount(
+                  Number(
+                    amount
+                      .split("")
+                      .filter(el => el.match(/^[0-9]*$/))
+                      .join("")
+                  )
+                )
+              }
             />
             <TouchableOpacity
               style={styles.button}
@@ -772,11 +783,19 @@ const Plant = props => {
               }}
             >
               <TouchableOpacity
+                style={{
+                  ...styles.button,
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                  marginTop: 5,
+                  backgroundColor: "#ffd02c"
+                }}
                 onPress={() => handleInputAmount("recommended")}
               >
-                <Text style={styles.text}> Use Recommendation Settings </Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
+                <Text style={{ ...styles.text, color: "#b9523e" }}>
+                  {" "}
+                  Use Recommendation Settings{" "}
+                </Text>
                 <Tooltip
                   popover={
                     <ToolText>
@@ -791,7 +810,7 @@ const Plant = props => {
                   <EvilIcons
                     name="question"
                     size={20}
-                    style={{ color: "white" }}
+                    style={{ color: "#b9523e" }}
                   />
                 </Tooltip>
               </TouchableOpacity>
@@ -823,7 +842,7 @@ const styles = {
     backgroundColor: "#b9523e",
     paddingVertical: 15,
     borderRadius: 5,
-    width: 200
+    width: 220
   },
   editButton: {
     backgroundColor: "#65a1ad",

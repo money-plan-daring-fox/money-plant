@@ -69,7 +69,7 @@ Leaderboard.navigationOptions = props => ({
     contentContainer: {
       paddingVertical: 20,
       backgroundColor: "#587E5B",
-    //   flex: 1
+      flex: 1
     }
   });
 

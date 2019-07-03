@@ -39,6 +39,7 @@ const Profile = props => {
   const [balance, setBalance] = useState(0);
   const [balanceDatabase, setBalanceDatabase] = useState(0);
   const [totalPlant, setTotalPlant] = useState(0);
+  const [onGoingPlant, setOngoingPlant] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [uid, setUid] = useState("");
   const [concurrent, setConcurrent] = useState(0);
@@ -220,19 +221,26 @@ const Profile = props => {
               setIncome(el.data().income);
             });
           });
-
+          
+        let totalPlant = 0
         db.firestore()
           .collection("plants")
           .where("uid", "==", uid)
           .onSnapshot(async docs => {
             let plantStatistics = 0;
+            let onGoingPlant = 0;
             docs.forEach(el => {
+              totalPlant++
               if (el.data().completed === true) {
                 plantStatistics += 1;
+              } else {
+                onGoingPlant += 1
               }
             });
             await setTotalCompletedPlant(plantStatistics);
             await setLoading(false);
+            await setTotalPlant(totalPlant);
+            await setOngoingPlant(onGoingPlant);
           });
       });
   }, []);
@@ -355,17 +363,25 @@ const Profile = props => {
           </View>
           <View
             style={{
-              paddingVertical: 10,
               flexDirection: "row",
               alignItems: "baseline"
             }}
           >
-            <Text style={styles.sub}> Total Plants : </Text>
-            <Text style={styles.value}> 5 </Text>
+            <Text style={styles.sub}> Total Ongoing Plants : </Text>
+            <Text style={styles.value}> {onGoingPlant} </Text>
           </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "baseline"
+            }}
+          >
+            <Text style={styles.sub}> Total Completed Plants : </Text>
+            <Text style={styles.value}> {totalCompletedPlant} </Text>
+          </View>
+            <Text style={{...styles.sub}}> Balance : </Text>
         </View>
         <View>
-          <Text style={styles.sub}> Balance : </Text>
           <Text style={{ ...styles.valueHeader, textAlign: "center" }}>
             {" "}
             {balanceDatabase.toLocaleString(undefined, {

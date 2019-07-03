@@ -41,7 +41,7 @@ const NewPlant = props => {
           .split("")
           .filter(el => el.match(/^[0-9]*$/))
           .join("");
-        setPrice(priceRecommend.toLocaleString());
+        setPrice(+priceRecommend.toLocaleString());
       })
       .finally(() => {
         setLoading(false);
