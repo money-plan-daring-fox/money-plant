@@ -320,10 +320,10 @@ const Profile = props => {
                 <TextInput
                   style={styles.input}
                   placeholder="Input Income"
-                  // value={income}
+                  value={changeIncome.toLocaleString()}
                   placeholderTextColor="#f6f4f2"
                   keyboardType="numeric"
-                  onChangeText={text => setChangeIncome(text)}
+                  onChangeText={text => setChangeIncome(Number(text.split("").filter(el => el.match(/^[0-9]*$/)).join("")))}
                 />
               ) : (
                   <Text style={styles.value}>
