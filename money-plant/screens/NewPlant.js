@@ -213,9 +213,9 @@ const NewPlant = props => {
         }}
         itemStyle={styles.picker}
       >
-        <Picker.Item label="Default" value="default" />
-        <Picker.Item label="$ / month" value="money" />
-        <Picker.Item label="Month" value="month" />
+        <Picker.Item label="Almond" value="default" />
+        <Picker.Item label="Bloom" value="money" />
+        <Picker.Item label="Cactus" value="month" />
       </Picker>
 
       {plan === "default" && (
@@ -230,7 +230,7 @@ const NewPlant = props => {
         >
           <Feather name="info" size={20} color="#fff" />
           <Text style={{ ...styles.text, paddingLeft: 10 }}>
-            Default settings is allowing the system to calculate 20 % of your
+            Allows system to calculate 20 % of your
             income and deduct value every month
           </Text>
         </View>
@@ -275,7 +275,7 @@ const NewPlant = props => {
           >
             <Feather name="info" size={20} color="#fff" />
             <Text style={{ ...styles.text, paddingLeft: 10 }}>
-              Please input how much money you would like to invest to get your
+              Please input how much money you would like to invest per month to get your
               desired item
             </Text>
           </View>
@@ -320,7 +320,7 @@ NewPlant.navigationOptions = props => ({
   title: "New Plant",
   headerTintColor: "white",
   headerStyle: {
-    backgroundColor: "#31422e"
+    backgroundColor: "#587e5b"
   }
 });
 
