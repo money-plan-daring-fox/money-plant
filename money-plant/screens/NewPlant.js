@@ -151,7 +151,8 @@ const NewPlant = props => {
           .collection("users")
           .doc(id)
           .update({
-            totalInvestingPerMonth:firebase.firestore.FieldValue.increment(input.investing)
+            totalInvestingPerMonth:firebase.firestore.FieldValue.increment(input.investing),
+            ongoingPlants: firebase.firestore.FieldValue.increment(1),
           })
           .then(() => {
             console.log(planInput, "berhasil uy");

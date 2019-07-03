@@ -95,16 +95,16 @@ const HistoryOngoing = (props) => {
                             resizeMode="contain"
                             source={
                               item.invested / item.price <= 0.2
-                              ? {uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-32.png?alt=media&token=b72a980e-6307-4e51-bf7a-aaebcdd0a5c3"}
-                              : item.invested / item.price <= 0.4
-                              ? {uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-25.png?alt=media&token=655692b9-6b16-4b6a-b8e8-b8354404561d"}
-                              : item.invested / item.price <= 0.6
-                              ? {uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-21.png?alt=media&token=ee490201-09a9-4c6f-ae12-d252ed6b2c02"}
-                              : item.invested / item.price <= 0.8
-                              ? {uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-38.png?alt=media&token=8986e16c-7db5-4e37-adb0-9c580bc34bac"}
-                              : item.invested / item.price <= 1
-                              ? {uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-29.png?alt=media&token=c1ddcda5-0a98-4c5f-aa80-1d6cfdd47a65"}
-                              : {uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-29.png?alt=media&token=c1ddcda5-0a98-4c5f-aa80-1d6cfdd47a65"}
+                                ? { uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-32.png?alt=media&token=b72a980e-6307-4e51-bf7a-aaebcdd0a5c3" }
+                                : item.invested / item.price <= 0.4
+                                  ? { uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-25.png?alt=media&token=655692b9-6b16-4b6a-b8e8-b8354404561d" }
+                                  : item.invested / item.price <= 0.6
+                                    ? { uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-21.png?alt=media&token=ee490201-09a9-4c6f-ae12-d252ed6b2c02" }
+                                    : item.invested / item.price <= 0.8
+                                      ? { uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-38.png?alt=media&token=8986e16c-7db5-4e37-adb0-9c580bc34bac" }
+                                      : item.invested / item.price <= 1
+                                        ? { uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-29.png?alt=media&token=c1ddcda5-0a98-4c5f-aa80-1d6cfdd47a65" }
+                                        : { uri: "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-29.png?alt=media&token=c1ddcda5-0a98-4c5f-aa80-1d6cfdd47a65" }
                             } />
                         </View>
 
@@ -170,17 +170,10 @@ const HistoryOngoing = (props) => {
                               flex: 1
                             }}
                           >
-                            createdAt: {Date(item.createdAt)}
+                            Planted: {
+                              new Date(Number(item.createdAt.seconds + String(item.createdAt.nanoseconds/1e6))).toDateString()
+                            }
                           </Text>
-                          {/* <Text
-                            style={{
-                              textTransform: "uppercase",
-                              // fontFamily: "Trebuchet MS",
-                              flex: 1
-                            }}
-                          >
-                            updatedAt: {Date(item.updatedAt)}
-                          </Text> */}
                         </View>
                       </TouchableOpacity>
                     </View>
@@ -189,7 +182,7 @@ const HistoryOngoing = (props) => {
               />
             ) : (
               <View style={{ height: Dimensions.get("window").width, justifyContent: "center", alignItems: 'center' }}>
-                <Text style={{ color: 'white'}}>Your list is empty, grow some plants in the garden.</Text>
+                <Text style={{ color: 'white' }}>Your list is empty, grow some plants in the garden.</Text>
               </View>
             )
       }

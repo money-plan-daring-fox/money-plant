@@ -89,7 +89,9 @@ const Login = props => {
         income,
         uid: user.user.uid,
         notifications: [],
-        totalInvestingPerMonth: 0
+        totalInvestingPerMonth: 0,
+        completedPlants: 0,
+        ongoingPlants: 0,
       };
       db.firestore()
         .collection("users")
@@ -154,6 +156,7 @@ const Login = props => {
         <View style={{ width: "50%" }}>
           <Text style={{ ...styles.text, textAlign: "right" }}>
             Get your exquisite gadget by devoted to a wonderful plant...
+
           </Text>
         </View>
       </View>

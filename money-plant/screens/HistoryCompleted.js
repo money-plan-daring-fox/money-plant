@@ -129,17 +129,8 @@ const HistoryCompleted = (props) => {
                               flex: 1
                             }}
                           >
-                            created at: {Date(item.createdAt)}
+                            Planted: {new Date(Number(item.createdAt.seconds + String(item.createdAt.nanoseconds/1e6))).toDateString()}
                           </Text>
-                          {/* <Text
-                            style={{
-                              textTransform: "uppercase",
-                              // fontFamily: "Trebuchet MS",
-                              flex: 1
-                            }}
-                          >
-                            Last watered: {Date(item.updatedAt)}
-                          </Text> */}
                         </View>
                       </TouchableOpacity>
                     </View>
