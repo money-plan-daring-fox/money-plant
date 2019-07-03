@@ -29,9 +29,11 @@ import Profile from "./screens/Profile";
 import HistoryCompleted from "./screens/HistoryCompleted";
 import HistoryDetails from "./screens/HistoryDetails";
 import HistoryOngoing from "./screens/HistoryOngoing";
-import Leaderboard from "./screens/Leaderboard"
+import Leaderboard from "./screens/Leaderboard";
+import Notification from './screens/Notifications';
 
 // Firebase
+import * as firebase from 'firebase'
 import { AuthProvider } from "./components/AuthContext";
 import db from './api/firebase'
 
@@ -44,6 +46,11 @@ import {
 
 // Disable Yellow Warnings
 console.disableYellowBox = true;
+
+// Notif
+import {
+  Notifications, Permissions
+} from 'expo';
 
 const drawerStyle = {
   contentComponent: props => {
@@ -312,6 +319,13 @@ const appNavigator = createSwitchNavigator({
               screen: Leaderboard
             }
           })
+        },
+        Notification: {
+          screen: createStackNavigator({
+            Notification: {
+              screen: Notification
+            }
+          })
         }
       },
       drawerStyle
@@ -319,8 +333,23 @@ const appNavigator = createSwitchNavigator({
   }
 });
 
+  
+  _handleNotification = (notification) => {
+    console.log(notification)
+    db.firestore()
+    .collection('users')
+    .doc(notification.data.id)
+    .update({
+      notifications: firebase.firestore.FieldValue.arrayUnion(notification.data)
+    })
+  };
+  Notifications.addListener(_handleNotification);
+
+
+
 export default function App() {
   const Route = createAppContainer(appNavigator);
+
   return (
     <AuthProvider>
       <Route />
