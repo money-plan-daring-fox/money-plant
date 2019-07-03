@@ -33,6 +33,7 @@ import Leaderboard from "./screens/Leaderboard"
 
 // Firebase
 import { AuthProvider } from "./components/AuthContext";
+import db from './api/firebase'
 
 // Icons
 import {
@@ -50,13 +51,20 @@ const drawerStyle = {
     const [balance, setBalance] = useState(0);
     const [logoLoading, setLogoLoading] = useState(false);
     useEffect(() => {
-      AsyncStorage.getItem("income").then(incomeKu => {
-        setIncome(incomeKu);
-      });
-      AsyncStorage.getItem("balance").then(balanceKu => {
-        setBalance(balanceKu);
-      });
-    }, [AsyncStorage.getItem("balance")]);
+      Promise.all([AsyncStorage.getItem("income"), AsyncStorage.getItem("id")])
+        .then(([incomeKu, idKu]) => {
+          setIncome(incomeKu)
+          return idKu
+        })
+        .then(idKu => {
+          db.firestore()
+            .collection("users")
+            .doc(idKu)
+            .onSnapshot(doc => {
+              setBalance(doc.data().balance)
+            })
+        })
+    }, []);
 
     return (
       <View style={{ flex: 1, backgroundColor: "#262525" }}>
@@ -266,7 +274,7 @@ const appNavigator = createSwitchNavigator({
                   }
                 }),
                 navigationOptions: {
-                  tabBarIcon: ({tintColor}) => (
+                  tabBarIcon: ({ tintColor }) => (
                     <FontAwesome name="leaf" color={tintColor} size={20} />
                   )
                 }
@@ -281,7 +289,7 @@ const appNavigator = createSwitchNavigator({
                   }
                 }),
                 navigationOptions: {
-                  tabBarIcon: ({tintColor}) => (
+                  tabBarIcon: ({ tintColor }) => (
                     <MaterialIcons name="check-box" color={tintColor} size={20} />
                   )
                 }

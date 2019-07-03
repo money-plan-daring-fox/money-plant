@@ -42,6 +42,7 @@ const Profile = props => {
   const [modalVisible, setModalVisible] = useState(false);
   const [uid, setUid] = useState("");
   const [concurrent, setConcurrent] = useState(0);
+  const [changeIncome, setChangeIncome] = useState(income)
   const [id, setId] = useState("");
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
@@ -113,18 +114,18 @@ const Profile = props => {
               }}
             />
           ) : (
-            <Image
-              onLoadEnd={() => setLoading(false)}
-              source={{ uri: item.url }}
-              style={{
-                width: "90%",
-                height: "90%",
-                opacity: item.opacity,
-                borderRadius: (Dimensions.get("window").width * 0.9) / 2,
-                position: "absolute"
-              }}
-            />
-          )}
+                <Image
+                  onLoadEnd={() => setLoading(false)}
+                  source={{ uri: item.url }}
+                  style={{
+                    width: "90%",
+                    height: "90%",
+                    opacity: item.opacity,
+                    borderRadius: (Dimensions.get("window").width * 0.9) / 2,
+                    position: "absolute"
+                  }}
+                />
+              )}
 
           <View style={{ justifyContent: "center" }}>
             {totalCompletedPlant < 1 && index === 1 ? (
@@ -160,6 +161,7 @@ const Profile = props => {
 
   function handleTopup() {
     setModalVisible(false);
+
     user.balance = Number(balance) + Number(balanceDatabase);
     AsyncStorage.setItem("balance", user.balance.toString());
 
@@ -173,6 +175,21 @@ const Profile = props => {
       .catch(err => {
         console.log("eh err mas ah enak");
       });
+  }
+
+  function submitChangeIncome() {
+    db.firestore()
+      .collection('users')
+      .doc(id)
+      .update({
+        income: Number(changeIncome)
+      })
+      .then(() => {
+        setState("view")
+      })
+      .catch(err => {
+        console.log("error submit change income")
+      })
   }
 
   const onPress = data => setCards({ data });
@@ -190,12 +207,10 @@ const Profile = props => {
         return uid;
       })
       .then(uid => {
-       
         db.firestore()
           .collection("users")
           .where("uid", "==", uid)
           .onSnapshot(docs => {
-        
             docs.forEach(el => {
               setId(el.id);
               setName(el.data().name);
@@ -297,18 +312,21 @@ const Profile = props => {
                 <TextInput
                   style={styles.input}
                   placeholder="Input Income"
+                  // value={income}
                   placeholderTextColor="#f6f4f2"
+                  keyboardType="numeric"
+                  onChangeText={text => setChangeIncome(text)}
                 />
               ) : (
-                <Text style={styles.value}>
-                  {parseInt(income).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })}
-                </Text>
-              )}
+                  <Text style={styles.value}>
+                    {parseInt(income).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
+                  </Text>
+                )}
               {state === "edit" ? (
-                <TouchableOpacity style={{...styles.submitButton, marginLeft : 5}}>
+                <TouchableOpacity style={{ ...styles.submitButton, marginLeft: 5 }}>
                   <View
                     style={{
                       justifyContent: "center",
@@ -316,28 +334,23 @@ const Profile = props => {
                       flexDirection: "row"
                     }}
                   >
-                    <Text style={{...styles.text, color:"#262525"}} onPress={() => setState("view")}>
+                    <Text style={styles.text} onPress={() => {
+                      submitChangeIncome()
+                      console.log(changeIncome)
+                    }}>
                       SUBMIT
                     </Text>
                   </View>
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity
-                  style={{ ...styles.editButton, marginLeft: 5 }}
-                >
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      alignSelf: "center",
-                      flexDirection: "row"
-                    }}
-                  >
-                    <Text style={{...styles.text, color:"#262525"}} onPress={() => setState("edit")}>
-                      EDIT
+                  <TouchableOpacity style={{ ...styles.editButton, marginLeft: 5 }}>
+                    <View>
+                      <Text style={{ ...styles.text, color: "#262525" }} onPress={() => setState("edit")}>
+                        EDIT
                     </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
+                    </View>
+                  </TouchableOpacity>
+                )}
             </View>
           </View>
           <View
