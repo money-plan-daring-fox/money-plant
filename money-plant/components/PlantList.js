@@ -43,7 +43,7 @@ const PlantList = ({ props, item }) => {
             borderColor: "#f6f4f2",
             backgroundColor: "none",
             height: 252,
-            width: 180,
+            width: Dimensions.get("window").width / 2.3,
             justifyContent: "center",
             alignItems: "center"
           }}
@@ -88,7 +88,7 @@ const PlantList = ({ props, item }) => {
             shadowRadius: 2,
             backgroundColor: "#f2f2d9",
             height: 252,
-            width: 180,
+            width: Dimensions.get("window").width / 2.3,
             justifyContent: "center",
             alignItems: "center",
             padding: 15

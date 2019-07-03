@@ -11,33 +11,20 @@ import {
   SafeAreaView,
   AsyncStorage,
   Linking,
-  Alert
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import { Tooltip, Text as ToolText } from "react-native-elements";
 import { Feather, EvilIcons, Ionicons } from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
 import SelectInput from "react-native-select-input-ios";
 import db from "../api/firebase";
-import firebase from 'firebase'
+import firebase from "firebase";
 import axios from "axios";
 
 const Plant = props => {
-  let {
-    // name,
-    // price,
-    // deadline,
-    // invested,
-    // investing,
-    // plan,
-    // dueDate,
-    // createdAt,
-    id
-    // uid,
-    // history
-  } = props.navigation.getParam("item");
-  // console.log(id);
-  const investingProps = props.navigation.getParam("item").investing
-
+  let { id } = props.navigation.getParam("item");
+  const investingProps = props.navigation.getParam("item").investing;
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState(1);
@@ -50,44 +37,37 @@ const Plant = props => {
   const [stateid, setId] = useState("");
   const [uid, setUid] = useState("");
   const [history, setHistory] = useState("");
-  const [completed, setCompleted] = useState(false)
+  const [completed, setCompleted] = useState(false);
   const [progressColorStyle, setProgressColorStyle] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const [touched, setTouched] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [editplan, setPlan] = useState(plan);
-  const [options, setOptions] = useState([
-    { value: 0, label: `Edit Plan : ${editplan} (current) ` },
-    { value: 1, label: "Default" },
-    { value: 2, label: "Month" },
-    { value: 3, label: "Rp/month" }
-  ]);
   const [income, setIncome] = useState(0);
   const [amount, setAmount] = useState(0);
 
-  const [investingPerMonthDatabase, setInvestingPerMonth] = useState(0)
+  const [investingPerMonthDatabase, setInvestingPerMonth] = useState(0);
   const [coba, setCoba] = useState("");
 
-  const [userId, setUserId] = useState('')
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    AsyncStorage.getItem("id")
-      .then(idKu => {
-        setUserId(idKu)
-        db.firestore()
-          .collection("users")
-          .doc(idKu)
-          .onSnapshot(doc => {
-            setInvestingPerMonth(doc.data().totalInvestingPerMonth)
-          })
-      })
-
-  })
+    AsyncStorage.getItem("id").then(idKu => {
+      setUserId(idKu);
+      db.firestore()
+        .collection("users")
+        .doc(idKu)
+        .onSnapshot(doc => {
+          setInvestingPerMonth(doc.data().totalInvestingPerMonth);
+        });
+    });
+  });
 
   const handleApi = () => {
     axios
       // .get(`http://localhost:3001/users/getItemsPrice?key=${name}`)
-      .get(`http://localhost:3001/users/getItemsPrice?key=${name}&price=${price}`)
+      .get(
+        `http://localhost:3001/users/getItemsPrice?key=${name}&price=${price}`
+      )
       .then(({ data }) => {
         console.log(data, "===== invoked");
         Linking.openURL(data[0].url);
@@ -122,7 +102,7 @@ const Plant = props => {
       if (plan === "default") {
         newDueDate.setMonth(
           newDueDate.getMonth() +
-          Math.ceil((price - (invested + amount)) / (income * 0.2))
+            Math.ceil((price - (invested + amount)) / (income * 0.2))
         );
         input.investing = income * 0.2;
         input.deadline =
@@ -139,7 +119,7 @@ const Plant = props => {
         input.investing =
           (price - (invested + amount)) / Math.round(deadline / 30);
         input.dueDate = dueDate;
-        input.deadline = deadline
+        input.deadline = deadline;
       }
 
       if (input.completed === true && input.plan !== "month") {
@@ -151,12 +131,13 @@ const Plant = props => {
             console.log("update berhasil uy");
             setModalVisible(false);
             db.firestore()
-              .collection('users')
+              .collection("users")
               .doc(userId)
               .update({
-                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(investing * -1),
-                completed: true
-              })
+                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(
+                  investing * -1
+                )
+              });
           })
           .catch(err => {
             console.log("update error uy", err);
@@ -181,37 +162,26 @@ const Plant = props => {
           .then(() => {
             console.log("update berhasil uy");
             setModalVisible(false);
-            console.log("WOOOOOHOOOOOO")
-            console.log(price)
-            console.log(invested)
-            console.log(amount)
-            console.log(deadline)
-            console.log("WOOOOOHOOOOOO")
+            console.log("WOOOOOHOOOOOO");
+            console.log(price);
+            console.log(invested);
+            console.log(amount);
+            console.log(deadline);
+            console.log("WOOOOOHOOOOOO");
             db.firestore()
               .collection("users")
               .doc(userId)
               .update({
-                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(((price - (invested + amount)) / Math.round(deadline / 30)) - ((price - invested) / Math.round(deadline / 30))),
-                // completed: true
-              })
+                totalInvestingPerMonth: firebase.firestore.FieldValue.increment(
+                  (price - (invested + amount)) / Math.round(deadline / 30) -
+                    (price - invested) / Math.round(deadline / 30)
+                )
+              });
           })
           .catch(err => {
             console.log("update error uy", err);
           });
       }
-
-    }
-  };
-
-  const handleSubmit = val => {
-    if (val !== 0) {
-      setPlan(options[val].label);
-      setOptions([
-        { value: 0, label: `Edit Plan : ${options[val].label} (current) ` },
-        { value: 1, label: "Default" },
-        { value: 2, label: "Month" },
-        { value: 3, label: "Rp/month" }
-      ]);
     }
   };
 
@@ -237,19 +207,23 @@ const Plant = props => {
           setId(plant.id);
           setUid(plant.data().uid);
           setHistory(plant.data().history);
-          setCompleted(plant.data().completed)
+          setCompleted(plant.data().completed);
         }
       });
 
-      invested / price <= 0.4 ? setProgressColorStyle("#ea4c89")
-      : invested / price <= 0.6 ? setProgressColorStyle("#ffd02c")
-        : invested / price <= 1 ? setProgressColorStyle("#9dddd9") : null
+    invested / price <= 0.4
+      ? setProgressColorStyle("#ea4c89")
+      : invested / price <= 0.6
+      ? setProgressColorStyle("#ffd02c")
+      : invested / price <= 1
+      ? setProgressColorStyle("#9dddd9")
+      : null;
   }, [invested]);
 
   const deletePlant = () => {
     Alert.alert(
       `Are You Sure To Kill ${name}? 😭`,
-      'really really sure?',
+      "really really sure?",
       [
         {
           text: "Cancel",
@@ -266,72 +240,83 @@ const Plant = props => {
                 .doc(id)
                 .delete()
                 .then(() => {
-                  props.navigation.navigate("Garden")
+                  props.navigation.navigate("Garden");
                 })
                 .catch(err => {
-                  console.log(err)
-                })
+                  console.log(err);
+                });
             } else if (completed === false && plan !== "month") {
               db.firestore()
-                .collection('plants')
+                .collection("plants")
                 .doc(id)
                 .delete()
                 .then(() => {
                   db.firestore()
-                    .collection('users')
+                    .collection("users")
                     .doc(userId)
                     .update({
-                      totalInvestingPerMonth: firebase.firestore.FieldValue.increment(Number(investing) * -1)
+                      totalInvestingPerMonth: firebase.firestore.FieldValue.increment(
+                        Number(investing) * -1
+                      )
                     })
                     .then(() => {
-                      alert(`Plant has successfully deleted`)
-                      props.navigation.navigate('Garden')(-Number(investing))
-                    })
+                      alert(`Plant has successfully deleted`);
+                      props.navigation.navigate("Garden")(-Number(investing));
+                    });
                 })
                 .catch(err => {
-                  console.log(err)
-                })
+                  console.log(err);
+                });
             } else if (completed === false && plan === "month") {
               db.firestore()
-                .collection('plants')
+                .collection("plants")
                 .doc(id)
                 .delete()
                 .then(() => {
                   db.firestore()
-                    .collection('users')
+                    .collection("users")
                     .doc(userId)
                     .update({
-                      totalInvestingPerMonth: firebase.firestore.FieldValue.increment(Number(investing) * -1)
+                      totalInvestingPerMonth: firebase.firestore.FieldValue.increment(
+                        Number(investing) * -1
+                      )
                     })
                     .then(() => {
-                      alert(`Plant has successfully deleted`)
-                      props.navigation.navigate('Garden')(-Number(investing))
-                    })
+                      alert(`Plant has successfully deleted`);
+                      props.navigation.navigate("Garden")(-Number(investing));
+                    });
                 })
                 .catch(err => {
-                  console.log(err)
-                })
+                  console.log(err);
+                });
             }
-          },
+          }
         }
       ],
       { cancelable: false }
-    )
-  }
+    );
+  };
 
   return (
     <>
+      <View
+        style={{
+          alignItems: "flex-end",
+          paddingRight: 10,
+          backgroundColor: "#587e5b",
+          width: "100%"
+        }}
+      >
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => deletePlant()}
+        >
+          <Text style={styles.text}>
+            Delete <Feather name="x-circle" size={13} color="#fff" />
+          </Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.container}>
-        <View style={{ alignSelf: "flex-end", paddingRight: 10 }}>
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => deletePlant()}
-          >
-            <Text style={styles.text}>
-              Delete <Feather name="x-circle" size={13} color="#fff" />
-            </Text>
-          </TouchableOpacity>
-        </View>
         <Text style={{ fontFamily: "MachineGunk", color: "white" }}>
           saving for :
         </Text>
@@ -406,7 +391,7 @@ const Plant = props => {
         {plan === "month" &&
           dueDate !== undefined &&
           Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) >=
-          30 &&
+            30 &&
           invested / price < 1 && (
             <Text
               style={{
@@ -425,7 +410,7 @@ const Plant = props => {
         {plan === "month" &&
           dueDate !== undefined &&
           Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) <
-          30 &&
+            30 &&
           invested / price < 1 && (
             <Text
               style={{
@@ -448,8 +433,21 @@ const Plant = props => {
             alignItems: "center"
           }}
         >
+          {loading && (
+            <View
+              style={{
+                ...styles.container,
+                marginTop: Dimensions.get("window").width / 2,
+                position: "absolute"
+              }}
+            >
+              <ActivityIndicator size="large" color="#fff" />
+            </View>
+          )}
           {invested / price <= 0.2 ? (
             <Image
+              onLoadStart={() => setLoading(true)}
+              onLoadEnd={() => setLoading(false)}
               source={{
                 uri:
                   "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage1speed.gif?alt=media&token=33b4c5e6-d0ec-4f50-887b-b6e0014a8ab0"
@@ -462,6 +460,8 @@ const Plant = props => {
             />
           ) : invested / price <= 0.4 ? (
             <Image
+              onLoadStart={() => setLoading(true)}
+              onLoadEnd={() => setLoading(false)}
               source={{
                 uri:
                   "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage3speed.gif?alt=media&token=45f871b9-7944-4229-a04e-c22707fd551e"
@@ -474,6 +474,8 @@ const Plant = props => {
             />
           ) : invested / price <= 0.6 ? (
             <Image
+              onLoadStart={() => setLoading(true)}
+              onLoadEnd={() => setLoading(false)}
               source={{
                 uri:
                   "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage3speed.gif?alt=media&token=45f871b9-7944-4229-a04e-c22707fd551e"
@@ -486,6 +488,8 @@ const Plant = props => {
             />
           ) : invested / price <= 0.8 ? (
             <Image
+              onLoadStart={() => setLoading(true)}
+              onLoadEnd={() => setLoading(false)}
               source={{
                 uri:
                   "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage4speed.gif?alt=media&token=a774282f-df60-4097-95a0-3ea4e7caea4e"
@@ -498,6 +502,8 @@ const Plant = props => {
             />
           ) : invested / price < 1 ? (
             <Image
+              onLoadStart={() => setLoading(true)}
+              onLoadEnd={() => setLoading(false)}
               source={{
                 uri:
                   "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/stage5speed.gif?alt=media&token=e8fa0eaa-12eb-47d8-897e-84487b6698ba"
@@ -510,6 +516,8 @@ const Plant = props => {
             />
           ) : invested / price >= 1 ? (
             <Image
+              onLoadStart={() => setLoading(true)}
+              onLoadEnd={() => setLoading(false)}
               source={{
                 uri:
                   "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/money-vector-free-icon-set-38.png?alt=media&token=4d78601a-4124-40e2-be63-3f6b3eb3a8fa"
@@ -547,17 +555,46 @@ const Plant = props => {
         {plan === "default" &&
           income * 0.2 <= price - invested &&
           invested / price < 1 && (
-            <Text style={styles.sub}>Rp. {Math.round(income * 0.2).toLocaleString()} per month</Text>
+            <Text
+              style={{
+                ...styles.sub,
+                color: "#FFD02C",
+                textDecorationLine: "underline"
+              }}
+            >
+              Rp. {Math.round(income * 0.2).toLocaleString()}{" "}
+              <Text style={styles.sub}>per month</Text>
+            </Text>
           )}
         {plan === "default" &&
           income * 0.2 > price - invested &&
           invested / price < 1 && (
-            <Text style={styles.sub}>Last watering: Rp {price - invested}</Text>
+            <Text style={styles.sub}>
+              Last watering:{" "}
+              <Text
+                style={{
+                  ...styles.sub,
+                  color: "#FFD02C",
+                  textDecorationLine: "underline"
+                }}
+              >
+                Rp {price - invested}
+              </Text>
+            </Text>
           )}
         {plan === "money" &&
           investing <= price - invested &&
           invested / price < 1 && (
-            <Text style={styles.sub}>Rp. {investing.toLocaleString()} per month</Text>
+            <Text
+              style={{
+                ...styles.sub,
+                color: "#FFD02C",
+                textDecorationLine: "underline"
+              }}
+            >
+              Rp. {investing.toLocaleString()}{" "}
+              <Text style={styles.sub}>per month</Text>
+            </Text>
           )}
         {plan === "money" &&
           investing > price - invested &&
@@ -567,27 +604,36 @@ const Plant = props => {
         {plan === "month" &&
           dueDate !== undefined &&
           Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) >=
-          30 &&
+            30 &&
           invested / price < 1 && (
             <Text style={styles.sub}>
               Rp.{" "}
-              {Math.round((price - invested) /
-                Math.floor(
-                  (dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24) / 30
-                )).toLocaleString()}{" "}
+              {Math.round(
+                (price - invested) /
+                  Math.floor(
+                    (dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24) / 30
+                  )
+              ).toLocaleString()}{" "}
               per month
             </Text>
           )}
         {plan === "month" &&
           dueDate !== undefined &&
           Math.floor((dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24)) <
-          30 &&
+            30 &&
           invested / price < 1 && (
             <Text style={styles.sub}>Last watering: Rp {price - invested}</Text>
           )}
         {invested / price < 1 ? (
-          <Text style={styles.sub}>
-            Rp. {(price - invested).toLocaleString()} more to get {name}
+          <Text
+            style={{
+              ...styles.sub,
+              color: "#FFD02C",
+              textDecorationLine: "underline"
+            }}
+          >
+            Rp. {(price - invested).toLocaleString()}{" "}
+            <Text style={styles.sub}>more to get {name}</Text>
           </Text>
         ) : null}
 
@@ -609,48 +655,29 @@ const Plant = props => {
             </View>
           </TouchableOpacity>
         ) : (
-            <TouchableOpacity
-              style={{
-                ...styles.editButton,
-                backgroundColor: "rgb(219,141,38)",
-                borderWidth: 2,
-                borderColor: "#ffd02c",
-                marginVertical: 5
-              }}
-              onPress={() =>
-                Alert.alert(
-                  "Are you sure ?",
-                  "You will leave this app",
-                  [
-                    {
-                      text: "Cancel",
-                      onPress: () => console.log("Cancel Pressed"),
-                      style: "cancel"
-                    },
-                    { text: "OK", onPress: () => handleApi(), style: "OK" }
-                  ],
-                  { cancelable: false }
-                )
-              }
-            >
-              <View
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "row"
-                }}
-              >
-                <Text style={styles.text}>BUY {name} !!</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        {invested / price < 1 ? (
           <TouchableOpacity
             style={{
-              ...styles.button,
-              backgroundColor: "#ffd02c",
-              marginTop: 5
+              ...styles.editButton,
+              backgroundColor: "rgb(219,141,38)",
+              borderWidth: 2,
+              borderColor: "#ffd02c",
+              marginVertical: 5
             }}
+            onPress={() =>
+              Alert.alert(
+                "Are you sure ?",
+                "You will leave this app",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => handleApi(), style: "OK" }
+                ],
+                { cancelable: false }
+              )
+            }
           >
             <View
               style={{
@@ -659,16 +686,24 @@ const Plant = props => {
                 flexDirection: "row"
               }}
             >
-              <SelectInput
-                value={options.value}
-                options={options}
-                labelStyle={{ ...styles.text, color: "black" }}
-                onSubmitEditing={val => handleSubmit(val)}
-              />
+              <Text style={styles.text}>BUY {name} !!</Text>
             </View>
           </TouchableOpacity>
+        )}
+        {invested / price < 1 ? (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "row",
+              marginVertical: 10
+            }}
+          >
+            <Text style={styles.text}>Current Plan : {plan}</Text>
+          </View>
         ) : null}
       </View>
+
       <Modal
         animationType="fade"
         transparent={false}
@@ -784,13 +819,13 @@ const styles = {
   button: {
     backgroundColor: "#b9523e",
     paddingVertical: 15,
-    borderRadius: 30,
+    borderRadius: 5,
     width: 200
   },
   editButton: {
     backgroundColor: "#65a1ad",
     paddingVertical: 15,
-    borderRadius: 30,
+    borderRadius: 5,
     width: 200
   },
   deleteButton: {

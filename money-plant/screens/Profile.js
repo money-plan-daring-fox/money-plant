@@ -13,6 +13,7 @@ import {
   AsyncStorage,
   ActivityIndicator
 } from "react-native";
+import { BlurView } from "expo-blur";
 import RadioForm, {
   RadioButton,
   RadioButtonInput,
@@ -43,24 +44,20 @@ const Profile = props => {
   const [concurrent, setConcurrent] = useState(0);
   const [id, setId] = useState("");
   const [user, setUser] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [totalCompletedPlant, setTotalCompletedPlant] = useState(0);
   const [entries, setEntries] = useState([
     {
       url:
-        "https://cdn.dribbble.com/users/1632728/screenshots/4693038/profilepic_dribbble.gif",
-      opacity: 1
+        "https://cdn.dribbble.com/users/1632728/screenshots/4693038/profilepic_dribbble.gif"
     },
     {
       url:
-        "https://cdn.dribbble.com/users/2764754/screenshots/5507524/dribbblemichael2.gif",
-      locked: true,
-      
+        "https://cdn.dribbble.com/users/2764754/screenshots/5507524/dribbblemichael2.gif"
     },
     {
       url:
-        "https://cdn.dribbble.com/users/1252358/screenshots/2923669/one-man-punch.gif",
-      locked: true,
-      
+        "https://cdn.dribbble.com/users/1252358/screenshots/2923669/one-man-punch.gif"
     }
   ]);
 
@@ -88,13 +85,34 @@ const Profile = props => {
         style={{
           width: Dimensions.get("window").width,
           height: Dimensions.get("window").width,
-          alignItems: "center",
+          alignItems: "center"
         }}
       >
-        {loading ? (
-          <ActivityIndicator size={large} color="#fff" animating={loading} />
-        ) : (
-          <>
+        <>
+          {totalCompletedPlant < 1 && index === 1 ? (
+            <Image
+              onLoadStart={() => setLoading(true)}
+              onLoadEnd={() => setLoading(false)}
+              source={{ uri: item.url }}
+              style={{
+                width: "90%",
+                height: "90%",
+                borderRadius: (Dimensions.get("window").width * 0.9) / 2,
+                position: "absolute"
+              }}
+            />
+          ) : totalCompletedPlant < 2 && index === 2 ? (
+            <Image
+              onLoadEnd={() => setLoading(false)}
+              source={{ uri: item.url }}
+              style={{
+                width: "90%",
+                height: "90%",
+                borderRadius: (Dimensions.get("window").width * 0.9) / 2,
+                position: "absolute"
+              }}
+            />
+          ) : (
             <Image
               onLoadEnd={() => setLoading(false)}
               source={{ uri: item.url }}
@@ -103,53 +121,53 @@ const Profile = props => {
                 height: "90%",
                 opacity: item.opacity,
                 borderRadius: (Dimensions.get("window").width * 0.9) / 2,
-                position: "absolute",
-                filter: "blur(4px)"
+                position: "absolute"
               }}
             />
-            <View style={{ justifyContent: "center" }}>
-              {item.locked === true ? (
-                <Image
-                  source={{
-                    uri: "https://img.icons8.com/ios/344/lock-filled.png"
-                  }}
-                  style={{
-                    marginTop: 50,
-                    width: 100,
-                    height: 100,
-                    position: "relative"
-                  }}
-                />
-              ) : null}
-            </View>
-          </>
-        )}
+          )}
+
+          <View style={{ justifyContent: "center" }}>
+            {totalCompletedPlant < 1 && index === 1 ? (
+              <Image
+                source={{
+                  uri: "https://img.icons8.com/ios/344/lock-filled.png"
+                }}
+                style={{
+                  marginTop: 50,
+                  width: 100,
+                  height: 100,
+                  position: "relative"
+                }}
+              />
+            ) : totalCompletedPlant < 2 && index === 2 ? (
+              <Image
+                source={{
+                  uri: "https://img.icons8.com/ios/344/lock-filled.png"
+                }}
+                style={{
+                  marginTop: 50,
+                  width: 100,
+                  height: 100,
+                  position: "relative"
+                }}
+              />
+            ) : null}
+          </View>
+        </>
       </View>
     );
   };
 
   function handleTopup() {
     setModalVisible(false);
-
-    // console.log("AKU KUMPULAN KONSOL==========")
-    // console.log({id})
-    // console.log({balance});
-    // console.log({balanceDatabase});
-    // console.log("AKU KUMPULAN KONSOL==========")
-
-    console.log("tetew");
-    console.log(balance);
-    console.log(balanceDatabase);
-
     user.balance = Number(balance) + Number(balanceDatabase);
+    AsyncStorage.setItem("balance", user.balance.toString());
 
     db.firestore()
       .collection("users")
       .doc(id)
       .set(user)
       .then(response => {
-        // console.log("handlletopup suskes uy")
-        // console.log(response)
         alert("your balance has successfully been updated");
       })
       .catch(err => {
@@ -169,19 +187,15 @@ const Profile = props => {
         setEmail(email);
         setUid(uid);
         setName(name);
-        // console.log("ini uid")
-        // console.log(uid)
-        // console.log("ini uid")
-
         return uid;
       })
       .then(uid => {
-        // console.log('ini uid setelah then', uid)
+       
         db.firestore()
           .collection("users")
           .where("uid", "==", uid)
           .onSnapshot(docs => {
-            // console.log("udah masuk firestore nih hehe")
+        
             docs.forEach(el => {
               setId(el.id);
               setName(el.data().name);
@@ -190,6 +204,20 @@ const Profile = props => {
               setEmail(el.data().email);
               setIncome(el.data().income);
             });
+          });
+
+        db.firestore()
+          .collection("plants")
+          .where("uid", "==", uid)
+          .onSnapshot(async docs => {
+            let plantStatistics = 0;
+            docs.forEach(el => {
+              if (el.data().completed === true) {
+                plantStatistics += 1;
+              }
+            });
+            await setTotalCompletedPlant(plantStatistics);
+            await setLoading(false);
           });
       });
   }, []);
@@ -213,7 +241,17 @@ const Profile = props => {
           alignItems: "center"
         }}
       >
-        <View style={{ marginVertical : 15, height: Dimensions.get("window").height / 2.3 }}>
+        <View
+          style={{
+            marginVertical: 15,
+            height: Dimensions.get("window").height / 2.3
+          }}
+        >
+          {loading && (
+            <View style={{ ...styles.container }}>
+              <ActivityIndicator size="large" color="#fff" />
+            </View>
+          )}
           <Carousel
             ref={c => {
               this._carousel = c;
@@ -270,7 +308,7 @@ const Profile = props => {
                 </Text>
               )}
               {state === "edit" ? (
-                <TouchableOpacity style={styles.submitButton}>
+                <TouchableOpacity style={{...styles.submitButton, marginLeft : 5}}>
                   <View
                     style={{
                       justifyContent: "center",
@@ -278,7 +316,7 @@ const Profile = props => {
                       flexDirection: "row"
                     }}
                   >
-                    <Text style={styles.text} onPress={() => setState("view")}>
+                    <Text style={{...styles.text, color:"#262525"}} onPress={() => setState("view")}>
                       SUBMIT
                     </Text>
                   </View>
@@ -294,7 +332,7 @@ const Profile = props => {
                       flexDirection: "row"
                     }}
                   >
-                    <Text style={styles.text} onPress={() => setState("edit")}>
+                    <Text style={{...styles.text, color:"#262525"}} onPress={() => setState("edit")}>
                       EDIT
                     </Text>
                   </View>
@@ -450,20 +488,20 @@ const styles = {
   button: {
     backgroundColor: "#b9523e",
     paddingVertical: 10,
-    borderRadius: 30,
+    borderRadius: 5,
     width: 200,
     alignSelf: "center"
   },
   editButton: {
-    backgroundColor: "#b9523e",
+    backgroundColor: "#65a1ad",
     paddingVertical: 5,
-    borderRadius: 30,
-    width: 50
+    borderRadius: 5,
+    width: 70
   },
   submitButton: {
-    backgroundColor: "#b9523e",
+    backgroundColor: "#65a1ad",
     paddingVertical: 5,
-    borderRadius: 30,
+    borderRadius: 5,
     width: 70
   },
   input: {

@@ -343,14 +343,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#b9523e",
     paddingVertical: 15,
-    borderRadius: 30,
+    borderRadius: 5,
     width: 200,
     margin: 5
   },
   button2: {
     backgroundColor: "#039be5",
     paddingVertical: 15,
-    borderRadius: 30,
+    borderRadius: 5,
     width: 200,
     margin: 5
   }

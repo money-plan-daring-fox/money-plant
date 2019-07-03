@@ -56,7 +56,7 @@ const drawerStyle = {
       AsyncStorage.getItem("balance").then(balanceKu => {
         setBalance(balanceKu);
       });
-    }, []);
+    }, [AsyncStorage.getItem("balance")]);
 
     return (
       <View style={{ flex: 1, backgroundColor: "#262525" }}>

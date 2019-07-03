@@ -8,7 +8,6 @@ import PlantList from '../components/PlantList'
 // Drawer
 import NavigationDrawerStructure from '../components/NavigationDrawerStructure'
 import { SafeAreaView } from 'react-navigation';
-import { Feather } from '@expo/vector-icons'
 
 // Firebase
 import db from '../api/firebase'
