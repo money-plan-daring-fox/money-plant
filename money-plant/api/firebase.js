@@ -7,10 +7,9 @@ const app = firebase.initializeApp({
   authDomain: "saving-plant2.firebaseapp.com",
   databaseURL: "https://saving-plant2.firebaseio.com",
   projectId: "saving-plant2",
-  storageBucket: "",
+  storageBucket: "saving-plant2.appspot.com",
   messagingSenderId: "627917916237",
   appId: "1:627917916237:web:5e7ddec96e762687"
-
   // apiKey: "AIzaSyDWrBGYF-MxYGquPe8Kv7kB0Fi2kUHas7I",
   // authDomain: "saving-plant-b5135.firebaseapp.com",
   // databaseURL: "https://saving-plant-b5135.firebaseio.com",
