@@ -352,8 +352,8 @@ const Profile = props => {
                 </TouchableOpacity>
               ) : (
                   <TouchableOpacity style={{ ...styles.editButton, marginLeft: 5 }}>
-                    <View>
-                      <Text style={{ ...styles.text, color: "#262525" }} onPress={() => setState("edit")}>
+                    <View style={{alignSelf : "center"}}>
+                      <Text style={{ ...styles.text, color: "#f6f4f2" }} onPress={() => setState("edit")}>
                         EDIT
                     </Text>
                     </View>
@@ -438,11 +438,12 @@ const Profile = props => {
           >
             <Text style={styles.sub}>Input Amount :</Text>
             <TextInput
+              value={balance.toLocaleString()}
               textAlign={"center"}
               placeholderTextColor="rgba(255,255,255,0.7)"
               id="amount"
               style={styles.input}
-              onChangeText={text => setBalance(text)}
+              onChangeText={text => setBalance(+text.split("").filter(el => el.match(/^[0-9]*$/)).join(""))}
             />
             <View style={{ paddingVertical: 10, alignSelf: "center" }}>
               <Text style={{ ...styles.sub, textAlign: "center" }}>
