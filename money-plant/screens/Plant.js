@@ -258,7 +258,8 @@ const Plant = props => {
                     .update({
                       totalInvestingPerMonth: firebase.firestore.FieldValue.increment(
                         Number(investing) * -1
-                      )
+                      ),
+                      completedPlants: firebase.firestore.FieldValue.increment(1)
                     })
                     .then(() => {
                       alert(`Plant has successfully deleted`);
@@ -280,7 +281,8 @@ const Plant = props => {
                     .update({
                       totalInvestingPerMonth: firebase.firestore.FieldValue.increment(
                         Number(investing) * -1
-                      )
+                      ),
+                      completedPlants: firebase.firestore.FieldValue.increment(1)
                     })
                     .then(() => {
                       alert(`Plant has successfully deleted`);
