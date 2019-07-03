@@ -228,8 +228,8 @@ const Plant = props => {
 
   const deletePlant = () => {
     Alert.alert(
-      `Are You Sure To Kill ${name}? 😭`,
-      "really really sure?",
+      `Abort Mission to Save ${name}? 😭`,
+      "You can't go back once its deleted",
       [
         {
           text: "Cancel",
@@ -325,14 +325,15 @@ const Plant = props => {
         </TouchableOpacity>
       </View>
       <View style={styles.container}>
-        <Text style={{ fontFamily: "MachineGunk", color: "white" }}>
+        <Text style={{ fontFamily: "MachineGunk", color: "white", letterSpacing : 0.5 }}>
           saving for :
         </Text>
         <Text
           style={{
             fontFamily: "MachineGunk",
             color: "white",
-            fontSize: 40
+            fontSize: 40,
+            letterSpacing : 0.5 
           }}
         >
           {name}
@@ -346,10 +347,11 @@ const Plant = props => {
                 fontFamily: "MachineGunk",
                 color: "white",
                 fontSize: 14,
-                paddingVertical: 10
+                paddingVertical: 10,
+                letterSpacing : 0.5 
               }}
             >
-              {Math.ceil((price - invested) / (income * 0.2))} months
+              {Math.ceil((price - invested) / (income * 0.2))} months left
             </Text>
           )}
         {plan === "default" &&
@@ -360,11 +362,12 @@ const Plant = props => {
                 fontFamily: "MachineGunk",
                 color: "white",
                 fontSize: 14,
-                paddingVertical: 10
+                paddingVertical: 10,
+                letterSpacing : 0.5 
               }}
             >
               {Math.floor((new Date() - createdAt) / (1000 * 60 * 60 * 24))}{" "}
-              days
+              days left
             </Text>
           )}
         {plan === "money" &&
@@ -378,7 +381,7 @@ const Plant = props => {
                 paddingVertical: 10
               }}
             >
-              {Math.ceil((price - invested) / investing)} months
+              {Math.ceil((price - invested) / investing)} months 
             </Text>
           )}
         {plan === "money" &&
@@ -659,7 +662,7 @@ const Plant = props => {
                 flexDirection: "row"
               }}
             >
-              <Text style={styles.text}>WATER ME</Text>
+              <Text style={{...styles.text, letterSpacing : 0.5 }}>WATER ME</Text>
             </View>
           </TouchableOpacity>
         ) : (
@@ -694,7 +697,7 @@ const Plant = props => {
                 flexDirection: "row"
               }}
             >
-              <Text style={styles.text}>BUY {name} !!</Text>
+              <Text style={{...styles.text, letterSpacing : 0.5 }}>BUY {name} !!</Text>
             </View>
           </TouchableOpacity>
         )}
@@ -707,7 +710,7 @@ const Plant = props => {
               marginVertical: 10
             }}
           >
-            <Text style={styles.text}>Current Plan : {plan}</Text>
+            <Text style={{...styles.text, letterSpacing : 0.5 }}>Current Plan : {plan}</Text>
           </View>
         ) : null}
       </View>
@@ -748,7 +751,8 @@ const Plant = props => {
                 fontFamily: "MachineGunk",
                 textAlign: "center",
                 color: "#fff",
-                paddingVertical: 10
+                paddingVertical: 10,
+                letterSpacing : 0.5 
               }}
             >
               Input Amount :
@@ -777,7 +781,7 @@ const Plant = props => {
             >
               <Text style={styles.text}>Submit</Text>
             </TouchableOpacity>
-            <Text style={{ ...styles.text, paddingTop: 20 }}> or </Text>
+            <Text style={{ ...styles.text, paddingTop: 20, letterSpacing : 0.5  }}> or </Text>
             <View
               style={{
                 flexDirection: "row",
@@ -796,14 +800,14 @@ const Plant = props => {
                 }}
                 onPress={() => handleInputAmount("recommended")}
               >
-                <Text style={{ ...styles.text, color: "#b9523e" }}>
+                <Text style={{ ...styles.text, color: "#b9523e", letterSpacing : 0.5  }}>
                   {" "}
                   Use Recommendation Settings{" "}
                 </Text>
                 <Tooltip
                   popover={
                     <ToolText>
-                      Use recommended settings to allow the system calculate 20%
+                      Use recommended settings, allow the system to calculate 20%
                       of your salary as your savings value
                     </ToolText>
                   }

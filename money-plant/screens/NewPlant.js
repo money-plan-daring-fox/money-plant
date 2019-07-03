@@ -125,21 +125,7 @@ const NewPlant = props => {
       }
     }
 
-    // console.log("LIHAT AKU MAS")
-    // console.log(income)
-    // console.log(investingPerMonthDatabase)
-    // console.log(input.investing)
-    // console.log("LIHAT AKU MAS")
-
-    // console.log(income)
-    // console.log(investingPerMonthDatabase)
-    // console.log(input.investing)
     if(Number(income) < Number(investingPerMonthDatabase) + Number(input.investing)) return alert("Your current income is insufficient")
-    // console.log("liat aku mas")
-    // console.log(input)
-    // console.log(input.investing)
-
-    console.log("liat aku mas")
 
     input.dueDate = dueDate;
     db.firestore()
@@ -200,8 +186,7 @@ const NewPlant = props => {
           />
         )}
       </View>
-      <Text style={{ ...styles.text, paddingTop: 15, paddingBottom: 6 }}>
-
+      <Text style={{ ...styles.text, paddingTop: 15, paddingBottom: 6, letterSpacing : 0.5 }}>
         How would you like to Save?
       </Text>
 
@@ -229,7 +214,7 @@ const NewPlant = props => {
           }}
         >
           <Feather name="info" size={20} color="#fff" />
-          <Text style={{ ...styles.text, paddingLeft: 10 }}>
+          <Text style={{ ...styles.text, paddingLeft: 10, letterSpacing : 0.5  }}>
             Allows system to calculate 20 % of your
             income and deduct value every month
           </Text>
@@ -248,7 +233,7 @@ const NewPlant = props => {
             }}
           >
             <Feather name="info" size={20} color="#fff" />
-            <Text style={{ ...styles.text, paddingLeft: 10 }}>
+            <Text style={{ ...styles.text, paddingLeft: 10, letterSpacing : 0.5  }}>
               Please input duration ( in month ) below, to get your desired item
             </Text>
           </View>
@@ -274,7 +259,7 @@ const NewPlant = props => {
             }}
           >
             <Feather name="info" size={20} color="#fff" />
-            <Text style={{ ...styles.text, paddingLeft: 10 }}>
+            <Text style={{ ...styles.text, paddingLeft: 10, letterSpacing : 0.5  }}>
               Please input how much money you would like to invest per month to get your
               desired item
             </Text>
@@ -293,7 +278,7 @@ const NewPlant = props => {
         style={styles.button}
         onPress={() => createPlant(name, price, plan, investing, deadline)}
       >
-        <Text style={styles.text}>Create plant</Text>
+        <Text style={{...styles.text, letterSpacing : 0.5 }}>Create plant</Text>
       </TouchableOpacity>
       {loading && (
         <View

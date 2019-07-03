@@ -81,10 +81,6 @@ Garden.navigationOptions = props => ({
         <View style={{ marginLeft: 15 }}>
             <NavigationDrawerStructure navigationProps={props.navigation} />
         </View>
-    // headerRight:
-    //     <TouchableOpacity onPress={() => props.navigation.navigate("NewPlant")}>
-    //         <Feather name="plus-circle" size={25} color="white" />
-    //     </TouchableOpacity>
 })
 
 export default Garden

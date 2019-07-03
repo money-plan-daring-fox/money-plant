@@ -69,7 +69,8 @@ const PlantList = ({ props, item }) => {
               fontFamily: "MachineGunk",
               textAlign: "center",
               color: "#fff",
-              paddingTop: 20
+              paddingTop: 20,
+              letterSpacing : 0.8
             }}
           >
             Plant new seed!
@@ -99,6 +100,8 @@ const PlantList = ({ props, item }) => {
             style={{
               textTransform: "uppercase",
               fontFamily: "MachineGunk",
+              letterSpacing : 0.8,
+              fontSize : 14,
               flex: 1
             }}
           >
@@ -125,15 +128,6 @@ const PlantList = ({ props, item }) => {
               maximumFractionDigits: 2
             })}
           </Text>
-          {/* <Image
-            style={{ height: "100%", width: "100%", flex: 3 }}
-            resizeMode="contain"
-            source={{
-              uri:
-                "https://firebasestorage.googleapis.com/v0/b/money-plant-328e6.appspot.com/o/avatar%2Fplants-vector-free-icon-set-21.png?alt=media&token=ee490201-09a9-4c6f-ae12-d252ed6b2c02"
-            }}
-            onLoadEnd={() => setLoading(false)}
-          /> */}
           {item.invested / item.price <= 0.2 ? (
             <Image
               source={{

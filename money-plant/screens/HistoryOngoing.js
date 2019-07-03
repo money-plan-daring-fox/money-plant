@@ -171,7 +171,7 @@ const HistoryOngoing = props => {
                         <Text
                           style={{
                             textTransform: "uppercase",
-                            // fontFamily: "Trebuchet MS",
+                            fontFamily: "PingFangHK-Medium",
                             flex: 1.5,
                             textAlign: "center",
                             fontSize: 20,
@@ -182,72 +182,67 @@ const HistoryOngoing = props => {
                         </Text>
                       </View>
 
-                      <Text style={{ color: "#666666", fontWeight: "500" }}>
+                      <Text style={{ color: "#666666", fontWeight: "500", fontFamily : "PingFangHK-Light"}}>
                         Planted: {Moment(Date(item.createdAt)).format("ll")}
                       </Text>
                       <Text
                         style={{
-                          // fontFamily: "Trebuchet MS",
+                          fontFamily: "PingFangHK-Regular",
                           flex: 1
                         }}
                       >
                         Price:{" "}
-                        <Text style={{ color: "#cfb53b" }}>
+                        <Text style={{ color: "#cfb53b", fontFamily : "PingFangHK-Regular" }}>
                           Rp. {item.price.toLocaleString()}
                         </Text>
                       </Text>
                       <Text
                         style={{
-                          // fontFamily: "Trebuchet MS",
+                          fontFamily: "PingFangHK-Regular",
                           flex: 1
                         }}
                       >
                         Expense / month:{" "}
-                        <Text style={{ color: "#65a1ad" }}>
+                        <Text style={{ color: "#65a1ad", fontFamily : "PingFangHK-Regular" }}>
                           Rp. {item.investing.toLocaleString()}
                         </Text>
                       </Text>
                       <Text
                         style={{
-                          // fontFamily: "Trebuchet MS",
+                          fontFamily: "PingFangHK-Regular",
                           flex: 1
                         }}
                       >
                         Invested:{" "}
-                        <Text style={{ color: "#587e5b" }}>
+                        <Text style={{ color: "#587e5b", fontFamily : "PingFangHK-Regular" }}>
                           Rp. {item.invested.toLocaleString()}
                         </Text>
                       </Text>
                       <Text
                         style={{
-                          // fontFamily: "Trebuchet MS",
+                          fontFamily: "PingFangHK-Regular",
                           flex: 1
                         }}
                       >
                         Plan:
-                        <Text style={{ textTransform: "uppercase" }}>
+                        <Text style={{ textTransform: "uppercase", fontFamily: "PingFangHK-Regular" }}>
                           {" "}
                           {item.plan}
                         </Text>
                       </Text>
                       <Text
                         style={{
-                          // fontFamily: "Trebuchet MS",
+                          fontFamily: "PingFangHK-Regular",
                           flex: 1
                         }}
                       >
                         Deadline:{" "}
-                        <Text style={{ color: "#b9523e" }}>
+                        <Text style={{ color: "#b9523e", fontFamily : "PingFangHK-Regular" }}>
                           {item.deadline}
                         </Text>
                       </Text>
                     </View>
                   </TouchableOpacity>
-                  {/* <Text>
-                    {JSON.stringify(item.createdAt)}
-                    {item.createdAt.seconds}
-                    {item.createdAt.nanoseconds / 1e6}
-                  </Text> */}
                 </View>
               );
             }}
@@ -261,7 +256,7 @@ const HistoryOngoing = props => {
             alignItems: "center"
           }}
         >
-          <Text style={{ color: "white" }}>
+          <Text style={{ color: "white", fontFamily: "PingFangHK-Light" }}>
             Your list is empty, grow some plants in the garden.
           </Text>
         </View>

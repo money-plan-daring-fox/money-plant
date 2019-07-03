@@ -154,9 +154,8 @@ const Login = props => {
       )}
       <View style={{ width: "100%", alignItems: "flex-end", marginRight: 100 }}>
         <View style={{ width: "50%" }}>
-          <Text style={{ ...styles.text, textAlign: "right" }}>
+          <Text style={{ ...styles.text, textAlign: "right", letterSpacing : 0.8 }}>
             Get your exquisite gadget by devoted to a wonderful plant...
-
           </Text>
         </View>
       </View>
@@ -341,7 +340,8 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "MachineGunk",
     textAlign: "center",
-    color: "#fff"
+    color: "#fff",
+    letterSpacing : 0.8
   },
   button: {
     backgroundColor: "#b9523e",

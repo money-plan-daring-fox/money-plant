@@ -33,6 +33,8 @@ const Notification = () => {
 
   return (
       <ScrollView endFillColor="#31422e" style={{backgroundColor:'#31422e', paddingVertical: 10}}>
+        {/* <Text style={{color: "white"}}>liat aku mas ah</Text> */}
+        {/* <Text>{JSON.stringify(notifications)}</Text> */}
         <View style={{marginHorizontal:20}}>
           {
             notifications.map((el,index) => {
