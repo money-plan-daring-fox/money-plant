@@ -146,6 +146,25 @@ const Plant = props => {
                 completedPlants: firebase.firestore.FieldValue.increment(1),
                 ongoingPlants: firebase.firestore.FieldValue.increment(-1)
               })
+              .then(() => {
+                AsyncStorage.getItem('expoToken')
+                .then((expoToken) => {
+                  axios
+                  .post(server+'users/notifPlantComplete', {
+                    toPush: {
+                      expoToken,
+                      item: name,
+                      userUid: uid,
+                      link: 'Plant',
+                      data: props.navigation.getParam("item"),
+                      id: userId
+                    }
+                  })
+                  .then(data => {
+                    console.log('successfully push plant-complete notif!')
+                  })
+                })
+              })
           })
           .catch(err => {
             console.log("update error uy", err);

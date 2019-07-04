@@ -334,24 +334,52 @@ const appNavigator = createSwitchNavigator({
 });
 
   
-  _handleNotification = (notification) => {
-    console.log(notification)
-    db.firestore()
-    .collection('users')
-    .doc(notification.data.id)
-    .update({
-      notifications: firebase.firestore.FieldValue.arrayUnion(notification.data)
-    }).then(() => {
-      console.log('berhasil masuk firestore')
-    })
-  };
-  Notifications.addListener(_handleNotification);
+_handleNotification = (notification) => {
+  db.firestore()
+  .collection('users')
+  .doc(notification.data.id)
+  .update({
+    notifications: firebase.firestore.FieldValue.arrayUnion(notification.data)
+  }).then(() => {
+    console.log('berhasil masuk firestore')
+  })
+};
+Notifications.addListener(_handleNotification);
+
+async function registerPushNotif(){
+  const { status: existingStatus } = await Permissions.getAsync(
+    Permissions.NOTIFICATIONS
+  );
+  let finalStatus = existingStatus;
+
+  // only ask if permissions have not already been determined, because
+  // iOS won't necessarily prompt the user a second time.
+  if (existingStatus !== 'granted') {
+    // Android remote notification permissions are granted during the app
+    // install, so this will only ask on iOS
+    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    finalStatus = status;
+  }
+
+  // Stop here if the user did not grant permissions
+  if (finalStatus !== 'granted') {
+    return;
+  }
+
+  // Get the token that uniquely identifies this device
+  let token = await Notifications.getExpoPushTokenAsync();
+  await AsyncStorage.setItem("expoToken", token)
+  .then(() => console.log(`${token} tersimpan`))
+}
 
 
 
 export default function App() {
-  const Route = createAppContainer(appNavigator);
+  useEffect(() => {
+    registerPushNotif()
+  },[])
 
+  const Route = createAppContainer(appNavigator);
   return (
     <AuthProvider>
       <Route />
