@@ -38,13 +38,20 @@ const app = firebase.initializeApp({
   // storageBucket: "",
   // messagingSenderId: "861867384752",
   // appId: "1:861867384752:web:f601494e92eb869c"
-    // apiKey: "AIzaSyCU1kszW16RqyIDrZ0-BrO6unM9ntlKUao",
-    // authDomain: "awesome-plant.firebaseapp.com",
-    // databaseURL: "https://awesome-plant.firebaseio.com",
-    // projectId: "awesome-plant",
-    // storageBucket: "",
-    // messagingSenderId: "799378575059",
-    // appId: "1:799378575059:web:ce0038ad5499f942"
+  // apiKey: "AIzaSyCU1kszW16RqyIDrZ0-BrO6unM9ntlKUao",
+  // authDomain: "awesome-plant.firebaseapp.com",
+  // databaseURL: "https://awesome-plant.firebaseio.com",
+  // projectId: "awesome-plant",
+  // storageBucket: "",
+  // messagingSenderId: "799378575059",
+  // appId: "1:799378575059:web:ce0038ad5499f942",
+  // apiKey: "AIzaSyCY0Erd7qz3Q8TvOLysHQGa1GPPS8KT3-Y",
+  // authDomain: "backup-saving-plant.firebaseapp.com",
+  // databaseURL: "https://backup-saving-plant.firebaseio.com",
+  // projectId: "backup-saving-plant",
+  // storageBucket: "",
+  // messagingSenderId: "966022669984",
+  // appId: "1:966022669984:web:0e9894798abb9c56"
 });
 
 export default app;
