@@ -3,6 +3,20 @@ import "firebase/firestore";
 import "firebase/auth";
 
 const app = firebase.initializeApp({
+  apiKey: "AIzaSyBRpiaATRuO2CoCbNdWKV9c6TUzGDry5ho",
+  authDomain: "final-project-saving-plant.firebaseapp.com",
+  databaseURL: "https://final-project-saving-plant.firebaseio.com",
+  projectId: "final-project-saving-plant",
+  storageBucket: "",
+  messagingSenderId: "1074108335961",
+  appId: "1:1074108335961:web:d15458eedc56f39a"
+  // apiKey: "AIzaSyAHQ8qXA5O1GpnD-zqxhN6i08h08kNfArk",
+  // authDomain: "fir-day-saving-plant.firebaseapp.com",
+  // databaseURL: "https://fir-day-saving-plant.firebaseio.com",
+  // projectId: "fir-day-saving-plant",
+  // storageBucket: "",
+  // messagingSenderId: "623981683115",
+  // appId: "1:623981683115:web:c7a4dc35bfe69d62"
   // apiKey: "AIzaSyDQiTAfJUmNVLo7EEg4JDmvrERFyG_EWzE",
   // authDomain: "saving-plant2.firebaseapp.com",
   // databaseURL: "https://saving-plant2.firebaseio.com",
@@ -24,13 +38,13 @@ const app = firebase.initializeApp({
   // storageBucket: "",
   // messagingSenderId: "861867384752",
   // appId: "1:861867384752:web:f601494e92eb869c"
-  apiKey: "AIzaSyCU1kszW16RqyIDrZ0-BrO6unM9ntlKUao",
-  authDomain: "awesome-plant.firebaseapp.com",
-  databaseURL: "https://awesome-plant.firebaseio.com",
-  projectId: "awesome-plant",
-  storageBucket: "",
-  messagingSenderId: "799378575059",
-  appId: "1:799378575059:web:ce0038ad5499f942"
+    // apiKey: "AIzaSyCU1kszW16RqyIDrZ0-BrO6unM9ntlKUao",
+    // authDomain: "awesome-plant.firebaseapp.com",
+    // databaseURL: "https://awesome-plant.firebaseio.com",
+    // projectId: "awesome-plant",
+    // storageBucket: "",
+    // messagingSenderId: "799378575059",
+    // appId: "1:799378575059:web:ce0038ad5499f942"
 });
 
 export default app;

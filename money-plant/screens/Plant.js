@@ -22,6 +22,8 @@ import db from "../api/firebase";
 import firebase from "firebase";
 import axios from "axios";
 
+const server = 'http://f42c1495.ngrok.io/'
+
 const Plant = props => {
   let { id } = props.navigation.getParam("item");
   const investingProps = props.navigation.getParam("item").investing;
@@ -71,7 +73,7 @@ const Plant = props => {
     axios
       // .get(`http://localhost:3001/users/getItemsPrice?key=${name}`)
       .get(
-        `http://localhost:3001/users/getItemsPrice?key=${name}&price=${price}`
+        `http://f42c1495.ngrok.io/users/getItemsPrice?key=${name}&price=${price}`
       )
       .then(({ data }) => {
         console.log(data, "===== invoked");
@@ -149,6 +151,7 @@ const Plant = props => {
               .then(() => {
                 AsyncStorage.getItem('expoToken')
                 .then((expoToken) => {
+                  console.log(expoToken,)
                   axios
                   .post(server+'users/notifPlantComplete', {
                     toPush: {
@@ -400,7 +403,7 @@ const Plant = props => {
                 paddingVertical: 10
               }}
             >
-              {Math.ceil((price - invested) / investing)} months 
+              {Math.ceil((price - invested) / investing)} months left
             </Text>
           )}
         {plan === "money" &&
@@ -415,7 +418,7 @@ const Plant = props => {
               }}
             >
               {Math.floor((new Date() - createdAt) / (1000 * 60 * 60 * 24))}{" "}
-              days
+              days left
             </Text>
           )}
         {plan === "month" &&
@@ -434,7 +437,7 @@ const Plant = props => {
               {Math.floor(
                 (dueDate.toDate() - new Date()) / (1000 * 60 * 60 * 24) / 30
               )}{" "}
-              months
+              months left
             </Text>
           )}
         {plan === "month" &&

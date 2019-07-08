@@ -17,7 +17,7 @@ import axios from "axios";
 import { Feather, EvilIcons, Ionicons } from "@expo/vector-icons";
 import firebase from 'firebase'
 
-let server = "http://localhost:3001/";
+let server = "http://f42c1495.ngrok.io/";
 
 const NewPlant = props => {
   const [name, setName] = useState("");
@@ -265,10 +265,11 @@ const NewPlant = props => {
             </Text>
           </View>
           <TextInput
+            value={investing.toLocaleString()}
             placeholder="Investments per month"
             placeholderTextColor="rgba(255,255,255,0.7)"
             keyboardType="numeric"
-            onChangeText={num => setInvesting(num)}
+            onChangeText={num => setInvesting(Number(num.split("").filter(el => el.match(/^[0-9]*$/)).join("")))}
             style={styles.input}
           />
         </View>
